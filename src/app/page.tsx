@@ -33,9 +33,6 @@ export default function Home() {
     // tRPC add user
     const { mutate: addUser, isLoading: addUserLoading } =
         trpc.addUser.useMutation({
-            onSuccess: (data) => {
-                setDatabaseAddLabel(`Added, ID: ${data.id}`);
-            },
             onError: (error) => {
                 console.log(error);
                 setDatabaseAddLabel('Error in the console');

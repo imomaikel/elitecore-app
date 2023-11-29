@@ -49,6 +49,9 @@ export type ExpressContext = inferAsyncReturnType<typeof expressContext>;
         });
     });
 
+    // Create socket client
+    // TODO
+
     // Start the bot
     import('./bot/client');
 })();

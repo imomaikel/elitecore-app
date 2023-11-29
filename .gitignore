@@ -16,6 +16,7 @@
 # production
 /build
 /dist
+*.exe
 
 # misc
 .DS_Store
@@ -36,3 +37,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# python
+\__pycache__
