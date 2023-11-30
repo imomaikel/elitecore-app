@@ -1,3 +1,4 @@
+import sendServerStatusNotifications from '../bot/plugins/server-status/notifications';
 import net from 'net';
 
 let isConnecting = false;
@@ -43,8 +44,17 @@ export const connectToSocketServer = () => {
     );
 
     // Receive data
-    client.on('data', async (data) => {
-        console.log(`data from the app: ${data}`);
+    client.on('data', async (buffer) => {
+        try {
+            const parsedMessage = JSON.parse(buffer.toString());
+            if (parsedMessage.type && parsedMessage.data) {
+                if (parsedMessage.type === 'serverStatusUpdate') {
+                    sendServerStatusNotifications(parsedMessage.data);
+                }
+            }
+        } catch (error) {
+            console.log('Could not parse the socket data', error);
+        }
     });
 
     client.on('timeout', () => socketReconnect());

@@ -127,6 +127,22 @@ def dbUpdateAutoRestart(serverId: int, newState: bool):
     return
 
 
+# Update player count
+def dbUpdatePlayerCount(serverId: int, currentPlayers: int):
+    try:
+        conn = dbCreateConnection()
+        cur = conn.cursor()
+        cur.execute(
+            'UPDATE servers SET lastPlayers = %s WHERE ID = %s;', (currentPlayers, serverId))
+        conn.commit()
+        conn.close()
+    except Exception as e:
+        lastConn.close()
+        notify('An error has occurred.', 'error')
+        dbAppendNewLog(e, 'dbUpdatePlayerCount')
+    return
+
+
 # Update server status
 def dbUpdateLastStatus(serverId: int, newStatus: Literal['online', 'offline']):
     try:

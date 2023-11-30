@@ -1,12 +1,15 @@
 from lib.db import dbGetAllServers, dbUpdateLastStatus
+from ui.rconStatus import getServerRCONStatus
 from engine.getStatuses import getStatuses
-from engine.socket import sendToClient
 from utils.constans import ServerDetails
+from engine.socket import sendToClient
+from lib.db import handleRCONPassword
 from threading import Timer
 from typing import List
 
-
 # Loop functions every x seconds
+
+
 def __set_interval(func, sec):
     def func_wrapper():
         __set_interval(func, sec)
@@ -31,9 +34,13 @@ def runObserver():
 
     currentServers: List[ServerDetails] = getStatuses()
 
+    rconPassword = handleRCONPassword()
+
     # Check if the status has changed
     changedServers = []
     for storedServer in storedServers:
+        getServerRCONStatus(storedServer.rconPort, rconPassword,
+                            storedServer.multiHome, storedServer.mapName, storedServer.id)
         lastStatus = storedServer.lastStatus
         currentStatus = next(
             entry for entry in currentServers if entry.id == storedServer.id).status
@@ -48,5 +55,4 @@ def runObserver():
             'type': 'serverStatusUpdate',
             'data': changedServers
         }
-        print('sending', payload)
         sendToClient('all', payload)

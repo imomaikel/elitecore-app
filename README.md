@@ -1,4 +1,4 @@
-> This is a project that I started developing in March 2019 as a novice software that put all code into one file and didn't know what was happening. It's a final version of this project rewritten to support the new game - ARK: Survival Ascended.
+> This is a project that I started developing in March 2019 as a novice software developer who put all the code into one file and didn't know what was happening. It's a final version of this project rewritten to support the new game - ARK: Survival Ascended.
 
 # Features
 
@@ -15,6 +15,9 @@ This feature is used to control game servers and send real-time status to the Ne
 ## Discord
 
 The application is being rewritten. Update soon.
+
+-   A custom widget that shows each server's status with player count and an option to join it
+-   Realtime Discord notifications when server status changes
 
 ## Website
 

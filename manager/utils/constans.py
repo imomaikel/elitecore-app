@@ -46,7 +46,9 @@ serversTableTemplate = '''CREATE TABLE IF NOT EXISTS webapp.servers (
   multiHome VARCHAR(45),
   queryPort INT NOT NULL,
   rconPort INT NOT NULL,
-  lastStatus VARCHAR(45) DEFAULT 'offline',
+  lastStatus VARCHAR(45) DEFAULT 'offline' NOT NULL,
+  lastPlayers TINYINT DEFAULT 0 NOT NULL,
+  position TINYINT DEFAULT 1 NOT NULL,
   PRIMARY KEY (id));'''
 # Logs schema table
 logsTableTemplate = '''CREATE TABLE IF NOT EXISTS webapp.app_logs (

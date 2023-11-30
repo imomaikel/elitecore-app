@@ -15,8 +15,9 @@ model app_logs {
 }
 
 model config {
-  id           Int    @id @default(autoincrement())
-  rconPassword String @db.VarChar(1024)
+  id                      Int    @id @default(autoincrement())
+  rconPassword            String @db.VarChar(1024)
+  serverStatusUpdateDelay Int    @default(5) @db.TinyInt
 }
 
 model servers {
@@ -30,5 +31,23 @@ model servers {
   multiHome   String? @db.VarChar(45)
   queryPort   Int
   rconPort    Int
-  lastStatus  String? @default("offline") @db.VarChar(45)
+  lastStatus  String  @default("offline") @db.VarChar(45)
+  lastPlayers Int     @default(0) @db.TinyInt
+  position    Int     @default(1) @db.TinyInt
+}
+
+model guilds {
+  // General
+  id        Int    @id @default(autoincrement())
+  guildId   String @db.TinyText
+  guildName String @db.TinyText
+
+  // Channels
+  serverStatusChannelId        String? @db.TinyText
+  serverStatusChannelMessageId String? @db.TinyText
+  serverStatusNotifyChannelId  String? @db.TinyText
+
+  // Logs
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

@@ -1,4 +1,4 @@
-from lib.db import handleRCONPassword, dbAppendNewLog
+from lib.db import handleRCONPassword, dbAppendNewLog, dbUpdatePlayerCount
 from engine.getStatuses import getStatuses
 from utils.constans import ServerDetails
 from utils.constans import ServerDetails
@@ -11,16 +11,26 @@ from typing import List
 
 
 # Run a command to check if RCON is responding
-def getServerRCONStatus(port: int, password: str, multiHome: str | None, mapName):
+def getServerRCONStatus(port: int, password: str, multiHome: str | None, mapName, serverId: int = None):
     status = 'offline'
     try:
         # Find RCON address
         addr = multiHome if not multiHome == None else '127.0.0.1'
+        playerCount = 0
         with Client(addr, port, passwd=password, timeout=1) as client:
             command = client.run('ListPlayers')
-            if command and ('1.' in command or 'No' in command):
+            if command == 'No Players Connected':
                 status = 'online'
+            elif '.' in command:
+                status = 'online'
+                rows = command.split('\n')
+                for row in rows:
+                    if not '.' in row:
+                        continue
+                    playerCount += 1
             client.close()
+        if serverId:
+            dbUpdatePlayerCount(serverId, playerCount)
     # Handle errors
     except errors.SessionTimeout:
         dbAppendNewLog(f'{mapName}:{port} RCON Timeout', 'rconStatus')
