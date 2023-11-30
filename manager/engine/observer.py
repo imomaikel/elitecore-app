@@ -1,6 +1,6 @@
 from lib.db import dbGetAllServers, dbUpdateLastStatus
 from engine.getStatuses import getStatuses
-# from engine.socket import sendSocketData
+from engine.socket import sendToClient
 from utils.constans import ServerDetails
 from threading import Timer
 from typing import List
@@ -32,10 +32,21 @@ def runObserver():
     currentServers: List[ServerDetails] = getStatuses()
 
     # Check if the status has changed
+    changedServers = []
     for storedServer in storedServers:
         lastStatus = storedServer.lastStatus
         currentStatus = next(
             entry for entry in currentServers if entry.id == storedServer.id).status
         if not lastStatus == currentStatus:
             dbUpdateLastStatus(storedServer.id, currentStatus)
-            # sendSocketData(f'{storedServer.mapName}:{currentStatus}')
+            changedServers.append({
+                'serverId': storedServer.id,
+                'currentStatus': currentStatus
+            })
+    if len(changedServers) > 0:
+        payload = {
+            'type': 'serverStatusUpdate',
+            'data': changedServers
+        }
+        print('sending', payload)
+        sendToClient('all', payload)

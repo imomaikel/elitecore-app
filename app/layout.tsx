@@ -1,4 +1,4 @@
-import { Provider } from './_components/Providers/trpc';
+import { Provider } from './_assets/components/Providers/trpc';
 import { Inter } from 'next/font/google';
 import type { Metadata } from 'next';
 import './globals.css';

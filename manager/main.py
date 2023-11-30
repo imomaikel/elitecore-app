@@ -1,6 +1,6 @@
+from lib.db import dbCreateTables, dbCreateConnection
 from engine.socket import createSocketServer
 from engine.observer import observeServers
-from lib.db import dbCreateTables
 from ui.root import RootWindow
 import ctypes
 
@@ -12,7 +12,10 @@ ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(
 
 # Start the App
 def main():
+
     # Create a database file if it does not exist
+    conn = dbCreateConnection()
+    conn.close()
     dbCreateTables()
 
     # Create UI

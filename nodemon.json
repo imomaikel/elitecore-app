@@ -1,9 +1,10 @@
 {
     "ext": "ts",
-    "exec": "ts-node --project tsconfig.server.json src/server.ts",
+    "exec": "ts-node --project tsconfig.server.json ./server/index.ts",
     "watch": [
-        "src/server.ts",
-        "src/bot/**/*",
-        "src/trpc/**/*"
+        "./server/*",
+        "./bot/**/*",
+        "./app/_assets/trpc/*",
+        "./app/socket.ts"
     ]
 }

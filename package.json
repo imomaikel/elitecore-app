@@ -8,11 +8,11 @@
   },
   "scripts": {
     "dev": "cross-env NODE_ENV=development nodemon",
-    "start": "cross-env NODE_ENV=production node dist/server.js",
+    "start": "cross-env NODE_ENV=production node dist/server/index.js",
     "build:server": "tsc --project tsconfig.server.json",
-    "build:next": "cross-env NEXT_BUILD=true node dist/server.js",
+    "build:next": "cross-env NEXT_BUILD=true node dist/server/index.js",
     "build": "cross-env NODE_ENV=production npm run build:server && npm run build:next",
-    "lint": "eslint ./src --ext .ts"
+    "lint": "eslint ./app --ext .ts && eslint ./bot --ext .ts && eslint ./server --ext .ts"
   },
   "dependencies": {
     "@prisma/client": "^5.6.0",

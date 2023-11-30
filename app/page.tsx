@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { trpc } from '@/trpc';
+import { trpc } from './_assets/trpc';
 
 export default function Home() {
     const [messageLabel, setMessageLabel] = useState<null | string>(null);

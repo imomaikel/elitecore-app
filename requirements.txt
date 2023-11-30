@@ -1,0 +1,5 @@
+mysql-connector-python==8.2.0
+ttkbootstrap==1.10.1
+python-dotenv==1.0.0
+psutil==5.9.6
+rcon==2.4.4

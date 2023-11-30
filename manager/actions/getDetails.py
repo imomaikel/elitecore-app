@@ -1,7 +1,7 @@
-import re
-from lib.db import dbAppendNewLog
 from utils.constans import ServerDetails
+from lib.db import dbAppendNewLog
 from ui.notify import notify
+import re
 
 # Define regex
 customNameRegex = "CustomName=[^\s]*"

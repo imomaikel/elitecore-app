@@ -14,13 +14,15 @@
 /out/
 
 # production
-/build
-/dist
+dist
+build
 *.exe
+*.spec
 
 # misc
 .DS_Store
 *.pem
+*.p12
 
 # debug
 npm-debug.log*

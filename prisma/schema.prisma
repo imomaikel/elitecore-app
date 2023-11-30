@@ -6,3 +6,29 @@ datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
+
+model app_logs {
+  id           Int       @id @default(autoincrement())
+  content      String    @db.VarChar(1024)
+  file         String    @db.VarChar(64)
+  logCreatedAt DateTime? @default(now()) @db.DateTime(0)
+}
+
+model config {
+  id           Int    @id @default(autoincrement())
+  rconPassword String @db.VarChar(1024)
+}
+
+model servers {
+  id          Int     @id @default(autoincrement())
+  mapName     String  @db.VarChar(45)
+  path        String  @db.VarChar(200)
+  gameMode    String  @db.VarChar(45)
+  gameType    String  @db.VarChar(45)
+  autoRestart Int     @db.TinyInt
+  customName  String? @db.VarChar(45)
+  multiHome   String? @db.VarChar(45)
+  queryPort   Int
+  rconPort    Int
+  lastStatus  String? @default("offline") @db.VarChar(45)
+}

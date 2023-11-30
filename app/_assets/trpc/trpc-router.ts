@@ -1,5 +1,6 @@
+import { botSendMessage } from '../../../bot/api';
+// import { sendToPython } from '../../socket';
 import { publicProcedure, privateProcedure, router } from './trpc';
-import { botSendMessage } from '../bot/api';
 // import prisma from '../lib/prisma';
 import { z } from 'zod';
 
@@ -11,16 +12,9 @@ export const appRouter = router({
             }),
         )
         .mutation(async () => {
-            // const query = await prisma.user.create({
-            //     data: {
-            //         name: input.name,
-            //     },
-            // });
-
             return 1;
         }),
     getUsers: publicProcedure.mutation(async () => {
-        // const query = await prisma.user.findMany({});
         return [];
     }),
     sendMessage: privateProcedure

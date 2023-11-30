@@ -1,8 +1,9 @@
-import { nextApp, nextRequestHandler } from './next';
+import { appRouter } from '../app/_assets/trpc/trpc-router';
+import { nextApp, nextRequestHandler } from '../app/next';
+import { connectToSocketServer } from '../app/socket';
 import { inferAsyncReturnType } from '@trpc/server';
-import { appRouter } from './trpc/trpc-router';
+import { getPort } from '../app/_assets/utils';
 import buildNextApp from 'next/dist/build';
-import { getPort } from './utils';
 import express from 'express';
 import {
     CreateExpressContextOptions,
@@ -50,8 +51,8 @@ export type ExpressContext = inferAsyncReturnType<typeof expressContext>;
     });
 
     // Create socket client
-    // TODO
+    connectToSocketServer();
 
     // Start the bot
-    import('./bot/client');
+    import('../bot/client');
 })();

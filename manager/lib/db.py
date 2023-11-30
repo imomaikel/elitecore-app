@@ -4,27 +4,43 @@ from typing import List, Literal
 from ui.notify import notify
 import mysql.connector
 from sys import exit
+import dotenv
+import os
+
+
+# .env variables
+dotenv.load_dotenv()
+DATABASE_USER = os.getenv('DATABASE_USER')
+DATABASE_SCHEMA = os.getenv('DATABASE_SCHEMA')
+DATABASE_PASSWORD = os.getenv('DATABASE_PASSWORD')
+DATABASE_HOST = os.getenv('DATABASE_HOST')
 
 
 # Global variables
 lastConn = None
+isNotifyOpened = None
 
 
 # Create connection
 def dbCreateConnection():
     global lastConn
+    global isNotifyOpened
     conn = None
     try:
         conn = mysql.connector.connect(
-            user='root', database='webapp', password="password")
+            user=DATABASE_USER, database=DATABASE_SCHEMA, password=DATABASE_PASSWORD, host=DATABASE_HOST)
     except mysql.connector.Error as e:
+        print(e)
         if e.errno == errorcode.ER_ACCESS_DENIED_ERROR:
             notify('Database auth error', 'error')
         else:
             notify('Database connection error', 'error')
         exit()
     except:
-        notify('Database connection error', 'error')
+        if not isNotifyOpened:
+            isNotifyOpened = True
+            notify('Database connection error', 'error')
+            isNotifyOpened = False
         exit()
     lastConn = conn
     return conn
@@ -32,6 +48,7 @@ def dbCreateConnection():
 
 # Create a new log
 def dbAppendNewLog(content: str, fileName: str):
+    global isNotifyOpened
     try:
         if not isinstance(content, str):
             content = str(content)
@@ -43,7 +60,10 @@ def dbAppendNewLog(content: str, fileName: str):
         conn.commit()
         conn.close()
     except:
-        notify('Something went wrong. (1)\nShutting down...', 'error')
+        if not isNotifyOpened:
+            isNotifyOpened = True
+            notify('Something went wrong. (1)\nShutting down...', 'error')
+            isNotifyOpened = False
         exit()
     return
 
@@ -60,8 +80,8 @@ def dbGetAllServers() -> List[ServerDetails] | List:
         response = []
         for row in rows:
             response.append(
-                ServerDetails(row[1], row[8], row[9], row[3],
-                              row[4], row[5], row[6], row[0], 'unknown', row[7], row[2], row[10])
+                ServerDetails(row[1], row[8], row[9], row[3], row[4],
+                              row[6], row[7], row[0], 'unknown', row[5], row[2], row[10])
             )
         return response
     except Exception as e:
@@ -84,7 +104,7 @@ def dbFindServer(pathOrId) -> None | ServerDetails:
         if row == None:
             return None
         else:
-            return ServerDetails(row[1], row[8], row[9], row[3], row[4], row[5], row[6], row[0], 'unknown', row[7], row[2])
+            return ServerDetails(row[1], row[8], row[9], row[3], row[4], row[6], row[7], row[0], 'unknown', row[5], row[2], row[10])
     except Exception as e:
         lastConn.close()
         dbAppendNewLog(e, 'dbFindServer')
@@ -215,7 +235,10 @@ def dbCreateTables():
         cur.execute(schemaTableTemplate)
         conn.close()
     except Exception as e:
+        if not isNotifyOpened:
+            isNotifyOpened = True
+            notify('Something went wrong. (2)\nShutting down...', 'error')
+            isNotifyOpened = False
         dbAppendNewLog(e, 'dbCreateTables')
-        notify('Something went wrong. (2)\nShutting down...', 'error')
         exit()
     return
