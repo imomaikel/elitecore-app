@@ -1,7 +1,7 @@
 import { appRouter } from '../app/_assets/trpc/trpc-router';
 import { nextApp, nextRequestHandler } from '../app/next';
-import { connectToSocketServer } from '../app/socket';
 import { inferAsyncReturnType } from '@trpc/server';
+import { connectToSocketServer } from './socket';
 import { getPort } from '../app/_assets/utils';
 import buildNextApp from 'next/dist/build';
 import express from 'express';

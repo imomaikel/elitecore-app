@@ -13,7 +13,8 @@
     "build:server": "tsc --project tsconfig.server.json",
     "build:next": "cross-env NEXT_BUILD=true node dist/server/index.js",
     "build": "cross-env NODE_ENV=production npm run build:server && npm run build:next",
-    "lint": "eslint ./app --ext .ts && eslint ./bot --ext .ts && eslint ./server --ext .ts"
+    "lint": "eslint ./app --ext .ts && eslint ./bot --ext .ts && eslint ./server --ext .ts",
+    "prepare": "cross-en NODE_ENV=development && npm install && npx prisma generate && npm run dev"
   },
   "dependencies": {
     "@prisma/client": "^5.6.0",

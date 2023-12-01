@@ -1,3 +1,7 @@
+from engine.restartServer import restartServer
+from engine.getStatuses import getStatuses
+from engine.startServer import startServer
+from engine.stopServer import stopServer
 from lib.db import dbAppendNewLog
 from threading import Thread
 from ui.notify import notify
@@ -9,13 +13,18 @@ import socket
 socketThread = None
 
 # Global variables
+skipAutoRestartWhileClientUseIt = False
 server = None
 clientSockets = []
 socketId = 0
 
+
+# Get variable
+def getSkipAutoRestart():
+    return skipAutoRestartWhileClientUseIt
+
+
 # Start the socket server
-
-
 def createSocketServer(rootWindow):
     global socketThread
     global server
@@ -31,10 +40,9 @@ def createSocketServer(rootWindow):
             notify('An error has occurred.')
             dbAppendNewLog(e, 'socket')
             exit()
-    print('Socket started')
     rootWindow.deiconify()
     socketThread = Thread(target=__initializeServer)
-    socketThread.setDaemon(True)
+    socketThread.daemon = True
     socketThread.start()
 
 
@@ -42,21 +50,16 @@ def createSocketServer(rootWindow):
 def sendToClient(clientSocket, message):
     if not type(message) == 'str':
         message = dumps(message)
-    print('len:', len(clientSockets))
     disconnectedUsers = []
     if clientSocket == 'all':
         index = 0
         for client in clientSockets:
-            print(f'Now: {index}/{len(clientSockets)-1}')
             try:
                 client.send(bytes(message, 'utf-8'))
-            except Exception as e:
-                print(e)
+            except:
                 disconnectedUsers.append(index)
-                print('client-')
                 continue
             index += 1
-        print('Loop end')
         for disconnectedUserIndex in disconnectedUsers:
             del clientSockets[disconnectedUserIndex]
     else:
@@ -65,16 +68,60 @@ def sendToClient(clientSocket, message):
 
 # Handle client
 def __handleClient(clientSocket):
+    global skipAutoRestartWhileClientUseIt
     try:
         while True:
             data = clientSocket.recv(1024)
             if not data:
                 break
-            messageFromClient = data.decode('utf-8')
-            print('recv', messageFromClient)
-            if messageFromClient == 'ping':
-
-                sendToClient(clientSocket, 'pong')
+            messageFromClient = str(data.decode('utf-8'))
+            if messageFromClient.startswith('start'):
+                skipAutoRestartWhileClientUseIt = True
+                serverId = messageFromClient.split(':')[1]
+                action = startServer(serverId)
+                skipAutoRestartWhileClientUseIt = False
+                payload = {
+                    'type': 'serverControl',
+                    'data': action
+                }
+                sendToClient('all', payload)
+            elif messageFromClient.startswith('stop'):
+                skipAutoRestartWhileClientUseIt = True
+                serverId = messageFromClient.split(':')[1]
+                action = stopServer(serverId)
+                skipAutoRestartWhileClientUseIt = False
+                payload = {
+                    'type': 'serverControl',
+                    'data': action
+                }
+                sendToClient('all', payload)
+            elif messageFromClient.startswith('restart'):
+                skipAutoRestartWhileClientUseIt = True
+                print('TRUE')
+                serverId = messageFromClient.split(':')[1]
+                action = restartServer(serverId)
+                print("FALSE")
+                skipAutoRestartWhileClientUseIt = False
+                payload = {
+                    'type': 'serverControl',
+                    'data': action
+                }
+                sendToClient('all', payload)
+            elif messageFromClient == 'getStatuses':
+                statuses = getStatuses()
+                if type(statuses) == bool:
+                    return
+                response = []
+                for server in statuses:
+                    response.append({
+                        'serverId': server.id,
+                        'currentStatus': server.status
+                    })
+                payload = {
+                    'type': 'getStatuses',
+                    'data': response
+                }
+                sendToClient('all', payload)
         clientSocket.close()
     except socket.error:
         pass
@@ -87,9 +134,8 @@ def __initializeServer():
         # Accept the client
         clientSocket, addr = server.accept()
         clientSockets.append(clientSocket)
-        print('client +')
         # Handle the client
         client_handler = Thread(
             target=__handleClient, args=(clientSocket,))
-        client_handler.setDaemon(True)
+        client_handler.daemon = True
         client_handler.start()

@@ -1,7 +1,12 @@
-import type { Channel, EmbedBuilder } from 'discord.js';
 import { CustomResponse } from '../constans/responses';
-import { client } from '../client';
 import logger from '../scripts/logger';
+import { client } from '../client';
+import type {
+    ActionRowBuilder,
+    ButtonBuilder,
+    Channel,
+    EmbedBuilder,
+} from 'discord.js';
 
 // Send message props
 type TSendMessage = {
@@ -9,6 +14,7 @@ type TSendMessage = {
     editMessageId?: string | null;
     messageContent?: string;
     messageEmbeds?: EmbedBuilder[];
+    messageButtons?: ActionRowBuilder<ButtonBuilder>[];
 };
 
 /**
@@ -19,6 +25,7 @@ export const sendMessage = async ({
     messageContent,
     messageEmbeds,
     editMessageId,
+    messageButtons,
 }: TSendMessage): Promise<CustomResponse<'sendMessage'>> => {
     const channel =
         typeof channelOrId === 'string'
@@ -53,12 +60,14 @@ export const sendMessage = async ({
             await findMessage.edit({
                 content: messageContent,
                 embeds: messageEmbeds,
+                components: messageButtons,
             });
         } else {
             // Send a new message
             const newMessage = await channel.send({
                 content: messageContent,
                 embeds: messageEmbeds,
+                components: messageButtons,
             });
             newMessageId = newMessage.id;
         }

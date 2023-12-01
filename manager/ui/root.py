@@ -1,5 +1,5 @@
 from ttkbootstrap.constants import *
-from utils.constans import icon
+from utils.constans import getIcon
 from ui.menu import MainMenu
 from ui.loader import Loader
 import ttkbootstrap as ttk
@@ -19,7 +19,7 @@ class RootWindow(ttk.Window):
         ttk.Style().configure('small.TLabel', font=('Verdana', 8))
 
         # Window settings
-        self.iconphoto(True, ttk.PhotoImage(data=icon))
+        self.iconphoto(True, ttk.PhotoImage(data=getIcon()))
         self.title('ARK: Server Manager')
         self.configure(padx=10, pady=10)
 

@@ -15,9 +15,10 @@ model app_logs {
 }
 
 model config {
-  id                      Int    @id @default(autoincrement())
-  rconPassword            String @db.VarChar(1024)
-  serverStatusUpdateDelay Int    @default(5) @db.TinyInt
+  id                       Int    @id @default(autoincrement())
+  rconPassword             String @db.VarChar(1024)
+  serverStatusUpdateDelay  Int    @default(5) @db.TinyInt
+  serverControlUpdateDelay Int    @default(3) @db.TinyInt
 }
 
 model servers {
@@ -42,10 +43,15 @@ model guilds {
   guildId   String @db.TinyText
   guildName String @db.TinyText
 
-  // Channels
+  // Widgets
   serverStatusChannelId        String? @db.TinyText
   serverStatusChannelMessageId String? @db.TinyText
   serverStatusNotifyChannelId  String? @db.TinyText
+  serverControlChannelId       String? @db.TinyText
+  serverControlMessageId       String? @db.TinyText
+
+  // Roles
+  serverControlRoleId String? @db.TinyText
 
   // Logs
   createdAt DateTime @default(now())

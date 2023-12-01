@@ -13,7 +13,7 @@ actionResult = []
 
 
 # Start server
-def startServer(serverId):
+def startServer(serverId, autoRestart=None):
     global threadIndex
     global actionResult
     actionResult = []

@@ -43,5 +43,5 @@ def createStatusNotify(statuses):
             entry for entry in servers if entry.id == newStatus['serverId']
         )
         newStatusLabel = newStatus['status']
-        notifyContent += f'{serverData.mapName} - {serverData.gameType} : {newStatusLabel}\n'
+        notifyContent += f'{serverData.mapName} : {newStatusLabel}\n'
     notify(notifyContent, 'info')

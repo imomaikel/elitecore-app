@@ -30,7 +30,6 @@ def dbCreateConnection():
         conn = mysql.connector.connect(
             user=DATABASE_USER, database=DATABASE_SCHEMA, password=DATABASE_PASSWORD, host=DATABASE_HOST)
     except mysql.connector.Error as e:
-        print(e)
         if e.errno == errorcode.ER_ACCESS_DENIED_ERROR:
             notify('Database auth error', 'error')
         else:

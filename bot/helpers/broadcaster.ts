@@ -1,22 +1,28 @@
 import { CustomResponse } from '../constans/responses';
-import type { EmbedBuilder } from 'discord.js';
+import type { ActionRowBuilder, ButtonBuilder, EmbedBuilder } from 'discord.js';
 import type { guilds } from '@prisma/client';
 import { sendMessage } from './sendMessage';
 import logger from '../scripts/logger';
 import prisma from '../lib/prisma';
 
 // All widgets that can be sent
-type TWidgets = 'serverStatus' | 'serverNotify';
+type TWidgets = 'serverStatus' | 'serverNotify' | 'serverControl';
 // Database message field related to widget
-type TDBMessageFields = 'serverStatusChannelMessageId';
+type TDBMessageFields =
+    | 'serverStatusChannelMessageId'
+    | 'serverControlMessageId';
 // Database channel field related to widget
-type TDBChannelFields = 'serverStatusChannelId' | 'serverStatusNotifyChannelId';
+type TDBChannelFields =
+    | 'serverStatusChannelId'
+    | 'serverStatusNotifyChannelId'
+    | 'serverControlChannelId';
 // Broadcaster props
 type TBroadcaster = {
     updateOnlyOneGuildId?: string;
     messageContent?: string;
     messageEmbeds?: EmbedBuilder[];
     widget: TWidgets;
+    messageButtons?: ActionRowBuilder<ButtonBuilder>[];
 };
 // Broadcaster checker props
 type TChecker = {
@@ -33,6 +39,7 @@ export const broadcaster = async ({
     messageContent,
     messageEmbeds,
     updateOnlyOneGuildId,
+    messageButtons,
 }: TBroadcaster): Promise<CustomResponse<'broadcaster'>> => {
     // For each widget check for the guild's required settings
 
@@ -75,6 +82,22 @@ export const broadcaster = async ({
             updateOnlyOneGuildId,
             channelField: 'serverStatusNotifyChannelId',
         });
+    } else if (widget === 'serverControl') {
+        const allowedGuilds = await prisma.guilds.findMany({
+            where: {
+                serverControlChannelId: {
+                    not: null,
+                },
+            },
+        });
+        return await broadcasterChecker({
+            allowedGuilds,
+            channelField: 'serverControlChannelId',
+            widget: 'serverControl',
+            messageEmbeds,
+            messageButtons,
+            messageField: 'serverControlMessageId',
+        });
     } else {
         return { status: 'error' };
     }
@@ -90,6 +113,7 @@ const broadcasterChecker = async ({
     messageEmbeds,
     messageField,
     channelField,
+    messageButtons,
 }: TBroadcaster & TChecker): Promise<CustomResponse<'broadcaster'>> => {
     // Reject if there are no servers with configured widget channel
     if (allowedGuilds.length === 0 && updateOnlyOneGuildId) {
@@ -113,6 +137,7 @@ const broadcasterChecker = async ({
                 editMessageId: messageId,
                 messageEmbeds,
                 messageContent,
+                messageButtons,
             });
             // Catch sending message error
             if (action.status === 'error') {

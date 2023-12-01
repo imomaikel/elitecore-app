@@ -1,4 +1,4 @@
-import { time, hyperlink, EmbedBuilder } from 'discord.js';
+import { time, EmbedBuilder } from 'discord.js';
 import { colors, extraSigns, gifs } from '../../constans';
 import { broadcaster } from '../../helpers/broadcaster';
 import prisma from '../../lib/prisma';
@@ -54,13 +54,18 @@ const updateServerStatusWidget = async (
                 : 'Offline';
         embed.addFields({
             name: `:map: ${serverName} (ARK: ${server.gameType})`,
+            // TODO
+            // value: `
+            //     ${statusIcon} ${statusLabel}
+            //     :crossed_swords: ${server.gameMode}
+            //     :video_game: ${hyperlink(
+            //         'Click',
+            //         `${process.env.NEXT_PUBLIC_SERVER_URL}/join/${server.queryPort}`,
+            //     )} to join
+            //     `,
             value: `
                 ${statusIcon} ${statusLabel}
                 :crossed_swords: ${server.gameMode}
-                :video_game: ${hyperlink(
-                    'Click',
-                    `${process.env.NEXT_PUBLIC_SERVER_URL}/join/${server.queryPort}`,
-                )} to join
                 `,
             inline: true,
         });

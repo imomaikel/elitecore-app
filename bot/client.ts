@@ -11,6 +11,11 @@ export const client = new Client({
         GatewayIntentBits.MessageContent,
     ],
 });
+// Create state container
+export const clientStates = {
+    usingServerControl: false,
+    lastSelectionPicked: false,
+};
 // Listen for events
 registerEvents(client, events);
 

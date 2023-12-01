@@ -14,6 +14,7 @@ export const colors = {
 export const extraSigns = {
     zap: '⚡️',
     space: 'ㅤ',
+    star: '💫',
 };
 
 export const gifs = {

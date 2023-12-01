@@ -1,3 +1,4 @@
+import scheduler from '../scripts/scheduler';
 import { event } from '../utils/events';
 import logger from '../scripts/logger';
 import prisma from '../lib/prisma';
@@ -41,4 +42,9 @@ export default event('ready', async (client) => {
         type: 'info',
         message: `Discord Client started as '${client.user?.username}' (${process.env.NODE_ENV})`,
     });
+
+    // Schedule tasks
+    if (process.env.NODE_ENV === 'production') {
+        scheduler();
+    }
 });

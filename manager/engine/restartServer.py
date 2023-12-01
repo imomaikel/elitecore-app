@@ -34,7 +34,7 @@ def restartServer(serverId):
         for serverId in serversToStart:
             action = startServer(serverId)
             response.append({
-                'serverId': action['serverId'],
-                'status': action['status']
+                'serverId': action[0]['serverId'],
+                'status': action[0]['status']
             })
         return response
