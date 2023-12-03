@@ -53,6 +53,9 @@ model guilds {
   // Roles
   serverControlRoleId String? @db.TinyText
 
+  // Commands
+  playersCmdChannelId String? @db.TinyText
+
   // Logs
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
