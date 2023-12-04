@@ -2,6 +2,7 @@ import { TRPCProvider } from '@/components/Providers/trpc';
 import { Montserrat } from 'next/font/google';
 import type { Metadata } from 'next';
 import './globals.css';
+import { NextAuthProvider } from '@/components/Providers/auth';
 
 const montserrat = Montserrat({ subsets: ['latin'] });
 
@@ -19,7 +20,9 @@ export default function RootLayout({
     return (
         <html lang="en">
             <body className={montserrat.className}>
-                <TRPCProvider>{children}</TRPCProvider>
+                <NextAuthProvider>
+                    <TRPCProvider>{children}</TRPCProvider>
+                </NextAuthProvider>
             </body>
         </html>
     );
