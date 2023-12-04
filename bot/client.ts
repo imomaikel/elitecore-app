@@ -5,23 +5,19 @@ import events from './events';
 
 // Create bot instance
 export const client = new Client({
-    intents: [
-        GatewayIntentBits.Guilds,
-        GatewayIntentBits.GuildMessages,
-        GatewayIntentBits.MessageContent,
-    ],
+  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent],
 });
 // Create state container
 export const clientStates = {
-    usingServerControl: false,
-    lastSelectionPicked: false,
+  usingServerControl: false,
+  lastSelectionPicked: false,
 };
 // Listen for events
 registerEvents(client, events);
 
 // Start the bot
 client.login(
-    getEnv('NODE_ENV') === 'production'
-        ? getEnv('DISCORD_PRODUCTION_BOT_TOKEN')
-        : getEnv('DISCORD_DEVELOPMENT_BOT_TOKEN'),
+  getEnv('NODE_ENV') === 'production'
+    ? getEnv('DISCORD_PRODUCTION_BOT_TOKEN')
+    : getEnv('DISCORD_DEVELOPMENT_BOT_TOKEN'),
 );

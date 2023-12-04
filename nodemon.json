@@ -4,7 +4,6 @@
     "watch": [
         "./server/*",
         "./bot/**/*",
-        "./app/_assets/trpc/*",
-        "./app/socket.ts"
+        "./app/dashboard/_assets/trpc"
     ]
 }

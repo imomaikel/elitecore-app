@@ -1,13 +1,14 @@
 {
-    "files.exclude": {
-        "**/.git": true,
-        "**/.svn": true,
-        "**/.hg": true,
-        "**/CVS": true,
-        "**/.DS_Store": true,
-        "**/Thumbs.db": true,
-        "__pycache__": true,
-        "**/__pycache__": true
-    },
-    "explorerExclude.backup": {}
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+    "**/Thumbs.db": true,
+    "__pycache__": true,
+    "**/__pycache__": true
+  },
+  "explorerExclude.backup": {},
+  "editor.tabSize": 2
 }

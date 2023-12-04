@@ -5,36 +5,36 @@ import commands from '../commands';
 
 // Listen for a new interaction
 export default event('interactionCreate', async (client, interaction) => {
-    if (!client.user?.id || interaction.applicationId !== client.user.id) {
-        return;
-    }
-    if (!interaction.guild?.id) return;
+  if (!client.user?.id || interaction.applicationId !== client.user.id) {
+    return;
+  }
+  if (!interaction.guild?.id) return;
 
-    // Handle slash commands
-    if (interaction.isChatInputCommand()) {
-        const commandName = interaction.commandName;
-        const command = commands.find((cmd) => cmd.body.name === commandName);
-        if (!command) return;
-        await command.execute(client, interaction);
-    }
+  // Handle slash commands
+  if (interaction.isChatInputCommand()) {
+    const commandName = interaction.commandName;
+    const command = commands.find((cmd) => cmd.body.name === commandName);
+    if (!command) return;
+    await command.execute(client, interaction);
+  }
 
-    // Handle button click
-    if (interaction.isButton()) {
-        const command = interaction.customId.split('|')[1];
-        if (!command) return;
-        if (command.startsWith('server')) {
-            await serverControlButtonHandler({ interaction });
-        }
-        return;
+  // Handle button click
+  if (interaction.isButton()) {
+    const command = interaction.customId.split('|')[1];
+    if (!command) return;
+    if (command.startsWith('server')) {
+      await serverControlButtonHandler({ interaction });
     }
+    return;
+  }
 
-    // Handle select menu choice
-    if (interaction.isStringSelectMenu()) {
-        const command = interaction.customId.split('|')[1];
-        if (!command) return;
-        if (command.startsWith('server')) {
-            await serverControlSelectionHandler({ interaction });
-        }
-        return;
+  // Handle select menu choice
+  if (interaction.isStringSelectMenu()) {
+    const command = interaction.customId.split('|')[1];
+    if (!command) return;
+    if (command.startsWith('server')) {
+      await serverControlSelectionHandler({ interaction });
     }
+    return;
+  }
 });

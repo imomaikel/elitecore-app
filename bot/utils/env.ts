@@ -8,13 +8,13 @@ config({ path: envFilePath });
 
 // Find .env by name
 const findEnv = (name: string): string => {
-    const env = process.env[name];
-    if (!env) {
-        if (name === 'NODE_ENV') return 'development';
-        console.log(`Failed to get '${name}' env variable.`);
-        process.exit(0);
-    }
-    return env;
+  const env = process.env[name];
+  if (!env) {
+    if (name === 'NODE_ENV') return 'development';
+    console.log(`Failed to get '${name}' env variable.`);
+    process.exit(0);
+  }
+  return env;
 };
 
 // Get .env with autocomplete
