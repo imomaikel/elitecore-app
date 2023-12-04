@@ -1,14 +1,14 @@
-import { Provider } from './_assets/components/Providers/trpc';
-import { Inter } from 'next/font/google';
+import { TRPCProvider } from '@/components/Providers/trpc';
+import { Montserrat } from 'next/font/google';
 import type { Metadata } from 'next';
 import './globals.css';
 
-const inter = Inter({ subsets: ['latin'] });
+const montserrat = Montserrat({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-    title: 'Next Discord tRPC',
+    title: 'EliteCore',
     description:
-        'Starting template to use Next.js with Discord.js, Prisma, and tRPC',
+        'EliteCore is dedicated to enhancing the gaming experience of ARK players, providing a comprehensive platform filled with resources, community interaction, and opportunities to bolster your in-game assets.',
 };
 
 export default function RootLayout({
@@ -18,8 +18,8 @@ export default function RootLayout({
 }) {
     return (
         <html lang="en">
-            <body className={inter.className}>
-                <Provider>{children}</Provider>
+            <body className={montserrat.className}>
+                <TRPCProvider>{children}</TRPCProvider>
             </body>
         </html>
     );

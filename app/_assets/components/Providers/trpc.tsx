@@ -1,10 +1,10 @@
 'use client';
-import { trpc } from '@/_assets/trpc';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { httpBatchLink } from '@trpc/client';
 import React, { useState, ReactNode } from 'react';
+import { httpBatchLink } from '@trpc/client';
+import { trpc } from '@/trpc';
 
-export function Provider({ children }: { children: ReactNode }) {
+export function TRPCProvider({ children }: { children: ReactNode }) {
     const [queryClient] = useState(() => new QueryClient());
     const [trpcClient] = useState(() =>
         trpc.createClient({

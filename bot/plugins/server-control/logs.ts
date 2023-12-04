@@ -2,6 +2,7 @@ import { broadcaster } from '../../helpers/broadcaster';
 import { colors, specialAvatar } from '../../constans';
 import { TControlServer } from '../../helpers/socket';
 import { EmbedBuilder, type User } from 'discord.js';
+import prisma from '../../lib/prisma';
 
 type TServerControlLog = {
     serversOrId: TControlServer[] | number;

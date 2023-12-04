@@ -29,6 +29,8 @@ export type ExpressContext = inferAsyncReturnType<typeof expressContext>;
             process.exit();
         });
         return;
+    } else {
+        console.log('\n');
     }
 
     // Create tRPC
