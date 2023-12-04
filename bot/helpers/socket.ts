@@ -1,10 +1,11 @@
 import { sendToPython } from '../../server/socket';
+import serverControlLog from '../plugins/server-control/logs';
 import sendServerStatusNotifications from '../plugins/server-status/notifications';
 import logger from '../scripts/logger';
 
 export type TCommands = 'getStatuses' | 'serverControl';
 
-type TControlServer = {
+export type TControlServer = {
     serverId: number;
     status: 'error' | 'success';
 };
@@ -86,6 +87,11 @@ export const receiveSocketMessage = (buffer: Buffer) => {
             sendServerStatusNotifications(parsedMessage.data);
         } else if (parsedMessage.type === 'autoRestart') {
             sendServerStatusNotifications(parsedMessage.data);
+            serverControlLog({
+                action: 'restart',
+                restartedBy: 'auto',
+                serversOrId: parsedMessage.data,
+            });
         } else if (parsedMessage.type === 'getStatuses') {
             if (!waitingStatuses['getStatuses'].isWaiting) return;
             waitingStatuses['getStatuses'].isWaiting = false;

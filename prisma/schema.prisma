@@ -49,6 +49,7 @@ model guilds {
   serverStatusNotifyChannelId  String? @db.TinyText
   serverControlChannelId       String? @db.TinyText
   serverControlMessageId       String? @db.TinyText
+  serverControlLogChannelId    String? @db.TinyText
 
   // Roles
   serverControlRoleId String? @db.TinyText

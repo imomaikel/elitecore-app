@@ -19,6 +19,7 @@ The application is being rewritten. Update soon.
 -   A custom widget that shows each server's status with player count and an option to join it
 -   Realtime Discord notifications when server status changes
 -   A custom widget that allows you to start, stop, or restart any server if you have permission
+-   A slash command that lets you see online players on each server
 
 ## Website
 

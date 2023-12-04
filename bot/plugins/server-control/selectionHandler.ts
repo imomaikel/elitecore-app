@@ -7,6 +7,8 @@ import { ACTIONS } from './serverSelection';
 import { clientStates } from '../../client';
 import prisma from '../../lib/prisma';
 import updateServerStatusWidget from '../server-status';
+import { hasPermissionToControl } from './permissions';
+import serverControlLog from './logs';
 
 type TSelectionHandler = {
     interaction: StringSelectMenuInteraction;
@@ -24,6 +26,18 @@ export const serverControlSelectionHandler = async ({
 
         const args = commandAction.split(':');
         const command = args[0];
+
+        const guildData = await prisma.guilds.findFirst({
+            where: {
+                guildId: interaction.guild.id,
+            },
+        });
+
+        const hasPermission = await hasPermissionToControl({
+            guildData,
+            interaction,
+        });
+        if (!hasPermission) return;
 
         if (command === 'server-control') {
             const action = args[1];
@@ -105,9 +119,14 @@ export const serverControlSelectionHandler = async ({
                     }, 25_000);
                 });
 
-            // Update all of the server-control and server-status widgets to show the updated statuses
+            // Update all of the server-control and server-status widgets to show the updated statuses, create the action log
             updateServerControlWidget();
             updateServerStatusWidget();
+            serverControlLog({
+                action,
+                restartedBy: interaction.user,
+                serversOrId: data,
+            });
             clientStates.usingServerControl = false;
             return;
         }

@@ -1,6 +1,6 @@
 import { errorEmbed, successEmbed } from '../../constans/embeds';
 import { ACTIONS, serverSelection } from './serverSelection';
-import { checkForRole } from '../../helpers/permissions';
+import { hasPermissionToControl } from './permissions';
 import type { ButtonInteraction } from 'discord.js';
 import { updateServerControlWidget } from '.';
 import { clientStates } from '../../client';
@@ -34,12 +34,26 @@ export const serverControlButtonHandler = async ({
         if (!command) return;
 
         const action = command.split('-')[1];
+
+        await interaction.deferReply();
+        const guildData = await prisma.guilds.findFirst({
+            where: {
+                guildId: interaction.guild.id,
+            },
+        });
+
+        const hasPermission = await hasPermissionToControl({
+            guildData,
+            interaction,
+        });
+        if (!hasPermission) return;
+
         // Refresh servers
         if (action === 'refresh') {
             if (clientStates.usingServerControl) {
                 return await widgetInUse(interaction);
             }
-            await interaction.deferReply();
+            clientStates.usingServerControl = true;
             const response = await updateServerControlWidget();
             if (response) {
                 await interaction
@@ -66,8 +80,11 @@ export const serverControlButtonHandler = async ({
                         }, 15_000);
                     });
             }
+
+            clientStates.usingServerControl = false;
             return;
         }
+
         // Check if the action is correct
         if (!ACTIONS.includes(action)) return;
 
@@ -75,54 +92,8 @@ export const serverControlButtonHandler = async ({
             return await widgetInUse(interaction);
         }
 
-        await interaction.deferReply();
-        const guildData = await prisma.guilds.findFirst({
-            where: {
-                guildId: interaction.guild.id,
-            },
-        });
-        // Check if guild control role is set
-        if (!guildData || !guildData.serverControlRoleId) {
-            await interaction
-                .editReply({
-                    embeds: [
-                        errorEmbed(
-                            'The widget access role is not set.\nHead over to the web panel to manage it.',
-                        ),
-                    ],
-                })
-                .then((reply) => {
-                    setTimeout(() => {
-                        reply.delete().catch(() => {});
-                    }, 30_000);
-                });
-            return;
-        }
-
-        // Check if a user has permission to do the action
-        const hasRole = await checkForRole({
-            roleId: guildData.serverControlRoleId,
-            guildOrId: interaction.guild,
-            userOrId: interaction.user.id,
-        });
-        if (!hasRole) {
-            await interaction
-                .editReply({
-                    embeds: [
-                        errorEmbed(
-                            'You do not have the role to control this widget.',
-                        ),
-                    ],
-                })
-                .then((reply) => {
-                    setTimeout(() => {
-                        reply.delete().catch(() => {});
-                    }, 30_000);
-                });
-            return;
-        }
-
         clientStates.usingServerControl = true;
+
         // Show server selection menu
         return await serverSelection({
             action: action,

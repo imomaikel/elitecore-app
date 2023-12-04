@@ -1,6 +1,7 @@
 import serverControlSelectionHandler from '../plugins/server-control/selectionHandler';
 import { serverControlButtonHandler } from '../plugins/server-control/buttonHandler';
 import { event } from '../utils/events';
+import commands from '../commands';
 
 // Listen for a new interaction
 export default event('interactionCreate', async (client, interaction) => {
@@ -8,6 +9,14 @@ export default event('interactionCreate', async (client, interaction) => {
         return;
     }
     if (!interaction.guild?.id) return;
+
+    // Handle slash commands
+    if (interaction.isChatInputCommand()) {
+        const commandName = interaction.commandName;
+        const command = commands.find((cmd) => cmd.body.name === commandName);
+        if (!command) return;
+        await command.execute(client, interaction);
+    }
 
     // Handle button click
     if (interaction.isButton()) {

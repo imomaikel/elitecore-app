@@ -11,7 +11,7 @@ import { errorEmbed } from '../../constans/embeds';
 
 export const ACTIONS = ['start', 'stop', 'restart'];
 type TServerSelection = {
-    action: (typeof ACTIONS)[number];
+    action: string;
     interaction: ButtonInteraction;
 };
 /**

@@ -6,7 +6,11 @@ import logger from '../scripts/logger';
 import prisma from '../lib/prisma';
 
 // All widgets that can be sent
-type TWidgets = 'serverStatus' | 'serverNotify' | 'serverControl';
+type TWidgets =
+    | 'serverStatus'
+    | 'serverNotify'
+    | 'serverControl'
+    | 'serverControlLog';
 // Database message field related to widget
 type TDBMessageFields =
     | 'serverStatusChannelMessageId'
@@ -15,7 +19,8 @@ type TDBMessageFields =
 type TDBChannelFields =
     | 'serverStatusChannelId'
     | 'serverStatusNotifyChannelId'
-    | 'serverControlChannelId';
+    | 'serverControlChannelId'
+    | 'serverControlLogChannelId';
 // Broadcaster props
 type TBroadcaster = {
     updateOnlyOneGuildId?: string;
@@ -97,6 +102,20 @@ export const broadcaster = async ({
             messageEmbeds,
             messageButtons,
             messageField: 'serverControlMessageId',
+        });
+    } else if (widget === 'serverControlLog') {
+        const allowedGuilds = await prisma.guilds.findMany({
+            where: {
+                serverControlLogChannelId: {
+                    not: null,
+                },
+            },
+        });
+        return await broadcasterChecker({
+            allowedGuilds,
+            channelField: 'serverControlLogChannelId',
+            widget: 'serverControlLog',
+            messageEmbeds,
         });
     } else {
         return { status: 'error' };

@@ -25,7 +25,7 @@ const logger = ({ type, message, file, data }: TLogger) => {
         type === 'info'
             ? chalk.greenBright(type.toUpperCase())
             : chalk.redBright(type.toUpperCase());
-    const fileName = file ? file : '';
+    const fileName = file ? `(${file})` : '';
     const log = `${timestamp} ${logType}${fileName} : ${message}`;
     console.log(log);
     if (data) console.log(data);
