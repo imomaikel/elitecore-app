@@ -1,14 +1,14 @@
 import { EmbedBuilder, type StringSelectMenuInteraction } from 'discord.js';
 import { colors, gifs, specialAvatar } from '../../constans';
-import { socketMessage } from '../../helpers/socket';
+import updateServerStatusWidget from '../server-status';
+import { hasPermissionToControl } from './permissions';
 import { errorEmbed } from '../../constans/embeds';
+import { fetchRequest } from '../../helpers/api';
 import { updateServerControlWidget } from '.';
 import { ACTIONS } from './serverSelection';
 import { clientStates } from '../../client';
-import prisma from '../../lib/prisma';
-import updateServerStatusWidget from '../server-status';
-import { hasPermissionToControl } from './permissions';
 import serverControlLog from './logs';
+import prisma from '../../lib/prisma';
 
 type TSelectionHandler = {
   interaction: StringSelectMenuInteraction;
@@ -64,10 +64,8 @@ export const serverControlSelectionHandler = async ({ interaction }: TSelectionH
         embeds: [loadingEmbed],
       });
       // Execute the action through the socket
-      const data = await socketMessage({
-        commandToSend: 'serverControl',
-        detailedCommand: `${action}:${serverId}`,
-        timeoutInSeconds: 120,
+      const data = await fetchRequest(action as 'start' | 'stop' | 'restart', {
+        serverId: serverId,
       });
       if (!data) {
         clientStates.usingServerControl = false;

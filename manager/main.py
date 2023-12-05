@@ -1,6 +1,6 @@
 from lib.db import dbCreateTables, dbCreateConnection
-from engine.socket import createSocketServer
 from engine.observer import observeServers
+from engine.api import startAPI
 from ui.root import RootWindow
 import ctypes
 
@@ -21,8 +21,8 @@ def main():
     # Create UI
     rootWindow = RootWindow()
 
-    # Start socket server
-    createSocketServer(rootWindow)
+    # Start http server
+    startAPI(rootWindow)
 
     # Observe servers
     observeServers()

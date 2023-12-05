@@ -1,11 +1,11 @@
+import { TServerControlResponse } from '../../helpers/api';
 import { broadcaster } from '../../helpers/broadcaster';
 import { colors, specialAvatar } from '../../constans';
-import { TControlServer } from '../../helpers/socket';
 import { EmbedBuilder, type User } from 'discord.js';
 import prisma from '../../lib/prisma';
 
 type TServerControlLog = {
-  serversOrId: TControlServer[] | number;
+  serversOrId: TServerControlResponse[] | number;
   restartedBy: User | 'auto';
   action: string;
 };
@@ -23,7 +23,7 @@ const serverControlLog = async ({ restartedBy, serversOrId, action }: TServerCon
     if (!serverDetails) continue;
 
     const footerText = restartedBy === 'auto' ? 'Auto restarted' : `${restartedBy.username} took the action`;
-    const footerImage = restartedBy === 'auto' ? specialAvatar : restartedBy.client.user.displayAvatarURL();
+    const footerImage = restartedBy === 'auto' ? specialAvatar : restartedBy.displayAvatarURL();
 
     const { mapName, customName } = serverDetails;
 
@@ -46,7 +46,8 @@ const serverControlLog = async ({ restartedBy, serversOrId, action }: TServerCon
         .setColor(colors.purple)
         .setDescription(description)
         .setAuthor({ name: 'Server Control Notifications' })
-        .setFooter({ text: footerText, iconURL: footerImage }),
+        .setFooter({ text: footerText, iconURL: footerImage })
+        .setTimestamp(),
     );
   }
 

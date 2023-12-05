@@ -1,5 +1,5 @@
-from engine.socket import sendToClient, getSkipAutoRestart
 from lib.db import dbGetAllServers, dbUpdateLastStatus
+from engine.api import sendData, getSkipAutoRestart
 from ui.rconStatus import getServerRCONStatus
 from engine.getStatuses import getStatuses
 from engine.startServer import startServer
@@ -59,20 +59,15 @@ def runObserver():
                 'currentStatus': currentStatus
             })
     if len(changedServers) > 0:
-        payload = {
-            'type': 'serverStatusUpdate',
-            'data': changedServers
-        }
-        sendToClient('all', payload)
+        for changedServer in changedServers:
+            if changedServer['serverId'] in idsToStart:
+                del changedServer
+        sendData('serverStatusUpdate', changedServers)
     # Auto restart with Discord notification
     if len(idsToStart) > 0:
         for id in idsToStart:
             action = startServer(id, True)
             if action and action[0] and action[0]['status']:
                 if action[0]['status'] == 'success':
-                    payload = {
-                        'type': 'autoRestart',
-                        'data': id
-                    }
                     dbUpdateLastStatus(id, 'online')
-                    sendToClient('all', payload)
+                    sendData('autoRestart', id)

@@ -1,19 +1,16 @@
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, time } from 'discord.js';
 import { colors, extraSigns, gifs, specialAvatar } from '../../constans';
 import { broadcaster } from '../../helpers/broadcaster';
-import { socketMessage } from '../../helpers/socket';
+import { fetchRequest } from '../../helpers/api';
 import prisma from '../../lib/prisma';
 import { client } from '../../client';
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, time } from 'discord.js';
 
 /**
  * Create an embed with options to control the servers
  */
 export const updateServerControlWidget = async (): Promise<boolean> => {
   // Get the data from the Python socket
-  const data = await socketMessage({
-    commandToSend: 'getStatuses',
-    timeoutInSeconds: 5,
-  });
+  const data = await fetchRequest('getStatuses');
   if (!data) return false;
 
   const [storedServers, config] = await Promise.all([prisma.servers.findMany(), prisma.config.findFirst()]);

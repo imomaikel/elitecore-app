@@ -50,7 +50,7 @@ const sendServerStatusNotifications = async (serversOrId: TSendServerStatusNotif
         name: `${serverName} (ARK: ${serverData.gameType})`,
         iconURL: specialAvatar,
       })
-      .setDescription('**The server was auto restarted and now it is online!**')
+      .setDescription('**The server has been automatically restarted and is now online.**')
       .setTimestamp();
     embeds.push(statusEmbed);
   }

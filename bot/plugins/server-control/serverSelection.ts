@@ -1,10 +1,10 @@
+import { ActionRowBuilder, StringSelectMenuOptionBuilder } from '@discordjs/builders';
 import { StringSelectMenuBuilder } from 'discord.js';
-import { socketMessage } from '../../helpers/socket';
 import { client, clientStates } from '../../client';
 import type { ButtonInteraction } from 'discord.js';
-import prisma from '../../lib/prisma';
-import { ActionRowBuilder, StringSelectMenuOptionBuilder } from '@discordjs/builders';
 import { errorEmbed } from '../../constans/embeds';
+import { fetchRequest } from '../../helpers/api';
+import prisma from '../../lib/prisma';
 
 export const ACTIONS = ['start', 'stop', 'restart'];
 type TServerSelection = {
@@ -15,14 +15,7 @@ type TServerSelection = {
  * Show all possible servers depending on the action
  */
 export const serverSelection = async ({ action, interaction }: TServerSelection) => {
-  const [statuses, storedServers] = await Promise.all([
-    socketMessage({
-      commandToSend: 'getStatuses',
-      timeoutInSeconds: 2,
-    }),
-    prisma.servers.findMany(),
-  ]);
-
+  const [statuses, storedServers] = await Promise.all([fetchRequest('getStatuses'), prisma.servers.findMany()]);
   if (!statuses) {
     await interaction.editReply({
       embeds: [errorEmbed('Something went wrong. Please try again')],
@@ -30,24 +23,25 @@ export const serverSelection = async ({ action, interaction }: TServerSelection)
     clientStates.usingServerControl = false;
     return;
   }
-
   const searchForStatus = action === 'stop' || action === 'restart' ? 'online' : 'offline';
   const possibleServers = statuses.filter((server) => server.currentStatus === searchForStatus);
-
   if (possibleServers.length == 0) {
-    await interaction.editReply({
-      embeds: [errorEmbed(`There are no servers to ${action}`)],
-    });
+    await interaction
+      .editReply({
+        embeds: [errorEmbed(`There are no servers to ${action}`)],
+      })
+      .then((reply) => {
+        setTimeout(() => {
+          reply.delete().catch(() => {});
+        }, 15_000);
+      });
     clientStates.usingServerControl = false;
     return;
   }
-
   const selectMenu = new StringSelectMenuBuilder()
     .setCustomId(`${client.user?.id}|server-control:${action}`)
     .setPlaceholder('Please select a server');
-
   const options = [];
-
   for (const status of possibleServers) {
     const serverDetails = storedServers.find((server) => server.id === status.serverId);
     if (!serverDetails) continue;
@@ -86,6 +80,5 @@ export const serverSelection = async ({ action, interaction }: TServerSelection)
         }
       }, 25_000);
     });
-
   return;
 };
