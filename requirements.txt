@@ -5,3 +5,4 @@ psutil==5.9.6
 rcon==2.4.4
 tornado==6.4
 Flask==3.0.0
+requests==2.31.0
