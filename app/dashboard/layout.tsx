@@ -2,6 +2,7 @@
 import Footer from '@/components/Footer';
 import MobileSidebar from '@/components/MobileSidebar';
 import Navbar from '@/components/Navbar';
+import ShoppingCart from '@/components/ShoppingCart';
 import Sidebar from '@/components/Sidebar';
 import type { Metadata } from 'next';
 
@@ -23,6 +24,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </div>
       </div>
       <Footer />
+      <ShoppingCart />
     </div>
   );
 }

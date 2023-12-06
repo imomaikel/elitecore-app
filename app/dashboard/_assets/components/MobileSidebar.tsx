@@ -1,5 +1,5 @@
 'use client';
-import { Sheet, SheetContent, SheetTrigger } from '@/shared/components/ui/sheet';
+import { Sheet, SheetContent } from '@/shared/components/ui/sheet';
 import { useMobileSidebar } from '@/hooks/use-mobile-sidebar';
 import { useEffect, useState } from 'react';
 import Sidebar from './Sidebar';
@@ -16,7 +16,6 @@ const MobileSidebar = () => {
 
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
-      <SheetTrigger />
       <SheetContent side="left">
         <Sidebar className="flex w-full border-none mt-5" />
       </SheetContent>

@@ -10,9 +10,11 @@ import { useTheme } from 'next-themes';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useMobileSidebar } from '@/hooks/use-mobile-sidebar';
+import { useCart } from '@/hooks/use-cart';
 
 const Navbar = () => {
-  const { onOpen } = useMobileSidebar();
+  const { onOpen: openMobileSidebar } = useMobileSidebar();
+  const { onOpen: openShoppingCart } = useCart();
   const { setTheme } = useTheme();
 
   return (
@@ -23,7 +25,7 @@ const Navbar = () => {
           <div className="flex">
             {/* Mobile button */}
             <div className="items-center h-full flex md:hidden mr-4">
-              <div className="cursor-pointer" onClick={onOpen} role="button">
+              <div className="cursor-pointer" onClick={openMobileSidebar} role="button">
                 <GiHamburgerMenu className="w-6 h-6" />
               </div>
             </div>
@@ -72,6 +74,7 @@ const Navbar = () => {
             <div
               className="relative cursor-pointer transition-colors group after:content-[attr(data-cart-size)] data-[cart-size]:after:bg-primary after:text-center after:h-6 after:w-6 after:rounded-full after:absolute after:-top-3 after:-right-3"
               data-cart-size="2"
+              onClick={openShoppingCart}
             >
               <MdOutlineShoppingCart className="w-7 h-7 md:ml-3 group-hover:text-primary" />
             </div>
