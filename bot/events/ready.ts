@@ -1,3 +1,4 @@
+import { setupBots } from '../plugins/server-status/bots';
 import registerCommands from '../commands/deploy';
 import scheduler from '../scripts/scheduler';
 import { event } from '../utils/events';
@@ -8,7 +9,7 @@ import prisma from '../lib/prisma';
 export default event('ready', async (client) => {
   // Add new guilds to the database
   const storedGuilds = (
-    await prisma.guilds.findMany({
+    await prisma.guild.findMany({
       select: {
         guildId: true,
       },
@@ -18,7 +19,7 @@ export default event('ready', async (client) => {
     const guild = guildEntries['1'];
     if (storedGuilds.includes(guild.id)) continue;
     try {
-      await prisma.guilds.create({
+      await prisma.guild.create({
         data: {
           guildId: guild.id,
           guildName: guild.name,
@@ -43,6 +44,11 @@ export default event('ready', async (client) => {
     type: 'info',
     message: `Discord Client started as '${client.user?.username}' (${process.env.NODE_ENV})`,
   });
+
+  // Login all bots
+  if (process.env.NODE_ENV === 'production') {
+    await setupBots();
+  }
 
   // Schedule tasks
   if (process.env.NODE_ENV === 'production') {

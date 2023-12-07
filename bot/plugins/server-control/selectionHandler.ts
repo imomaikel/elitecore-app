@@ -25,7 +25,7 @@ export const serverControlSelectionHandler = async ({ interaction }: TSelectionH
     const args = commandAction.split(':');
     const command = args[0];
 
-    const guildData = await prisma.guilds.findFirst({
+    const guildData = await prisma.guild.findFirst({
       where: {
         guildId: interaction.guild.id,
       },
@@ -85,7 +85,7 @@ export const serverControlSelectionHandler = async ({ interaction }: TSelectionH
           name: 'Your result',
           iconURL: specialAvatar,
         });
-      const storedServers = await prisma.servers.findMany();
+      const storedServers = await prisma.server.findMany();
       for (const server of data) {
         const serverDetails = storedServers.find((entry) => entry.id === server.serverId);
         if (!serverDetails) continue;

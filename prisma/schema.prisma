@@ -7,21 +7,21 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model app_logs {
+model App_Log {
   id           Int       @id @default(autoincrement())
   content      String    @db.VarChar(1024)
   file         String    @db.VarChar(64)
   logCreatedAt DateTime? @default(now()) @db.DateTime(0)
 }
 
-model config {
+model Config {
   id                       Int    @id @default(autoincrement())
   rconPassword             String @db.VarChar(1024)
   serverStatusUpdateDelay  Int    @default(5) @db.TinyInt
   serverControlUpdateDelay Int    @default(3) @db.TinyInt
 }
 
-model servers {
+model Server {
   id          Int     @id @default(autoincrement())
   mapName     String  @db.VarChar(45)
   path        String  @db.VarChar(200)
@@ -37,7 +37,7 @@ model servers {
   position    Int     @default(1) @db.TinyInt
 }
 
-model guilds {
+model Guild {
   // General
   id        Int    @id @default(autoincrement())
   guildId   String @db.TinyText
@@ -60,6 +60,17 @@ model guilds {
   // Logs
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Bot {
+  id              Int      @id @default(autoincrement())
+  token           String   @db.TinyText
+  nickname        String   @db.TinyText
+  avatar          String   @db.TinyText
+  isAvatarUpdated Boolean? @default(false)
+  status          Boolean? @default(false)
+  clientId        String?  @db.TinyText
+  gameName        String?
 }
 
 // NextAuth

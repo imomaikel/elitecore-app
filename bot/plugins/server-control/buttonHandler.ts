@@ -29,7 +29,7 @@ export const serverControlButtonHandler = async ({ interaction }: TButtonHandler
     const action = command.split('-')[1];
 
     await interaction.deferReply();
-    const guildData = await prisma.guilds.findFirst({
+    const guildData = await prisma.guild.findFirst({
       where: {
         guildId: interaction.guild.id,
       },

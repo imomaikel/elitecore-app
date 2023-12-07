@@ -10,7 +10,7 @@ type TCommand = {
  */
 const rconCommand = async ({ command, serverId }: TCommand) => {
   const [server, password] = await Promise.all([
-    prisma.servers.findFirst({
+    prisma.server.findFirst({
       where: {
         id: serverId,
       },

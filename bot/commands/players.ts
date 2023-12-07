@@ -17,7 +17,7 @@ export default command(cmd, async (client, interaction) => {
     }
 
     const guild = interaction.guild;
-    const guildData = await prisma.guilds.findFirst({
+    const guildData = await prisma.guild.findFirst({
       where: {
         guildId: guild.id,
       },
@@ -43,7 +43,7 @@ export default command(cmd, async (client, interaction) => {
       return;
     }
 
-    const servers = await prisma.servers.findMany();
+    const servers = await prisma.server.findMany();
     servers.sort((a, b) => a.gameType.localeCompare(b.gameType));
 
     const playersEmbed = new EmbedBuilder()

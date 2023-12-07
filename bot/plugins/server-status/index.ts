@@ -1,14 +1,15 @@
-import { time, EmbedBuilder } from 'discord.js';
 import { colors, extraSigns, gifs } from '../../constans';
 import { broadcaster } from '../../helpers/broadcaster';
+import { time, EmbedBuilder } from 'discord.js';
 import prisma from '../../lib/prisma';
+import { updateBots } from './bots';
 
 /**
  * Create embed of all servers and update all widgets
  * @param updateOnlyOneGuildId If specified, the widget will be sent to only one guild, and the returned value will be more detailed
  */
 const updateServerStatusWidget = async (updateOnlyOneGuildId: string | undefined = undefined) => {
-  const [servers, config] = await Promise.all([prisma.servers.findMany(), prisma.config.findFirst()]);
+  const [servers, config] = await Promise.all([prisma.server.findMany(), prisma.config.findFirst()]);
 
   const { zap } = extraSigns;
   const { pulseUrl } = gifs;
@@ -65,6 +66,9 @@ const updateServerStatusWidget = async (updateOnlyOneGuildId: string | undefined
     value: `:family: Total players: ${totalPlayers}`,
     inline: false,
   });
+
+  // Update bots presence
+  updateBots(servers);
 
   return await broadcaster({
     widget: 'serverStatus',

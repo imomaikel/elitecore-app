@@ -13,7 +13,7 @@ export const updateServerControlWidget = async (): Promise<boolean> => {
   const data = await fetchRequest('getStatuses');
   if (!data) return false;
 
-  const [storedServers, config] = await Promise.all([prisma.servers.findMany(), prisma.config.findFirst()]);
+  const [storedServers, config] = await Promise.all([prisma.server.findMany(), prisma.config.findFirst()]);
 
   const onlineServers = data.filter((entry) => entry.currentStatus === 'online').length;
   const offlineServers = data.filter((entry) => entry.currentStatus === 'offline').length;

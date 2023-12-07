@@ -1,6 +1,6 @@
 import { CustomResponse } from '../constans/responses';
 import type { ActionRowBuilder, ButtonBuilder, EmbedBuilder } from 'discord.js';
-import type { guilds } from '@prisma/client';
+import type { Guild } from '@prisma/client';
 import { sendMessage } from './sendMessage';
 import logger from '../scripts/logger';
 import prisma from '../lib/prisma';
@@ -25,7 +25,7 @@ type TBroadcaster = {
 };
 // Broadcaster checker props
 type TChecker = {
-  allowedGuilds: guilds[];
+  allowedGuilds: Guild[];
   channelField: TDBChannelFields;
   messageField?: TDBMessageFields;
 };
@@ -43,7 +43,7 @@ export const broadcaster = async ({
   // For each widget check for the guild's required settings
 
   if (widget === 'serverStatus') {
-    const allowedGuilds = await prisma.guilds.findMany({
+    const allowedGuilds = await prisma.guild.findMany({
       where: {
         serverStatusChannelId: {
           not: null,
@@ -63,7 +63,7 @@ export const broadcaster = async ({
       channelField: 'serverStatusChannelId',
     });
   } else if (widget === 'serverNotify') {
-    const allowedGuilds = await prisma.guilds.findMany({
+    const allowedGuilds = await prisma.guild.findMany({
       where: {
         serverStatusNotifyChannelId: {
           not: null,
@@ -82,7 +82,7 @@ export const broadcaster = async ({
       channelField: 'serverStatusNotifyChannelId',
     });
   } else if (widget === 'serverControl') {
-    const allowedGuilds = await prisma.guilds.findMany({
+    const allowedGuilds = await prisma.guild.findMany({
       where: {
         serverControlChannelId: {
           not: null,
@@ -98,7 +98,7 @@ export const broadcaster = async ({
       messageField: 'serverControlMessageId',
     });
   } else if (widget === 'serverControlLog') {
-    const allowedGuilds = await prisma.guilds.findMany({
+    const allowedGuilds = await prisma.guild.findMany({
       where: {
         serverControlLogChannelId: {
           not: null,
@@ -175,7 +175,7 @@ const broadcasterChecker = async ({
       if (action.details?.message === 'Message sent') {
         const newMessageId = action.details.data.messageId;
         if (messageField) {
-          await prisma.guilds.update({
+          await prisma.guild.update({
             where: {
               id: allowedGuild.id,
             },

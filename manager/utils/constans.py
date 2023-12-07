@@ -35,7 +35,7 @@ class ServerDetails():
 
 
 # Servers schema table
-serversTableTemplate = '''CREATE TABLE IF NOT EXISTS webapp.servers (
+serversTableTemplate = '''CREATE TABLE IF NOT EXISTS webapp.server (
   id INT NOT NULL AUTO_INCREMENT,
   mapName VARCHAR(45) NOT NULL,
   path VARCHAR(200) NOT NULL,
@@ -51,7 +51,7 @@ serversTableTemplate = '''CREATE TABLE IF NOT EXISTS webapp.servers (
   position TINYINT DEFAULT 1 NOT NULL,
   PRIMARY KEY (id));'''
 # Logs schema table
-logsTableTemplate = '''CREATE TABLE IF NOT EXISTS webapp.app_logs (
+logsTableTemplate = '''CREATE TABLE IF NOT EXISTS webapp.app_log (
   id INT NOT NULL AUTO_INCREMENT,
   content VARCHAR(1024) NOT NULL,
   file VARCHAR(64) NOT NULL,

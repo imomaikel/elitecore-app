@@ -1,10 +1,10 @@
 import { checkForRole } from '../../helpers/permissions';
 import { errorEmbed } from '../../constans/embeds';
 import { ButtonInteraction, StringSelectMenuInteraction } from 'discord.js';
-import { guilds } from '@prisma/client';
+import { Guild } from '@prisma/client';
 
 type TCheckPermissions = {
-  guildData: guilds | null;
+  guildData: Guild | null;
   interaction: ButtonInteraction | StringSelectMenuInteraction;
 };
 export const hasPermissionToControl = async ({ guildData, interaction }: TCheckPermissions): Promise<boolean> => {
