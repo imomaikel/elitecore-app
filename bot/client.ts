@@ -1,6 +1,7 @@
 import { Client, GatewayIntentBits } from 'discord.js';
 import { registerEvents } from './utils/events';
 import { getEnv } from './utils/env';
+import { Bot } from '@prisma/client';
 import events from './events';
 
 // Create bot instance
@@ -12,6 +13,18 @@ export const clientStates = {
   usingServerControl: false,
   lastSelectionPicked: false,
 };
+// Create a container for bot clients
+export const clientBots: {
+  isLoggedIn: boolean;
+  account: Client;
+  data: Bot;
+  hasPair?: boolean;
+  lastPlayers?: number;
+  lastStatus?: string;
+  newNickname?: string;
+  gameType?: string;
+}[] = [];
+
 // Listen for events
 registerEvents(client, events);
 

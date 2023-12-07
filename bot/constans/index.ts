@@ -12,6 +12,8 @@ export const extraSigns = {
   zap: '⚡️',
   space: 'ㅤ',
   star: '💫',
+  family: '👪',
+  redCircle: '🔴',
 };
 
 export const gifs = {

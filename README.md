@@ -31,3 +31,4 @@ The bot was built using module [discord.js](https://discord.js.org/)
 - Realtime Discord notifications when server status changes
 - A custom widget that allows you to start, stop, or restart any server if you have permission
 - A slash command that lets you see online players on each server
+- Multi-bot presences that show each game server's players and status
