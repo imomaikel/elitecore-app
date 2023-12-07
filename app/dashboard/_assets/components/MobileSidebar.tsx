@@ -16,8 +16,10 @@ const MobileSidebar = () => {
 
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
-      <SheetContent side="left">
-        <Sidebar className="flex w-full border-none mt-5" />
+      <SheetContent side="left" className="overflow-y-auto p-0">
+        <div className="flex w-full min-h-[calc(100%-48px)] mt-12">
+          <Sidebar className="flex w-full border-none shadow-none dark:md:shadow-none m-0" />
+        </div>
       </SheetContent>
     </Sheet>
   );

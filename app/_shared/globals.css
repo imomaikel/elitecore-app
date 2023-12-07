@@ -61,3 +61,23 @@
 .arial {
   font-family: Arial, sans-serif !important;
 }
+@keyframes progress {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+.progressAnimation {
+  background-size: 400%;
+  animation: 2s progress ease infinite;
+}
+
+.shadows-md {
+  @apply shadow-md dark:shadow-lg dark:shadow-black/90;
+}
+.shadows-lg {
+  @apply shadow-lg dark:shadow-lg dark:shadow-black/90;
+}

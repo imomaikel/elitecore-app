@@ -1,9 +1,10 @@
 import { NextAuthProvider } from './_shared/providers/auth';
-import { Montserrat } from 'next/font/google';
-import type { Metadata } from 'next';
-import './_shared/globals.css';
 import { ThemeProvider } from './_shared/providers/theme';
+import { Montserrat } from 'next/font/google';
 import { cn } from './_shared/lib/utils';
+import type { Metadata } from 'next';
+import { Toaster } from 'sonner';
+import './_shared/globals.css';
 
 const montserrat = Montserrat({ subsets: ['latin'] });
 
@@ -22,6 +23,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             {children}
           </ThemeProvider>
         </NextAuthProvider>
+        <Toaster position="top-center" />
       </body>
     </html>
   );

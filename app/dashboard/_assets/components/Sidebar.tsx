@@ -7,6 +7,7 @@ import React, { useEffect, useState } from 'react';
 import { cn } from '@/shared/lib/utils';
 import PanelTab from './PanelTab';
 import ShopTab from './ShopTab';
+import Link from 'next/link';
 
 type TSidebar = {
   className?: string;
@@ -20,8 +21,12 @@ const Sidebar = ({ className }: TSidebar) => {
   }, []);
 
   return (
-    <div className={cn('w-[330px] mt-16 md:flex hidden relative border-primary/20 border-r', className)}>
-      {/* <div className="absolute w-full h-[1px] bg-background z-10 -top-[1px]" /> */}
+    <div
+      className={cn(
+        'w-[330px] mt-16 md:flex flex-col hidden relative shadow-md dark:md:shadow-lg dark:md:shadow-black/90 justify-between',
+        className,
+      )}
+    >
       <div className="p-4 w-full">
         <Tabs
           defaultValue="shop"
@@ -61,6 +66,16 @@ const Sidebar = ({ className }: TSidebar) => {
           </TabsContent>
         </Tabs>
         <Separator className="my-4 bg-primary/20" />
+      </div>
+      <div className="text-muted-foreground flex flex-col px-4 pt-4 mb-2 text-xs select-none opacity-60">
+        <p> &copy; 2023 EliteCore</p>
+        <p>We do not have affiliation with any real world brands</p>
+        <p>
+          Website made by
+          <Link href="https://github.com/imomaikel" className="underline ml-1" target="_blank">
+            imomaikel
+          </Link>
+        </p>
       </div>
     </div>
   );
