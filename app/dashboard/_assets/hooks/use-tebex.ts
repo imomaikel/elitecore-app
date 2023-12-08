@@ -1,0 +1,20 @@
+import { persist, createJSONStorage } from 'zustand/middleware';
+import { create } from 'zustand';
+import type { Category } from 'tebex_headless';
+
+type TUseTebex = {
+  categoryList: Category[] | [];
+  setCategoryList: (categories: Category[] | []) => void;
+};
+export const useTebex = create<TUseTebex>()(
+  persist(
+    (set) => ({
+      categoryList: [],
+      setCategoryList: (data) => set(() => ({ categoryList: data })),
+    }),
+    {
+      name: 'tebex-storage',
+      storage: createJSONStorage(() => localStorage),
+    },
+  ),
+);

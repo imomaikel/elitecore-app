@@ -6,6 +6,10 @@ const nextConfig = {
         hostname: 'cdn.discordapp.com',
         protocol: 'https',
       },
+      {
+        hostname: 'dunb17ur4ymx4.cloudfront.net',
+        protocol: 'https',
+      },
     ],
   },
 };

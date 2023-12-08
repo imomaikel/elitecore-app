@@ -4,8 +4,10 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/shared/components/ui/
 import { Avatar, AvatarFallback, AvatarImage } from '@/shared/components/ui/avatar';
 import { useMobileSidebar } from '@/hooks/use-mobile-sidebar';
 import { Separator } from '@/shared/components/ui/separator';
+import { Skeleton } from '@/shared/components/ui/skeleton';
 import { MdOutlineShoppingCart } from 'react-icons/md';
 import { Button } from '@/shared/components/ui/button';
+import { signOut, useSession } from 'next-auth/react';
 import { GiHamburgerMenu } from 'react-icons/gi';
 import { FiChevronsDown } from 'react-icons/fi';
 import { useCart } from '@/hooks/use-cart';
@@ -13,8 +15,6 @@ import { useTheme } from 'next-themes';
 import Image from 'next/image';
 import { toast } from 'sonner';
 import Link from 'next/link';
-import { signOut, useSession } from 'next-auth/react';
-import { Skeleton } from '@/shared/components/ui/skeleton';
 
 const Navbar = () => {
   const { onOpen: openMobileSidebar } = useMobileSidebar();
@@ -113,11 +113,14 @@ const Navbar = () => {
             </Popover>
             {/* SSR */}
             <div
-              className="relative cursor-pointer transition-colors group after:content-[attr(data-cart-size)] data-[cart-size]:after:bg-primary after:text-center after:h-6 after:w-6 after:rounded-full after:absolute after:-top-3 after:-right-3"
+              className="relative cursor-pointer transition-colors
+              group after:content-[attr(data-cart-size)]
+              data-[cart-size]:after:bg-primary after:text-center
+              after:h-6 after:w-6 after:rounded-full after:absolute sm:after:-top-3 sm:after:-right-3 after:-top-3 after:right-0"
               data-cart-size="2"
               onClick={openShoppingCart}
             >
-              <MdOutlineShoppingCart className="w-7 h-7 md:ml-3 group-hover:text-primary" />
+              <MdOutlineShoppingCart className="w-7 h-7 md:ml-3 group-hover:text-primary mr-3 sm:mr-0" />
             </div>
           </div>
         </div>

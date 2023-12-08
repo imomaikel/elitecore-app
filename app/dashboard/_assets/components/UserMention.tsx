@@ -1,5 +1,5 @@
-import { unknownAvatar } from '@/constans';
 import { Avatar, AvatarFallback, AvatarImage } from '@/shared/components/ui/avatar';
+import { unknownAvatar } from '@/constans';
 import { cn } from '@/shared/lib/utils';
 import Image from 'next/image';
 
