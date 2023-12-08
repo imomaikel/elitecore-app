@@ -22,7 +22,7 @@ export const appRouter = router({
 
       const timeDiffInMs = timeNow - lastTime;
       const timeDiffInMinutes = Math.round(timeDiffInMs / 60_000);
-      if (timeDiffInMinutes >= 5) {
+      if (timeDiffInMinutes >= 1) {
         allowRefetch = true;
         await prisma.user.update({
           where: { id: user.id },

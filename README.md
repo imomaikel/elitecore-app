@@ -7,6 +7,7 @@
 The application is being rewritten. Update soon.
 
 - Website store with payments using [tebex](https://docs.tebex.io/developers)
+- API routes built using [tRPC](https://trpc.io/)
 - User Interface created using [shadcn](https://ui.shadcn.com/)
 - State management (sidebar, shopping cart) using [zustand](https://github.com/pmndrs/zustand)
 - Theme colors using [next-themes](https://github.com/pacocoursey/next-themes)

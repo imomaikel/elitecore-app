@@ -1,6 +1,6 @@
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { create } from 'zustand';
 import type { Category } from 'tebex_headless';
+import { create } from 'zustand';
 
 type TUseTebex = {
   categoryList: Category[] | [];

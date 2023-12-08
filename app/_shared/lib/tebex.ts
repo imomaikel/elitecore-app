@@ -5,7 +5,7 @@ export const shopGetCategories = async (): Promise<Category[] | []> => {
   SetWebstoreIdentifier(process.env.TEBEX_WEBSTORE_IDENTIFIER!);
   let categories = null;
   try {
-    categories = await GetCategories();
+    categories = (await GetCategories(true)).filter((entry) => entry.packages.length >= 1);
   } catch (error) {
     console.log('Could not fetch categories', error);
   }

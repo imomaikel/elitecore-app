@@ -4,6 +4,7 @@ import { FaCartPlus, FaCircleInfo } from 'react-icons/fa6';
 import Image from 'next/image';
 import { toast } from 'sonner';
 import Link from 'next/link';
+import { Skeleton } from '@/shared/components/ui/skeleton';
 
 type TProductBox = {
   description: string;
@@ -34,7 +35,7 @@ const ProductBox = ({ basePrice, description, imageURL, name, productId }: TProd
             <div>
               <div>{description}</div>
               {/* TODO LINK */}
-              <Link className="underline" href={`/products/${productId}`}>
+              <Link className="underline" href={`/dashboard/shop/${productId}`}>
                 More details
               </Link>
             </div>
@@ -47,4 +48,8 @@ const ProductBox = ({ basePrice, description, imageURL, name, productId }: TProd
   );
 };
 
+// TODO
+ProductBox.Skeleton = function ShowSkeleton() {
+  return <Skeleton className="w-[175px] h-[239px] shadows-lg p-2 rounded-md space-y-2 group"></Skeleton>;
+};
 export default ProductBox;
