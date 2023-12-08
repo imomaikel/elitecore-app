@@ -25,7 +25,7 @@ const authOptions: NextAuthOptions = {
       session.user.id = token.uid;
       return session;
     },
-    jwt: async ({ user, token, account }) => {
+    jwt: async ({ token, user, account }) => {
       if (!user || !account) return token;
       token.discordId = account.providerAccountId;
       token.uid = user.id;

@@ -1,7 +1,6 @@
 import { CreateExpressContextOptions, createExpressMiddleware } from '@trpc/server/adapters/express';
 import { appRouter } from '../app/dashboard/_assets/trpc/trpc-router';
 import { getPort, nextApp, nextRequestHandler } from '../app/next';
-import { inferAsyncReturnType } from '@trpc/server';
 import { dataReceived } from '../bot/helpers/api';
 import buildNextApp from 'next/dist/build';
 import bodyParser from 'body-parser';
@@ -11,11 +10,8 @@ import express from 'express';
 const app = express();
 const PORT = getPort();
 const jsonParser = bodyParser.json();
-const expressContext = ({ req, res }: CreateExpressContextOptions) => ({
-  req,
-  res,
-});
-export type ExpressContext = inferAsyncReturnType<typeof expressContext>;
+const createContext = async ({ req, res }: CreateExpressContextOptions) => ({ req, res });
+export type ExpressContext = Awaited<ReturnType<typeof createContext>>;
 
 // Initialize app and server
 (() => {
@@ -35,7 +31,7 @@ export type ExpressContext = inferAsyncReturnType<typeof expressContext>;
     '/trpc',
     createExpressMiddleware({
       router: appRouter,
-      createContext: expressContext,
+      createContext,
     }),
   );
 
