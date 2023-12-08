@@ -82,11 +82,18 @@ export const sendMessage = async ({
           message: 'Missing Permissions',
         },
       };
+    } else {
+      logger({
+        message: 'Unknown error (1)',
+        type: 'error',
+        file: 'sendMessage',
+        data: JSON.stringify(error),
+      });
     }
   }
 
   logger({
-    message: 'Unknown error',
+    message: 'Unknown error (2)',
     type: 'error',
     file: 'sendMessage',
   });

@@ -55,7 +55,7 @@ def dbAppendNewLog(content: str, fileName: str):
         conn = dbCreateConnection()
         cur = conn.cursor()
         cur.execute(
-            'INSERT INTO app_logs(content, file) VALUES (%s, %s);', (content, fileName))
+            'INSERT INTO app_log(content, file) VALUES (%s, %s);', (content, fileName))
         conn.commit()
         conn.close()
     except:
@@ -72,7 +72,7 @@ def dbGetAllServers() -> List[ServerDetails] | List:
     try:
         conn = dbCreateConnection()
         cur = conn.cursor()
-        cur.execute('SELECT * FROM servers;')
+        cur.execute('SELECT * FROM server;')
         rows = cur.fetchall()
         conn.close()
 
@@ -94,10 +94,10 @@ def dbFindServer(pathOrId) -> None | ServerDetails:
     try:
         conn = dbCreateConnection()
         cur = conn.cursor()
-        cur.execute('SELECT * FROM servers WHERE path = %s;', (pathOrId,))
+        cur.execute('SELECT * FROM server WHERE path = %s;', (pathOrId,))
         row = cur.fetchone()
         if row == None:
-            cur.execute('SELECT * FROM servers WHERE id = %s;', (pathOrId,))
+            cur.execute('SELECT * FROM server WHERE id = %s;', (pathOrId,))
             row = cur.fetchone()
         conn.close()
         if row == None:
@@ -116,7 +116,7 @@ def dbUpdateAutoRestart(serverId: int, newState: bool):
         conn = dbCreateConnection()
         cur = conn.cursor()
         cur.execute(
-            'UPDATE servers SET autoRestart = %s WHERE ID = %s;', (newState, serverId))
+            'UPDATE server SET autoRestart = %s WHERE ID = %s;', (newState, serverId))
         conn.commit()
         conn.close()
     except Exception as e:
@@ -132,7 +132,7 @@ def dbUpdatePlayerCount(serverId: int, currentPlayers: int):
         conn = dbCreateConnection()
         cur = conn.cursor()
         cur.execute(
-            'UPDATE servers SET lastPlayers = %s WHERE ID = %s;', (currentPlayers, serverId))
+            'UPDATE server SET lastPlayers = %s WHERE ID = %s;', (currentPlayers, serverId))
         conn.commit()
         conn.close()
     except Exception as e:
@@ -148,7 +148,7 @@ def dbUpdateLastStatus(serverId: int, newStatus: Literal['online', 'offline']):
         conn = dbCreateConnection()
         cur = conn.cursor()
         cur.execute(
-            'UPDATE servers SET lastStatus = %s WHERE ID = %s;', (newStatus, serverId))
+            'UPDATE server SET lastStatus = %s WHERE ID = %s;', (newStatus, serverId))
         conn.commit()
         conn.close()
     except Exception as e:
@@ -168,7 +168,7 @@ def dbAddNewServer(serverDetails: ServerDetails, path: str):
         conn = dbCreateConnection()
         cur = conn.cursor()
         cur.execute(
-            'INSERT INTO servers(mapName, queryPort, rconPort, gameMode, gameType, customName, multiHome, path, autoRestart) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);', (
+            'INSERT INTO server(mapName, queryPort, rconPort, gameMode, gameType, customName, multiHome, path, autoRestart) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);', (
                 serverDetails.mapName,
                 serverDetails.queryPort,
                 serverDetails.rconPort,
@@ -195,9 +195,9 @@ def dbRemoveServer(serverId: int):
         conn = dbCreateConnection()
         cur = conn.cursor()
         if not serverId == 'all':
-            cur.execute('DELETE FROM servers WHERE id = %s;', (serverId,))
+            cur.execute('DELETE FROM server WHERE id = %s;', (serverId,))
         else:
-            cur.execute('DELETE FROM servers;')
+            cur.execute('DELETE FROM server;')
         conn.commit()
         conn.close()
     except Exception as e:

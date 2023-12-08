@@ -24,22 +24,26 @@ export default command(cmd, async (client, interaction) => {
     });
 
     if (!guildData?.playersCmdChannelId) {
-      await interaction.reply({
-        embeds: [errorEmbed('This server has no configured channel to use this command.')],
-      });
+      await interaction
+        .reply({
+          embeds: [errorEmbed('This server has no configured channel to use this command.')],
+        })
+        .catch(() => {});
       return;
     }
     const channel = client.channels.cache.get(guildData.playersCmdChannelId);
     if (guildData.playersCmdChannelId !== interaction.channel.id) {
-      await interaction.reply({
-        embeds: [
-          errorEmbed(
-            channel?.id
-              ? `This command can only be used in this channel <#${guildData.playersCmdChannelId}>`
-              : 'This command can not be used here',
-          ),
-        ],
-      });
+      await interaction
+        .reply({
+          embeds: [
+            errorEmbed(
+              channel?.id
+                ? `This command can only be used in this channel <#${guildData.playersCmdChannelId}>`
+                : 'This command can not be used here',
+            ),
+          ],
+        })
+        .catch(() => {});
       return;
     }
 
@@ -94,9 +98,11 @@ export default command(cmd, async (client, interaction) => {
       playersEmbed.setFooter({ text: `Total ${totalPlayers} players` });
     }
 
-    await interaction.reply({
-      embeds: [playersEmbed],
-    });
+    await interaction
+      .reply({
+        embeds: [playersEmbed],
+      })
+      .catch(() => {});
   } catch (error) {
     logger({
       type: 'error',
