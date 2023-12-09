@@ -7,7 +7,7 @@ type TLoader = {
 };
 const Loader = ({ className }: TLoader) => {
   return (
-    <div className={cn('flex items-center gap-x-2 font-medium select-none relative p-2', className)}>
+    <div className={cn('flex items-center gap-x-2 font-medium select-none relative', className)}>
       <ImSpinner9 className="w-6 h-6 animate-spin" />
       <span className="tracking-tighter">Loading...</span>
     </div>

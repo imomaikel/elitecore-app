@@ -22,6 +22,9 @@ const SelectBox = ({ onSelect, options, searchLabel, noResultLabel, buttonText, 
   const generatePreSelectedValue = preSelectedData && `${preSelectedData.value}:${preSelectedData.label}`;
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(generatePreSelectedValue ?? '');
+  if (generatePreSelectedValue && value !== generatePreSelectedValue) {
+    setValue(generatePreSelectedValue);
+  }
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -33,11 +36,11 @@ const SelectBox = ({ onSelect, options, searchLabel, noResultLabel, buttonText, 
           <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[200px] p-0">
+      <PopoverContent className="w-[200px] p-0" side="bottom">
         <Command>
           <CommandInput placeholder={searchLabel} className="h-9" />
           <CommandEmpty>{noResultLabel}</CommandEmpty>
-          <CommandGroup>
+          <CommandGroup className="max-h-[350px] overflow-y-auto">
             {options.map((option) => (
               <CommandItem
                 key={option.value}
@@ -50,7 +53,12 @@ const SelectBox = ({ onSelect, options, searchLabel, noResultLabel, buttonText, 
                 }}
               >
                 {option.label}
-                <CheckIcon className={cn('ml-auto h-4 w-4', value === option.value ? 'opacity-100' : 'opacity-0')} />
+                <CheckIcon
+                  className={cn(
+                    'ml-auto h-4 w-4',
+                    value.substring(0, value.indexOf(':')) === option.value ? 'opacity-100' : 'opacity-0',
+                  )}
+                />
               </CommandItem>
             ))}
           </CommandGroup>

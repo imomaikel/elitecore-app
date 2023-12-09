@@ -2,7 +2,7 @@
 type PluginResponses = {
   sendMessage: {
     status: {
-      error: 'Missing Permissions' | 'Could not find the channel' | 'Unknown error';
+      error: 'The bot has no permission' | 'Could not find the channel' | 'Unknown error';
       success: 'Message sent' | 'Message edited';
     };
     data: {
@@ -15,11 +15,14 @@ type PluginResponses = {
   broadcaster: {
     status: {
       error:
-        | 'Missing Permissions'
+        | 'The bot has no permission'
         | 'Could not find the channel'
         | 'Unknown error'
         | 'The widget channel does not exist'
-        | 'The widget channel is not set';
+        | 'The widget channel is not set'
+        | 'User has no permission'
+        | 'The channel does not exist'
+        | 'Bad request';
       success: 'Widget sent';
     };
     data: never;

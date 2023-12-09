@@ -1,3 +1,6 @@
-import apiDiscordSelection from './discord-selection/index';
+import apiAvailableChannels from './availableChannels';
+import apiAvailableRoles from './availableRoles';
+import apiUpdateChannel from './updateChannel';
+import apiMutualGuilds from './mutualGuilds';
 
-export { apiDiscordSelection };
+export { apiAvailableChannels, apiMutualGuilds, apiAvailableRoles, apiUpdateChannel };

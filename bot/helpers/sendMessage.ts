@@ -79,7 +79,7 @@ export const sendMessage = async ({
       return {
         status: 'error',
         details: {
-          message: 'Missing Permissions',
+          message: 'The bot has no permission',
         },
       };
     } else {
