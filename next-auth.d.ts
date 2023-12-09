@@ -1,9 +1,10 @@
 import { DefaultSession } from 'next-auth';
-// import type { User } from '@prisma/client';
 
 interface NextAuthUser {
   id?: string;
   discordId?: string;
+  isAdmin?: boolean;
+  selectedGuildId?: string | null;
 }
 export interface NextAuthSession {
   user: NextAuthUser & DefaultSession['user'];

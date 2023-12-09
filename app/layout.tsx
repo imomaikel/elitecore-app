@@ -23,7 +23,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             {children}
           </ThemeProvider>
         </NextAuthProvider>
-        <Toaster position="top-center" />
+        <Toaster richColors position="top-center" />
       </body>
     </html>
   );

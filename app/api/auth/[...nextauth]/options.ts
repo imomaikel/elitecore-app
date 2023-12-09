@@ -21,6 +21,11 @@ const authOptions: NextAuthOptions = {
   callbacks: {
     session: async ({ session, token }) => {
       if (!session.user) return session;
+      const getUserData = await prisma.user.findFirst({
+        where: { id: token.uid },
+      });
+      session.user.isAdmin = getUserData?.isAdmin === true ? true : false;
+      session.user.selectedGuildId = getUserData?.selectedDiscordId ? getUserData.selectedDiscordId : null;
       session.user.discordId = token.discordId;
       session.user.id = token.uid;
       return session;

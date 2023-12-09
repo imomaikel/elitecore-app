@@ -19,7 +19,7 @@ export const dataReceived = (action: any, data: any) => {
   } catch (error) {
     logger({
       type: 'error',
-      message: 'Could not parse the socket data',
+      message: 'Could not parse the server data',
       data: JSON.stringify(error),
     });
   }

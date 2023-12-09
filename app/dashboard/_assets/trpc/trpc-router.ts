@@ -1,11 +1,12 @@
 import { shopGetCategories } from '../../../_shared/lib/tebex';
 import { authorizedProcedure, router } from './trpc';
-import prisma from '../../../_shared/lib/prisma';
 import { TRPCError } from '@trpc/server';
+import { adminRouter } from './admin-router';
 
 export const appRouter = router({
+  admin: adminRouter,
   getCategories: authorizedProcedure.mutation(async ({ ctx }) => {
-    const { user } = ctx;
+    const { user, prisma } = ctx;
 
     const userData = await prisma.user.findFirst({
       where: { id: user.id },
