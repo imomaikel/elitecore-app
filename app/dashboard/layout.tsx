@@ -1,9 +1,8 @@
-// import Sidebar from '@/components/Sidebar';
-import Footer from '@/components/Footer';
-import MobileSidebar from '@/components/MobileSidebar';
-import Navbar from '@/components/Navbar';
-import ShoppingCart from '@/components/ShoppingCart';
-import Sidebar from '@/components/Sidebar';
+import MobileSidebar from '@/components/shared/MobileSidebar';
+import ShoppingCart from '@/components/shared/ShoppingCart';
+import Sidebar from '@/components/shared/Sidebar';
+import Footer from '@/components/shared/Footer';
+import Navbar from '@/components/shared/Navbar';
 import { TRPCProvider } from '@/trpc/provider';
 import type { Metadata } from 'next';
 

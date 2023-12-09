@@ -1,6 +1,6 @@
-import ProductBox from '@/components/ProductBox';
-import UserMention from '@/components/UserMention';
 import { Progress } from '@/shared/components/ui/progress';
+import UserMention from './_components/UserMention';
+import ProductBox from '../_assets/components/shared/ProductBox';
 
 const DashboardPage = () => {
   return (

@@ -1,7 +1,7 @@
 'use client';
-import { useCart } from '@/hooks/use-cart';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/shared/components/ui/sheet';
 import { useEffect, useState } from 'react';
+import { useCart } from '@/hooks/use-cart';
 
 const ShoppingCart = () => {
   const { isOpen, onOpenChange } = useCart();

@@ -1,8 +1,8 @@
 'use client';
+import ProductBox from '@/components/shared/ProductBox';
 import React, { useEffect, useState } from 'react';
 import { useTebex } from '@/hooks/use-tebex';
 import { redirect } from 'next/navigation';
-import ProductBox from '@/components/ProductBox';
 
 type TProductPage = {
   params: {

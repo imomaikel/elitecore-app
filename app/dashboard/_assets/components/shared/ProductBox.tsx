@@ -1,10 +1,10 @@
 'use client';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/shared/components/ui/hover-card';
 import { FaCartPlus, FaCircleInfo } from 'react-icons/fa6';
+import { Skeleton } from '@/shared/components/ui/skeleton';
 import Image from 'next/image';
 import { toast } from 'sonner';
 import Link from 'next/link';
-import { Skeleton } from '@/shared/components/ui/skeleton';
 
 type TProductBox = {
   description: string;

@@ -1,5 +1,5 @@
 'use client';
-import ProductBox from '@/components/ProductBox';
+import ProductBox from '@/components/shared/ProductBox';
 import { useTebex } from '@/hooks/use-tebex';
 import { useEffect, useState } from 'react';
 import { redirect } from 'next/navigation';
