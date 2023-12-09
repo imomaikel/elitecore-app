@@ -1,10 +1,10 @@
-import { client } from '../../client';
+import { client } from '../client';
 
 /**
  * Returns array of mutual guilds with user or null
  * @param userDiscordId Discord ID of a user logged in at the web panel
  */
-const apiDiscordSelection = async (userDiscordId: string) => {
+const apiMutualGuilds = async (userDiscordId: string) => {
   try {
     const response = [];
     for await (const guildEntries of client.guilds.cache) {
@@ -25,4 +25,4 @@ const apiDiscordSelection = async (userDiscordId: string) => {
   }
 };
 
-export default apiDiscordSelection;
+export default apiMutualGuilds;
