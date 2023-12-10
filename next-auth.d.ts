@@ -5,6 +5,7 @@ interface NextAuthUser {
   discordId?: string;
   isAdmin?: boolean;
   selectedGuildId?: string | null;
+  basketIdent?: string | null;
 }
 export interface NextAuthSession {
   user: NextAuthUser & DefaultSession['user'];

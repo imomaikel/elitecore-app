@@ -1,11 +1,24 @@
-import { shopGetCategories } from '../../../_shared/lib/tebex';
+import { addProduct, shopGetCategories } from '../../../_shared/lib/tebex';
 import { authorizedProcedure, router } from './trpc';
-import { TRPCError } from '@trpc/server';
 import { adminRouter } from './admin-router';
+import { TRPCError } from '@trpc/server';
+import { z } from 'zod';
 
 export const appRouter = router({
   admin: adminRouter,
-  getCategories: authorizedProcedure.mutation(async ({ ctx }) => {
+  addToBasket: authorizedProcedure.input(z.object({ productId: z.number() })).mutation(async ({ ctx, input }) => {
+    const { req, user } = ctx;
+    const { productId } = input;
+
+    const response = await addProduct({
+      ipAddress: req.ip,
+      productId: productId,
+      user,
+    });
+
+    return response;
+  }),
+  getCategories: authorizedProcedure.query(async ({ ctx }) => {
     const { user, prisma } = ctx;
 
     const userData = await prisma.user.findFirst({

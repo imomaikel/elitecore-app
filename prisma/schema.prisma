@@ -130,6 +130,8 @@ model User {
   lastCategoryFetch DateTime? @default(now())
   isAdmin           Boolean?  @default(false)
   selectedDiscordId String?
+  basketIdent       String?
+  basketAuthUrl     String?
 
   Admin_Log Admin_Log[]
   createdAt DateTime    @default(now())

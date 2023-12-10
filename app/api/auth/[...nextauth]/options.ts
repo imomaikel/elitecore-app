@@ -36,6 +36,8 @@ const authOptions: NextAuthOptions = {
           data: { avatar: session.user.image },
         });
       }
+      session.user.basketIdent =
+        getUserData?.basketIdent && getUserData.basketIdent?.length >= 5 ? getUserData?.basketIdent : null;
       session.user.isAdmin = getUserData?.isAdmin === true ? true : false;
       session.user.selectedGuildId = getUserData?.selectedDiscordId ? getUserData.selectedDiscordId : null;
       session.user.discordId = token.discordId;

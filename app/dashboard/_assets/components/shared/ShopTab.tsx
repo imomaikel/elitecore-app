@@ -9,18 +9,23 @@ const ShopTab = () => {
   const { categoryList, setCategoryList } = useTebex();
   const [isMounted, setIsMounted] = useState(false);
 
-  const { mutate: fetchCategories } = trpc.getCategories.useMutation({
-    onSuccess: (categories) => {
-      if (categories) {
-        setCategoryList(categories);
-      }
-    },
+  // const { mutate: fetchCategories } = trpc.getCategories.useMutation({
+  //   onSuccess: (categories) => {
+  //     if (categories) {
+  //       setCategoryList(categories);
+  //     }
+  //   },
+  // });
+
+  const { data } = trpc.getCategories.useQuery(undefined, {
+    refetchOnWindowFocus: false,
+    retry: false,
   });
 
   useEffect(() => {
-    fetchCategories();
-    setIsMounted(true);
-  }, []);
+    if (!isMounted) setIsMounted(true);
+    if (data) setCategoryList(data);
+  }, [data]);
 
   return (
     <div className="flex flex-col gap-y-2">

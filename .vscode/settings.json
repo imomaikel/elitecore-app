@@ -10,5 +10,6 @@
     "**/__pycache__": true
   },
   "explorerExclude.backup": {},
-  "editor.tabSize": 2
+  "editor.tabSize": 2,
+  "cmake.configureOnOpen": true
 }
