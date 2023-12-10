@@ -24,6 +24,18 @@ const authOptions: NextAuthOptions = {
       const getUserData = await prisma.user.findFirst({
         where: { id: token.uid },
       });
+      if (!getUserData?.discordId) {
+        await prisma.user.update({
+          where: { id: token.uid },
+          data: { discordId: token.discordId },
+        });
+      }
+      if (session.user.image?.includes('http') && getUserData?.avatar !== session.user.image) {
+        await prisma.user.update({
+          where: { id: token.uid },
+          data: { avatar: session.user.image },
+        });
+      }
       session.user.isAdmin = getUserData?.isAdmin === true ? true : false;
       session.user.selectedGuildId = getUserData?.selectedDiscordId ? getUserData.selectedDiscordId : null;
       session.user.discordId = token.discordId;

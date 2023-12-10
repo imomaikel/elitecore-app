@@ -30,7 +30,7 @@ const ShopTab = () => {
       {isMounted ? (
         categoryList.map((category) => (
           <Link href={`/dashboard/shop/category/${category.id}`} key={category.id}>
-            <div className="bg-primary/50 px-2 py-2 w-full rounded-sm truncate cursor-pointer transition-colors hover:bg-primary hover:underline">
+            <div className="bg-primary/50 px-2 py-2 w-full rounded-sm truncate cursor-pointer transition-colors hover:bg-primary hover:underline text-sm">
               <span>{category.name}</span>
             </div>
           </Link>

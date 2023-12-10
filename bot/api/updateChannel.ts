@@ -81,12 +81,43 @@ const apiUpdateChannel = async ({
           where: { guildId },
           data: { serverStatusChannelId: oldChannel?.serverStatusChannelId },
         });
+      } else {
+        await prisma.guild.update({
+          where: { guildId },
+          data: {
+            logs: {
+              create: {
+                content: `Updated server status widget channel to "${channel.name}"`,
+                author: {
+                  connect: {
+                    discordId: userDiscordId,
+                  },
+                },
+              },
+            },
+          },
+        });
       }
       return action;
     } else if (widgetName === 'serverStatusNotify') {
       await prisma.guild.update({
         where: { guildId },
         data: { serverStatusNotifyChannelId: channel.id },
+      });
+      await prisma.guild.update({
+        where: { guildId },
+        data: {
+          logs: {
+            create: {
+              content: `Updated server status notification channel to "${channel.name}"`,
+              author: {
+                connect: {
+                  discordId: userDiscordId,
+                },
+              },
+            },
+          },
+        },
       });
       return {
         status: 'success',

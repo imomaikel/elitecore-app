@@ -76,4 +76,61 @@ export const adminRouter = router({
 
       return action;
     }),
+  getLogs: adminProcedure
+    .input(
+      z.object({
+        logsPerPage: z
+          .number()
+          .min(2, { message: 'Minimum two logs per page' })
+          .max(50, { message: 'Maximum fifty logs per page' }),
+        authorFilter: z.string().optional(),
+        contentFilter: z.string().optional(),
+        order: z.string(),
+        currentPage: z.number().min(1, { message: 'Page could not be lower than one' }),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const { prisma, user } = ctx;
+      const { logsPerPage, authorFilter, contentFilter, currentPage, order } = input;
+      const guildId = user.selectedGuildId;
+      if (!user.discordId || !guildId) return null;
+      if (!(order === 'asc' || order === 'desc')) return null;
+
+      const data = await prisma.guild.findFirst({
+        where: { guildId: guildId },
+        include: {
+          logs: {
+            orderBy: {
+              createdAt: order,
+            },
+            where: {
+              content: {
+                contains: contentFilter,
+              },
+              author: {
+                name: {
+                  contains: authorFilter,
+                },
+              },
+            },
+            include: {
+              author: true,
+            },
+            take: logsPerPage,
+            skip: (currentPage - 1) * logsPerPage,
+          },
+        },
+      });
+      const totalLogsSize = await prisma.admin_Log.count({
+        where: {
+          guildId: data?.id,
+          content: { contains: contentFilter },
+          author: { name: { contains: authorFilter } },
+        },
+      });
+      return {
+        guild: data,
+        totalLogsSize,
+      };
+    }),
 });

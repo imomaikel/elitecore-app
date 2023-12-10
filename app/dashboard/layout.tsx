@@ -20,8 +20,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <Navbar />
           <MobileSidebar />
           <div className="flex relative flex-grow">
-            <Sidebar />
-            <div className="px-3 md:px-6 pt-[82px] pb-5 min-h-full">{children}</div>
+            <Sidebar className="min-w-[310px] max-w-[310px]" />
+            <div className="px-3 md:px-6 pt-[82px] pb-5 min-h-full w-full">{children}</div>
           </div>
         </div>
         <Footer />

@@ -26,7 +26,7 @@ const PanelTab = () => {
               <Link href={tab.path} key={`${tab.tabName}${tabIndex}`}>
                 <div
                   className={cn(
-                    `flex text-lg w-[85%] items-center my-2 ml-auto
+                    `flex text-md w-[90%] items-center my-2 ml-auto
                 transition-colors hover:bg-muted p-2 cursor-pointer
                 rounded-md group relative after:w-1 after:h-full after:bg-red-500
                 after:absolute after:right-0  after:rounded-tr after:rounded-br
@@ -37,7 +37,7 @@ const PanelTab = () => {
                   <div className="group-hover:text-primary transition-colors">
                     {<tab.Icon className="w-6 h-6 mr-3" />}
                   </div>
-                  <div className="group-hover:translate-x-5 transition-transform whitespace-nowrap pr-3 truncate group-hover:underline">
+                  <div className="group-hover:translate-x-2 transition-transform whitespace-nowrap pr-2 truncate group-hover:underline font-medium">
                     {tab.tabName}
                   </div>
                 </div>

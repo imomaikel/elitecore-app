@@ -22,7 +22,7 @@ const Sidebar = ({ className }: TSidebar) => {
   return (
     <div
       className={cn(
-        'w-[330px] mt-16 md:flex flex-col hidden relative shadow-md dark:md:shadow-lg dark:md:shadow-black/90 justify-between dark:bg-background bg-background',
+        'w-[310px] mt-16 md:flex flex-col hidden relative shadow-md dark:md:shadow-lg dark:md:shadow-black/90 justify-between dark:bg-background bg-background',
         className,
       )}
     >
@@ -35,7 +35,7 @@ const Sidebar = ({ className }: TSidebar) => {
               setTab(state);
             }
           }}
-          className="w-[calc(330px - 32px)]"
+          className="w-[calc(310px - 32px)]"
         >
           <TabsList className="w-full flex gap-x-6 mb-4">
             <TabsTrigger value="shop" onClick={() => setTab('shop')}>

@@ -58,10 +58,24 @@ model Guild {
   playersCmdChannelId String? @db.TinyText
 
   // Logs
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  logs      Admin_Log[]
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
 
   @@unique([guildId])
+}
+
+model Admin_Log {
+  id      Int    @id @default(autoincrement())
+  content String
+
+  author   User   @relation(fields: [authorId], references: [discordId])
+  authorId String
+
+  guild   Guild @relation(fields: [guildId], references: [id])
+  guildId Int
+
+  createdAt DateTime @default(now())
 }
 
 model Bot {
@@ -105,6 +119,8 @@ model Session {
 
 model User {
   id                String    @id @default(cuid())
+  discordId         String?
+  avatar            String?
   name              String?
   email             String?   @unique
   emailVerified     DateTime?
@@ -115,8 +131,11 @@ model User {
   isAdmin           Boolean?  @default(false)
   selectedDiscordId String?
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  Admin_Log Admin_Log[]
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  @@unique([discordId])
 }
 
 model VerificationToken {
