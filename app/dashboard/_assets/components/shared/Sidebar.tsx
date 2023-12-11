@@ -22,7 +22,7 @@ const Sidebar = ({ className }: TSidebar) => {
   return (
     <div
       className={cn(
-        'w-[310px] mt-16 md:flex flex-col hidden relative shadow-md dark:md:shadow-lg dark:md:shadow-black/90 justify-between dark:bg-background bg-background',
+        'w-[310px] mt-16 md:flex flex-col hidden relative shadow-md md:shadow-lg md:shadow-black/90 justify-between',
         className,
       )}
     >

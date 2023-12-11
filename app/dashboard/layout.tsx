@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
     <TRPCProvider>
-      <div className="flex flex-col relative min-h-screen dark:bg-background bg-white/90">
+      <div className="flex flex-col relative min-h-screen">
         <div className="flex flex-grow flex-1">
           <Navbar />
           <MobileSidebar />

@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 const Footer = () => {
   return (
-    <div className="z-10 min-h-[35px] bg-secondary flex items-center flex-col md:flex-row justify-between text-[11px] font-normal px-4 md:px-8 py-1 md:py-0 dark:text-[#B2B2B2] arial text-[#6a6a6a]">
+    <div className="z-10 min-h-[35px] bg-secondary flex items-center flex-col md:flex-row justify-between text-[11px] font-normal px-4 md:px-8 py-1 md:py-0 text-[#B2B2B2] arial">
       {/* Logo and text */}
       <div className="flex items-center h-full">
         <Image src="/tebex.png" width={54} height={28} alt="tebex" className="hidden md:block" />

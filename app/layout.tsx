@@ -1,5 +1,4 @@
 import { NextAuthProvider } from './_shared/providers/auth';
-import { ThemeProvider } from './_shared/providers/theme';
 import { Montserrat } from 'next/font/google';
 import { cn } from './_shared/lib/utils';
 import type { Metadata } from 'next';
@@ -18,11 +17,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className="h-full">
       <body className={cn('font-sans relative h-full', montserrat.className)}>
-        <NextAuthProvider>
-          <ThemeProvider defaultTheme="dark" attribute="class">
-            {children}
-          </ThemeProvider>
-        </NextAuthProvider>
+        <NextAuthProvider>{children}</NextAuthProvider>
         <Toaster richColors position="top-center" />
       </body>
     </html>

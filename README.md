@@ -10,7 +10,7 @@ The application is being rewritten. Update soon.
 - API routes built using [tRPC](https://trpc.io/)
 - User Interface created using [shadcn](https://ui.shadcn.com/)
 - State management (sidebar, shopping cart) using [zustand](https://github.com/pmndrs/zustand)
-- Theme colors using [next-themes](https://github.com/pacocoursey/next-themes)
+- Currency preferences using [exchangeratesapi](https://exchangeratesapi.io/)
 - Logs created at every action, displayed in a table with pagination
 
 ## Server Manager (Python)

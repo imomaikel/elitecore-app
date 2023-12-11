@@ -15,7 +15,6 @@ import { FiChevronsDown } from 'react-icons/fi';
 import { useSheet } from '@/hooks/use-sheet';
 import { useTebex } from '@/hooks/use-tebex';
 import { useEffect, useState } from 'react';
-import { useTheme } from 'next-themes';
 import Image from 'next/image';
 import { toast } from 'sonner';
 import { trpc } from '@/trpc';
@@ -27,7 +26,6 @@ const Navbar = () => {
   const { onOpen: openMobileSidebar } = useMobileSidebar();
   const [isMounted, setIsMounted] = useState(false);
   const { onOpen: openShoppingCart } = useSheet();
-  const { setTheme } = useTheme();
   const { data } = useSession();
   const { basket } = useTebex();
 
@@ -60,7 +58,7 @@ const Navbar = () => {
   const cartSize = basket?.packages.length ?? 0;
 
   return (
-    <div className="w-full h-16 fixed right-0 top-0 z-10 bg-background shadow-sm dark:md:shadow-md dark:md:shadow-black/90">
+    <div className="w-full h-16 fixed right-0 top-0 z-10 bg-background shadow-sm md:shadow-black/90">
       <nav className="h-full">
         <div className="h-full px-3 lg:px-8 md:px-6 flex justify-between">
           <div className="flex">
@@ -97,19 +95,6 @@ const Navbar = () => {
                 </div>
               </PopoverTrigger>
               <PopoverContent className="flex flex-col mr-2">
-                <div className="mb-1">Theme</div>
-                <div className="flex space-x-2">
-                  <Button variant="secondary" onClick={() => setTheme('dark')}>
-                    Dark
-                  </Button>
-                  <Button variant="secondary" onClick={() => setTheme('light')}>
-                    Light
-                  </Button>
-                  <Button variant="secondary" onClick={() => setTheme('system')}>
-                    Auto
-                  </Button>
-                </div>
-                <Separator className="my-2" />
                 <div className="mb-1">Your currency</div>
                 {/* TODO HOOK */}
                 <Select onValueChange={updateCurrency} value={selected}>
