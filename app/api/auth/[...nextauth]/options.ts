@@ -38,6 +38,7 @@ const authOptions: NextAuthOptions = {
       }
       session.user.basketIdent =
         getUserData?.basketIdent && getUserData.basketIdent?.length >= 5 ? getUserData?.basketIdent : null;
+      session.user.currency === getUserData?.currency ?? 'EUR';
       session.user.isAdmin = getUserData?.isAdmin === true ? true : false;
       session.user.selectedGuildId = getUserData?.selectedDiscordId ? getUserData.selectedDiscordId : null;
       session.user.discordId = token.discordId;

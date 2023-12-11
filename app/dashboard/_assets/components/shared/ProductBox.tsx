@@ -2,6 +2,7 @@
 import { Popover, PopoverContent, PopoverTrigger } from '@/shared/components/ui/popover';
 import { FaCartPlus, FaCircleInfo } from 'react-icons/fa6';
 import { Skeleton } from '@/shared/components/ui/skeleton';
+import { useCurrency } from '@/hooks/use-currency';
 import { useDialog } from '@/hooks/use-dialog';
 import { useTebex } from '@/hooks/use-tebex';
 import { ImSpinner9 } from 'react-icons/im';
@@ -22,6 +23,7 @@ type TProductBox = {
 const ProductBox = ({ basePrice, description, imageURL, name, productId, gradient }: TProductBox) => {
   const { onOpen: openDialog, setAuthUrl } = useDialog();
   const { addToBasket: clientAddToBasket } = useTebex();
+  const { formatPrice } = useCurrency();
   const { mutate: addToBasket, isLoading } = trpc.addToBasket.useMutation({
     onSuccess: (response) => {
       if (response.status === 'success') {
@@ -75,7 +77,7 @@ const ProductBox = ({ basePrice, description, imageURL, name, productId, gradien
         <div className="font-bold tracking-wide group-hover:text-primary transition-colors">{name}</div>
         {/* Footer */}
         <div className="flex justify-between items-center">
-          <span className="font-extrabold">{basePrice} EUR</span>
+          <span className="font-extrabold">{formatPrice(basePrice)}</span>
           <div className="flex mr-2 gap-x-4">
             <Popover>
               <PopoverTrigger>

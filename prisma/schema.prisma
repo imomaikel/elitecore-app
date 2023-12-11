@@ -15,10 +15,11 @@ model App_Log {
 }
 
 model Config {
-  id                       Int    @id @default(autoincrement())
-  rconPassword             String @db.VarChar(1024)
-  serverStatusUpdateDelay  Int    @default(5) @db.TinyInt
-  serverControlUpdateDelay Int    @default(3) @db.TinyInt
+  id                       Int      @id @default(autoincrement())
+  rconPassword             String   @db.VarChar(1024)
+  serverStatusUpdateDelay  Int      @default(5) @db.TinyInt
+  serverControlUpdateDelay Int      @default(3) @db.TinyInt
+  currenciesLastUpdated    DateTime @default(now())
 }
 
 model Server {
@@ -89,6 +90,14 @@ model Bot {
   gameName        String?
 }
 
+model Currencies {
+  id   Int    @id @default(autoincrement())
+  code String
+  rate Float
+
+  @@unique([code])
+}
+
 // NextAuth
 model Account {
   id                String  @id @default(cuid())
@@ -132,6 +141,7 @@ model User {
   selectedDiscordId String?
   basketIdent       String?
   basketAuthUrl     String?
+  currency          String?
 
   Admin_Log Admin_Log[]
   createdAt DateTime    @default(now())

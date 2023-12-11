@@ -50,3 +50,55 @@ export const panelTabs = [
     ],
   },
 ];
+
+export const CURRENCIES = ['AUD', 'BRL', 'CAD', 'DKK', 'EUR', 'NOK', 'NZD', 'PLN', 'GBP', 'SEK', 'USD'] as const;
+export type TCurrency = {
+  code: (typeof CURRENCIES)[number];
+  rate: number;
+};
+export const LOCALE_CODES = [
+  {
+    code: 'AUD',
+    locale: 'ar-SA',
+  },
+  {
+    code: 'BRL',
+    locale: 'pt-BR',
+  },
+  {
+    code: 'CAD',
+    locale: 'en-CA',
+  },
+  {
+    code: 'DKK',
+    locale: 'da-DK',
+  },
+  {
+    code: 'EUR',
+    locale: undefined,
+  },
+  {
+    code: 'NOK',
+    locale: 'nb-NO',
+  },
+  {
+    code: 'NZD',
+    locale: 'en-NZ',
+  },
+  {
+    code: 'PLN',
+    locale: 'pl-PL',
+  },
+  {
+    code: 'GBP',
+    locale: 'en-GB',
+  },
+  {
+    code: 'SEK',
+    locale: 'sv-SE',
+  },
+  {
+    code: 'USD',
+    locale: 'en-US',
+  },
+];

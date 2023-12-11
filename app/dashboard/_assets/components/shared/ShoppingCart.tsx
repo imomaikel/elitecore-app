@@ -2,6 +2,7 @@
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/shared/components/ui/sheet';
 import { Alert, AlertDescription, AlertTitle } from '@/shared/components/ui/alert';
 import { Button } from '@/shared/components/ui/button';
+import { useCurrency } from '@/hooks/use-currency';
 import { FaDollarSign } from 'react-icons/fa6';
 import { useSession } from 'next-auth/react';
 import { useTebex } from '@/hooks/use-tebex';
@@ -16,6 +17,7 @@ const BASE_URL = process.env.NEXT_PUBLIC_TEBEX_BASE_URL;
 const ShoppingCart = () => {
   const [isDataReady, setIsDataReady] = useState(false);
   const { categoryList, setBasket, basket } = useTebex();
+  const { formatPrice } = useCurrency();
   const { isOpen, onOpenChange } = useSheet();
   const { data: session } = useSession();
 
@@ -61,15 +63,15 @@ const ShoppingCart = () => {
                 <div className="my-4">
                   <div className="flex justify-between font-medium">
                     <span>Base price:</span>
-                    <span>{basket.base_price}</span>
+                    <span>{formatPrice(basket.base_price)}</span>
                   </div>
                   <div className="flex justify-between font-medium">
                     <span>Tax:</span>
-                    <span>{basket.sales_tax}</span>
+                    <span>{formatPrice(basket.sales_tax)}</span>
                   </div>
                   <div className="flex justify-between font-medium">
                     <span>Total price:</span>
-                    <span>{basket.total_price}</span>
+                    <span>{formatPrice(basket.total_price)}</span>
                   </div>
                   <Alert className="my-2 z-10 relative">
                     <div className="bg-gradient-to-r from-red-500 to-red-800 w-[75%] h-[50%] left-[50%] -translate-x-[50%]  blur-[150px] absolute top-0 opacity-75 z-0" />
@@ -81,7 +83,7 @@ const ShoppingCart = () => {
                     </AlertDescription>
                   </Alert>
                 </div>
-                <div>
+                <div className="z-10 relative">
                   {basket.packages.map((basketItem, index) => {
                     const productData = categoryList
                       .find((category) => category.packages.find((entry) => entry.id === basketItem.id))

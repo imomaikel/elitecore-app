@@ -5,26 +5,59 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/shared/components/ui/avat
 import { useMobileSidebar } from '@/hooks/use-mobile-sidebar';
 import { Separator } from '@/shared/components/ui/separator';
 import { Skeleton } from '@/shared/components/ui/skeleton';
+import { useCurrencyStorage } from '@/hooks/use-currency';
 import { MdOutlineShoppingCart } from 'react-icons/md';
 import { Button } from '@/shared/components/ui/button';
 import { signOut, useSession } from 'next-auth/react';
+import { CURRENCIES, TCurrency } from '@/constans';
 import { GiHamburgerMenu } from 'react-icons/gi';
 import { FiChevronsDown } from 'react-icons/fi';
 import { useSheet } from '@/hooks/use-sheet';
+import { useTebex } from '@/hooks/use-tebex';
+import { useEffect, useState } from 'react';
 import { useTheme } from 'next-themes';
 import Image from 'next/image';
 import { toast } from 'sonner';
+import { trpc } from '@/trpc';
 import Link from 'next/link';
 
 const Navbar = () => {
+  const { setSelectedCurrency, selected, lastUpdatedAt, setCurrencies, setLastUpdated, currencies } =
+    useCurrencyStorage();
   const { onOpen: openMobileSidebar } = useMobileSidebar();
+  const [isMounted, setIsMounted] = useState(false);
   const { onOpen: openShoppingCart } = useSheet();
   const { setTheme } = useTheme();
   const { data } = useSession();
+  const { basket } = useTebex();
 
-  const updateCurrency = () => {
+  const { mutate: refreshCurrencies } = trpc.getCurrencies.useMutation({
+    onSuccess: (response) => {
+      setCurrencies(response as TCurrency[]);
+      setLastUpdated(new Date());
+    },
+  });
+
+  useEffect(() => {
+    let requestNewCurrencies = false;
+    if (!lastUpdatedAt || !currencies || currencies.length <= 0) {
+      requestNewCurrencies = true;
+    } else {
+      const minutesAfterUpdate = Math.round((new Date().getTime() - new Date(lastUpdatedAt).getTime()) / 60_000);
+      if (minutesAfterUpdate >= 60 * 6) requestNewCurrencies = true;
+    }
+
+    if (requestNewCurrencies) refreshCurrencies();
+
+    setIsMounted(true);
+  }, []);
+
+  const updateCurrency = (value: TCurrency['code']) => {
     toast.info('Currency updated');
+    setSelectedCurrency(value);
   };
+
+  const cartSize = basket?.packages.length ?? 0;
 
   return (
     <div className="w-full h-16 fixed right-0 top-0 z-10 bg-background shadow-sm dark:md:shadow-md dark:md:shadow-black/90">
@@ -79,13 +112,16 @@ const Navbar = () => {
                 <Separator className="my-2" />
                 <div className="mb-1">Your currency</div>
                 {/* TODO HOOK */}
-                <Select onValueChange={updateCurrency}>
+                <Select onValueChange={updateCurrency} value={selected}>
                   <SelectTrigger className="w-[180px]">
                     <SelectValue placeholder="Currency" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="usd">USD</SelectItem>
-                    <SelectItem value="eur">EUR</SelectItem>
+                    {CURRENCIES.map((currency) => (
+                      <SelectItem key={currency} value={currency}>
+                        {currency}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
                 <Separator className="my-2" />
@@ -111,16 +147,13 @@ const Navbar = () => {
                 </Button>
               </PopoverContent>
             </Popover>
-            {/* SSR */}
-            <div
-              className="relative cursor-pointer transition-colors
-              group after:content-[attr(data-cart-size)]
-              data-[cart-size]:after:bg-primary after:text-center
-              after:h-6 after:w-6 after:rounded-full after:absolute sm:after:-top-3 sm:after:-right-3 after:-top-3 after:right-0"
-              data-cart-size="2"
-              onClick={openShoppingCart}
-            >
-              <MdOutlineShoppingCart className="w-7 h-7 md:ml-3 group-hover:text-primary mr-3 sm:mr-0" />
+            <div className="md:ml-3 mr-3 sm:mr-0 relative cursor-pointer group" onClick={openShoppingCart}>
+              {isMounted && cartSize >= 1 && (
+                <div className="w-6 h-6 absolute bg-primary rounded-full -top-3 -right-3 flex items-center justify-center">
+                  {cartSize}
+                </div>
+              )}
+              <MdOutlineShoppingCart className="w-8 h-8 group-hover:text-primary transition-colors" />
             </div>
           </div>
         </div>

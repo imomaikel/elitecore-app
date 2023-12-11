@@ -1,11 +1,18 @@
 import { addProduct, removeProduct, shopGetCategories } from '../../../_shared/lib/tebex';
-import { authorizedProcedure, router } from './trpc';
+import { authorizedProcedure, publicProcedure, router } from './trpc';
 import { adminRouter } from './admin-router';
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 
 export const appRouter = router({
   admin: adminRouter,
+  getCurrencies: publicProcedure.mutation(async ({ ctx }) => {
+    const { prisma } = ctx;
+
+    const currencies = await prisma.currencies.findMany({ select: { code: true, rate: true } });
+
+    return currencies;
+  }),
   removeFromBasket: authorizedProcedure.input(z.object({ productId: z.number() })).mutation(async ({ ctx, input }) => {
     const { user } = ctx;
     const { productId } = input;
@@ -56,7 +63,8 @@ export const appRouter = router({
       }
     }
 
-    if (!allowRefetch) throw new TRPCError({ code: 'TOO_MANY_REQUESTS' });
+    // if (!allowRefetch) throw new TRPCError({ code: 'TOO_MANY_REQUESTS' });
+    if (!allowRefetch) return undefined;
 
     const categories = await shopGetCategories();
 

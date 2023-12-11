@@ -8,7 +8,16 @@ const t = initTRPC.context<ExpressContext>().create();
 
 export const router = t.router;
 export const middleware = t.middleware;
-export const publicProcedure = t.procedure;
+
+const prismaContext = middleware(({ next }) => {
+  return next({
+    ctx: {
+      prisma,
+    },
+  });
+});
+
+export const publicProcedure = t.procedure.use(prismaContext);
 
 const isLoggedIn = middleware(async ({ ctx, next }) => {
   const { req } = ctx;

@@ -6,6 +6,7 @@ interface NextAuthUser {
   isAdmin?: boolean;
   selectedGuildId?: string | null;
   basketIdent?: string | null;
+  currency?: string;
 }
 export interface NextAuthSession {
   user: NextAuthUser & DefaultSession['user'];

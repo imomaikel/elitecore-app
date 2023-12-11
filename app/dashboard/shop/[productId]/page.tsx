@@ -36,7 +36,7 @@ const ProductPage = ({ params }: TProductPage) => {
   if (isMounted && product) {
     return (
       <ProductBox
-        basePrice={product.base_price}
+        basePrice={product.total_price}
         description={product.description}
         imageURL={product.image ?? '/logo.png'}
         name={product.name}

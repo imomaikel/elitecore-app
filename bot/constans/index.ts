@@ -1,4 +1,8 @@
-export type TEnvVars = 'DISCORD_DEVELOPMENT_BOT_TOKEN' | 'DISCORD_PRODUCTION_BOT_TOKEN' | 'NODE_ENV';
+export type TEnvVars =
+  | 'DISCORD_DEVELOPMENT_BOT_TOKEN'
+  | 'DISCORD_PRODUCTION_BOT_TOKEN'
+  | 'NODE_ENV'
+  | 'EXCHANGE_RATES_API_URL';
 
 // https://flatuicolors.com/
 export const colors = {

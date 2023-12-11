@@ -78,7 +78,7 @@ const CategoryPage = ({ params }: TParams) => {
         {category?.packages.map((categoryPackage) => (
           <ProductBox
             key={categoryPackage.id}
-            basePrice={categoryPackage.base_price}
+            basePrice={categoryPackage.total_price}
             description={categoryPackage.description}
             imageURL={categoryPackage.image ?? '/logo.png'}
             name={categoryPackage.name}

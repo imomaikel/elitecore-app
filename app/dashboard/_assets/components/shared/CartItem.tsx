@@ -5,6 +5,7 @@ import { ImSpinner9 } from 'react-icons/im';
 import Image from 'next/image';
 import { toast } from 'sonner';
 import { trpc } from '@/trpc';
+import { useCurrency } from '@/hooks/use-currency';
 
 type TCartItem = {
   productItem: Package | undefined;
@@ -12,6 +13,7 @@ type TCartItem = {
 };
 const CartItem = ({ basketItem, productItem }: TCartItem) => {
   const { removeFromBasket: clientRemoveFromBasket } = useTebex();
+  const { formatPrice } = useCurrency();
   const image = productItem?.image ?? '/logo.png';
 
   const { mutate: removeFromBasket, isLoading } = trpc.removeFromBasket.useMutation({
@@ -29,7 +31,7 @@ const CartItem = ({ basketItem, productItem }: TCartItem) => {
   });
 
   return (
-    <div className="my-6 group hover:bg-muted-foreground/25 rounded-tr-md rounded-br-md transition-colors flex relative">
+    <div className="my-6 group hover:bg-muted-foreground/25 rounded-md transition-colors flex relative">
       <div className="h-16 w-16">
         {isLoading ? (
           <ImSpinner9 className="h-full w-full animate-spin p-4" />
@@ -50,7 +52,7 @@ const CartItem = ({ basketItem, productItem }: TCartItem) => {
         <div className="px-2 flex justify-between items-center pb-2">
           {/* TODO: PRICE HOOK */}
           <div className="flex">
-            <div className="w-24 font-semibold">{basketItem.in_basket.price} EUR</div>
+            <div className="w-24 font-semibold">{formatPrice(basketItem.in_basket.price)}</div>
             <div className="">x{basketItem.in_basket.quantity}</div>
           </div>
           <div>
