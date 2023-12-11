@@ -1,5 +1,6 @@
 import { createJSONStorage, persist } from 'zustand/middleware';
 import { LOCALE_CODES, TCurrency } from '@/constans';
+import { useEffect, useState } from 'react';
 import { create } from 'zustand';
 
 type TUseCurrency = {
@@ -27,6 +28,9 @@ export const useCurrencyStorage = create<TUseCurrency>()(
 
 export const useCurrency = () => {
   const { selected, currencies } = useCurrencyStorage();
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => setIsMounted(true), []);
 
   const createFormat = (price: number, code: TCurrency['code']) => {
     return new Intl.NumberFormat(LOCALE_CODES.find((entry) => entry.code === code)?.locale ?? undefined, {
@@ -36,6 +40,7 @@ export const useCurrency = () => {
   };
 
   const formatPrice = (price: number) => {
+    if (!isMounted) return;
     if (currencies.length <= 0 || selected === 'EUR') {
       return createFormat(price, 'EUR');
     }
