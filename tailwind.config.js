@@ -20,6 +20,11 @@ module.exports = {
       screens: {
         "3xl": "1850px",
       },
+      maxWidth: {
+        "8xl": "1408px",
+        "9xl": "1536px",
+        "10xl": "1664px"
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

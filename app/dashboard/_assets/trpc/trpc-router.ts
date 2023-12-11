@@ -1,4 +1,4 @@
-import { addProduct, shopGetCategories } from '../../../_shared/lib/tebex';
+import { addProduct, removeProduct, shopGetCategories } from '../../../_shared/lib/tebex';
 import { authorizedProcedure, router } from './trpc';
 import { adminRouter } from './admin-router';
 import { TRPCError } from '@trpc/server';
@@ -6,6 +6,17 @@ import { z } from 'zod';
 
 export const appRouter = router({
   admin: adminRouter,
+  removeFromBasket: authorizedProcedure.input(z.object({ productId: z.number() })).mutation(async ({ ctx, input }) => {
+    const { user } = ctx;
+    const { productId } = input;
+
+    const response = await removeProduct({
+      productId,
+      user,
+    });
+
+    return response;
+  }),
   addToBasket: authorizedProcedure.input(z.object({ productId: z.number() })).mutation(async ({ ctx, input }) => {
     const { req, user } = ctx;
     const { productId } = input;

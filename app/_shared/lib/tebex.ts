@@ -11,6 +11,7 @@ import {
   AddPackageToBasket,
   GetBasketAuthUrl,
   Basket,
+  RemovePackage,
 } from 'tebex_headless';
 
 export const shopGetCategories = async (): Promise<Category[] | []> => {
@@ -90,14 +91,17 @@ type TAddProductToBasket = {
   userId: string;
   productId: number;
 };
-const addProductToBasket = async ({
-  userId,
-  productId,
-}: TAddProductToBasket): Promise<{
-  status: 'success' | 'error';
-  message?: 'Unauthorized' | 'Basket does not exist' | 'Basket not authorized' | 'Internal error' | 'Unknown error';
-  extraMessage?: string | Basket;
-}> => {
+type TAddProductToBasketResponse =
+  | {
+      status: 'success';
+      data: Basket;
+    }
+  | {
+      status: 'error';
+      message: 'Unauthorized' | 'Basket does not exist' | 'Basket not authorized' | 'Internal error' | 'Unknown error';
+      errorMessage?: string;
+    };
+const addProductToBasket = async ({ userId, productId }: TAddProductToBasket): Promise<TAddProductToBasketResponse> => {
   const userData = await prisma.user.findFirst({
     where: { id: userId },
   });
@@ -112,7 +116,7 @@ const addProductToBasket = async ({
     const addedProduct = await AddPackageToBasket(userData.basketIdent, productId, 1, 'single');
     return {
       status: 'success',
-      extraMessage: addedProduct,
+      data: addedProduct,
     };
   } catch (error: any) {
     if (error?.response?.data?.detail) {
@@ -120,7 +124,7 @@ const addProductToBasket = async ({
       if (detail === 'User must login before adding packages to basket') {
         return { status: 'error', message: 'Basket not authorized' };
       } else {
-        return { status: 'error', message: 'Unknown error', extraMessage: error.response.data.detail };
+        return { status: 'error', message: 'Unknown error', errorMessage: error.response.data.detail };
       }
     } else {
       console.log('Add product - error', error);
@@ -134,20 +138,22 @@ type TAddProduct = {
   user: NextAuthUser;
   productId: number;
 };
-export const addProduct = async ({
-  ipAddress,
-  user,
-  productId,
-}: TAddProduct): Promise<{
-  status: 'error' | 'success';
-  message?:
-    | 'Unauthorized'
-    | 'Internal error'
-    | 'Could not find the basket auth url'
-    | 'Basket not authorized'
-    | 'Unknown error';
-  extraMessage?: Basket | string;
-}> => {
+type TAddProductResponse =
+  | {
+      status: 'success';
+      data: Basket;
+    }
+  | {
+      status: 'error';
+      message:
+        | 'Unauthorized'
+        | 'Internal error'
+        | 'Could not find the basket auth url'
+        | 'Basket not authorized'
+        | 'Unknown error';
+      errorMessage?: string;
+    };
+export const addProduct = async ({ ipAddress, user, productId }: TAddProduct): Promise<TAddProductResponse> => {
   if (!ipAddress || !user.id) {
     return {
       status: 'error',
@@ -163,7 +169,7 @@ export const addProduct = async ({
   if (addedProduct.status === 'success') {
     return {
       status: 'success',
-      extraMessage: addedProduct.extraMessage as Basket,
+      data: addedProduct.data as Basket,
     };
   } else if (addedProduct.message === 'Basket does not exist') {
     const newBasket = await createBasket({
@@ -182,7 +188,7 @@ export const addProduct = async ({
       return {
         status: 'error',
         message: 'Basket not authorized',
-        extraMessage: newBasket.authUrl,
+        errorMessage: newBasket.authUrl,
       };
     }
   } else if (addedProduct.message === 'Basket not authorized') {
@@ -199,13 +205,64 @@ export const addProduct = async ({
     return {
       status: 'error',
       message: 'Basket not authorized',
-      extraMessage: userData.basketAuthUrl,
+      errorMessage: userData.basketAuthUrl,
     };
   } else {
     return {
       status: 'error',
       message: 'Unknown error',
-      extraMessage: addedProduct.extraMessage ?? addedProduct.message,
+      errorMessage: addedProduct.errorMessage ?? addedProduct.message,
     };
+  }
+};
+
+type TRemoveProduct = {
+  user: NextAuthUser;
+  productId: number;
+};
+type TRemoveProductResponse =
+  | {
+      status: 'error';
+      message: 'Unauthorized' | 'Something went wrong' | 'Unknown error' | 'Internal error' | 'Basket does not exist';
+      extraMessage?: string;
+    }
+  | {
+      status: 'success';
+      data: Basket;
+    };
+export const removeProduct = async ({ productId, user }: TRemoveProduct): Promise<TRemoveProductResponse> => {
+  if (!user.id) {
+    return {
+      status: 'error',
+      message: 'Unauthorized',
+    };
+  }
+  if (!user.basketIdent) {
+    return {
+      status: 'error',
+      message: 'Basket does not exist',
+    };
+  }
+
+  SetWebstoreIdentifier(process.env.NEXT_PUBLIC_TEBEX_WEBSTORE_IDENTIFIER!);
+
+  try {
+    const updatedBasket = await RemovePackage(user.basketIdent, productId);
+    return {
+      status: 'success',
+      data: updatedBasket,
+    };
+  } catch (error: any) {
+    if (error?.response?.data?.detail) {
+      const detail = error.response.data.detail;
+      return {
+        status: 'error',
+        message: 'Unknown error',
+        extraMessage: detail,
+      };
+    } else {
+      console.log('Remove product - error', error);
+      return { status: 'error', message: 'Internal error' };
+    }
   }
 };

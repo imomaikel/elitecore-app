@@ -11,7 +11,7 @@ type TUserMention = {
 };
 const UserMention = ({ className, avatarURL, username, text }: TUserMention) => {
   return (
-    <div className={cn('flex flex-row space-x-4 items-center w-[260px] px-2 py-1 rounded-md shadows-md', className)}>
+    <div className={cn('flex flex-row space-x-4 items-center w-[260px] px-2 py-1 rounded-md', className)}>
       <Avatar>
         {/* TODO SSR */}
         <AvatarImage src={avatarURL} />

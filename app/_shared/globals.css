@@ -72,12 +72,5 @@
 }
 .progressAnimation {
   background-size: 400%;
-  animation: 3s progress ease infinite;
-}
-
-.shadows-md {
-  @apply shadow-md dark:shadow-lg dark:shadow-black/90;
-}
-.shadows-lg {
-  @apply shadow-lg dark:shadow-lg dark:shadow-black/90;
+  animation: 5s progress ease infinite;
 }

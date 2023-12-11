@@ -1,11 +1,11 @@
 import { create } from 'zustand';
 
-type TUseCart = {
+type TUseSheet = {
   isOpen: boolean;
   onOpen: () => void;
   onOpenChange: () => void;
 };
-export const useCart = create<TUseCart>()((set) => ({
+export const useSheet = create<TUseSheet>()((set) => ({
   isOpen: false,
   onOpen: () => set(() => ({ isOpen: true })),
   onOpenChange: () => set(() => ({ isOpen: false })),

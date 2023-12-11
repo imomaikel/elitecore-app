@@ -1,34 +1,102 @@
 'use client';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/shared/components/ui/sheet';
+import { Alert, AlertDescription, AlertTitle } from '@/shared/components/ui/alert';
+import { Button } from '@/shared/components/ui/button';
+import { FaDollarSign } from 'react-icons/fa6';
+import { useSession } from 'next-auth/react';
+import { useTebex } from '@/hooks/use-tebex';
+import { useSheet } from '@/hooks/use-sheet';
 import { useEffect, useState } from 'react';
-import { useCart } from '@/hooks/use-cart';
-import { useBasket } from '@/hooks/use-basket';
-import Loader from './Loader';
+import CartItem from './CartItem';
+import Image from 'next/image';
+
+const WEBSTORE_IDENTIFIER = process.env.NEXT_PUBLIC_TEBEX_WEBSTORE_IDENTIFIER;
+const BASE_URL = process.env.NEXT_PUBLIC_TEBEX_BASE_URL;
 
 const ShoppingCart = () => {
-  const { isOpen, onOpenChange } = useCart();
-  const [isMounted, setIsMounted] = useState(false);
-  const { basketData, isBasketLoading } = useBasket();
+  const [isDataReady, setIsDataReady] = useState(false);
+  const { categoryList, setBasket, basket } = useTebex();
+  const { isOpen, onOpenChange } = useSheet();
+  const { data: session } = useSession();
 
   useEffect(() => {
-    setIsMounted(true);
-  }, []);
+    if (!session?.user || !session.user.basketIdent) return;
+    const url = `${BASE_URL}/api/accounts/${WEBSTORE_IDENTIFIER}/baskets/${session.user.basketIdent}`;
+    fetch(url, { method: 'GET' })
+      .then((res) => res.json())
+      .then((response) => {
+        setBasket(response.data);
+        setIsDataReady(true);
+      });
+  }, [session]);
 
-  if (!isMounted || isBasketLoading) return;
+  if (!isDataReady) return;
 
   return (
     <Sheet open={isOpen} onOpenChange={onOpenChange}>
-      <SheetContent>
+      <SheetContent className="overflow-y-auto">
         <SheetHeader>
-          <SheetTitle>Your cart</SheetTitle>
-          {isBasketLoading ? (
-            <Loader />
-          ) : basketData ? (
-            basketData.packages?.map((product) => <p key={product.id}>{product.name}</p>)
-          ) : (
-            'Fail'
-          )}
+          <SheetTitle className="mb-2">Your cart ({basket?.packages.length ?? 0})</SheetTitle>
         </SheetHeader>
+
+        <div className="relative">
+          {basket && basket?.packages.length >= 1 && (
+            <div className="bg-gradient-to-r from-red-800 via-yellow-600 to-yellow-500 absolute h-80 w-[30%] right-28 -rotate-45 opacity-75 blur-[175px] z-0" />
+          )}
+          <div className="relative">
+            {!basket || basket.packages.length <= 0 ? (
+              <div className="flex flex-col select-none">
+                <div className="w-full h-[350px] md:h-[450px]">
+                  <Image src="/emptyCart.png" fill alt="empty cart" className="mt-4" />
+                </div>
+                <span className="font-bold">Your cart is empty!</span>
+              </div>
+            ) : (
+              <div>
+                <div className="space-x-4 z-10 relative">
+                  <Button>Checkout</Button>
+                  <Button variant="ghost">View details</Button>
+                </div>
+                {/* TODO PRICE HOOK */}
+                <div className="my-4">
+                  <div className="flex justify-between font-medium">
+                    <span>Base price:</span>
+                    <span>{basket.base_price}</span>
+                  </div>
+                  <div className="flex justify-between font-medium">
+                    <span>Tax:</span>
+                    <span>{basket.sales_tax}</span>
+                  </div>
+                  <div className="flex justify-between font-medium">
+                    <span>Total price:</span>
+                    <span>{basket.total_price}</span>
+                  </div>
+                  <Alert className="my-2 z-10 relative">
+                    <div className="bg-gradient-to-r from-red-500 to-red-800 w-[75%] h-[50%] left-[50%] -translate-x-[50%]  blur-[150px] absolute top-0 opacity-75 z-0" />
+                    <FaDollarSign className="h-4 w-4" />
+                    <AlertTitle className="z-10 relative">Heads up!</AlertTitle>
+                    <AlertDescription className="text-xs relative z-10">
+                      Please note that currency exchange rates may cause slight adjustments to your order total at
+                      checkout. We aim for transparency and assure you any changes will be minimal.
+                    </AlertDescription>
+                  </Alert>
+                </div>
+                <div>
+                  {basket.packages.map((basketItem, index) => {
+                    const productData = categoryList
+                      .find((category) => category.packages.find((entry) => entry.id === basketItem.id))
+                      ?.packages.find((entry) => entry.id === basketItem.id);
+                    return (
+                      <CartItem key={`${basketItem.id}${index}`} basketItem={basketItem} productItem={productData} />
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            <div className="bg-gradient-to-r from-slate-900 via-purple-900 to-slate-900 absolute h-80 w-[30%] right-28 -rotate-45 opacity-75 bottom-0 blur-[175px] z-0" />
+          </div>
+        </div>
       </SheetContent>
     </Sheet>
   );

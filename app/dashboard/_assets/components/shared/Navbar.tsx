@@ -10,7 +10,7 @@ import { Button } from '@/shared/components/ui/button';
 import { signOut, useSession } from 'next-auth/react';
 import { GiHamburgerMenu } from 'react-icons/gi';
 import { FiChevronsDown } from 'react-icons/fi';
-import { useCart } from '@/hooks/use-cart';
+import { useSheet } from '@/hooks/use-sheet';
 import { useTheme } from 'next-themes';
 import Image from 'next/image';
 import { toast } from 'sonner';
@@ -18,7 +18,7 @@ import Link from 'next/link';
 
 const Navbar = () => {
   const { onOpen: openMobileSidebar } = useMobileSidebar();
-  const { onOpen: openShoppingCart } = useCart();
+  const { onOpen: openShoppingCart } = useSheet();
   const { setTheme } = useTheme();
   const { data } = useSession();
 
