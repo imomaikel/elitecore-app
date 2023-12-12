@@ -16,7 +16,7 @@ asaCheck = "ASA"
 # Extract data using regex
 def findUsingRegex(script, regex):
     output = None
-    findInScript = re.findall(regex, script)
+    findInScript = re.findall(regex, script, flags=re.I)
     if findInScript and findInScript[0]:
         output = findInScript[0].split('=')[1]
     return output

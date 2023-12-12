@@ -3,6 +3,7 @@ import { Client, GatewayIntentBits } from 'discord.js';
 import type { Server } from '@prisma/client';
 import logger from '../../scripts/logger';
 import { clientBots } from '../../client';
+import { getEnv } from '../../utils/env';
 import prisma from '../../lib/prisma';
 
 type TServer = Server & {
@@ -13,6 +14,7 @@ type TServer = Server & {
  */
 export const updateBots = async (servers: TServer[]) => {
   if (servers.length === 0) return;
+  if (getEnv('NODE_ENV') !== 'production') return;
 
   const serversSize = servers.length;
   const botsSize = clientBots.length;

@@ -17,7 +17,7 @@ def getServerRCONStatus(port: int, password: str, multiHome: str | None, mapName
         # Find RCON address
         addr = multiHome if not multiHome == None else '127.0.0.1'
         playerCount = 0
-        with Client(addr, port, passwd=password, timeout=1) as client:
+        with Client(addr, port, passwd=password, timeout=3) as client:
             command = client.run('ListPlayers')
             if command == 'No Players Connected':
                 status = 'online'
