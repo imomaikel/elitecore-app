@@ -30,6 +30,9 @@ const authOptions: NextAuthOptions = {
           data: { discordId: token.discordId },
         });
       }
+      if (getUserData?.steamId) {
+        session.user.steamId = getUserData.steamId;
+      }
       if (session.user.image?.includes('http') && getUserData?.avatar !== session.user.image) {
         await prisma.user.update({
           where: { id: token.uid },

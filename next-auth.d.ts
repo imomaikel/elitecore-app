@@ -7,6 +7,7 @@ interface NextAuthUser {
   selectedGuildId?: string | null;
   basketIdent?: string | null;
   currency?: string;
+  steamId?: string;
 }
 export interface NextAuthSession {
   user: NextAuthUser & DefaultSession['user'];

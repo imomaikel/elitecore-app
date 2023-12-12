@@ -41,8 +41,19 @@ const handleWebhookEvent = async ({ data, res }: THandleWebhookEvent) => {
       }
 
       const { transaction_id, customer, price_paid, status, fees } = data.subject;
+
+      const dbUser = await prisma.user.findFirst({
+        where: { steamId: customer.username.id },
+      });
+      if (!dbUser || dbUser.steamId !== customer.username.id) return res.status(500).send('Could not find the user');
+
       const query = await prisma.payment.create({
         data: {
+          user: {
+            connect: {
+              steamId: customer.username.id,
+            },
+          },
           customerCountry: customer.country,
           customerEmail: customer.email,
           customerSteamId: customer.username.id,
