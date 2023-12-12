@@ -3,15 +3,17 @@ import { appRouter } from '../app/dashboard/_assets/trpc/trpc-router';
 import { getPort, nextApp, nextRequestHandler } from '../app/next';
 import { dataReceived } from '../bot/helpers/api';
 import buildNextApp from 'next/dist/build';
+import { IncomingMessage } from 'http';
+import webhookHandler from './webhooks';
 import bodyParser from 'body-parser';
 import express from 'express';
 
 // Create express server
 const app = express();
 const PORT = getPort();
-const jsonParser = bodyParser.json();
 const createContext = async ({ req, res }: CreateExpressContextOptions) => ({ req, res });
 export type ExpressContext = Awaited<ReturnType<typeof createContext>>;
+export type TWebhookRequest = IncomingMessage & { rawBody: Buffer };
 
 // Initialize app and server
 (() => {
@@ -36,7 +38,7 @@ export type ExpressContext = Awaited<ReturnType<typeof createContext>>;
   );
 
   // API Server
-  app.use('/api/manager', jsonParser, (req, res) => {
+  app.use('/api/manager', bodyParser.json(), (req, res) => {
     if (
       !(
         req.socket.remoteAddress === '127.0.0.1' ||
@@ -51,10 +53,20 @@ export type ExpressContext = Awaited<ReturnType<typeof createContext>>;
       const data = req.body['data'];
       if (!(command && data)) return;
       dataReceived(command, data);
-
       res.sendStatus(200);
     } catch {}
   });
+
+  // Listen for webhooks
+  app.use(
+    '/api/webhooks',
+    bodyParser.json({
+      verify: (req: TWebhookRequest, _, buf) => {
+        req.rawBody = buf;
+      },
+    }),
+    webhookHandler,
+  );
 
   // Start the app
   app.use((req, res) => nextRequestHandler(req, res));
