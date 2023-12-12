@@ -1,6 +1,7 @@
 import { Progress } from '@/shared/components/ui/progress';
 import UserMention from './_components/UserMention';
 import ProductBox from '../_assets/components/shared/ProductBox';
+import RecentPayments from './_components/RecentPayments';
 
 const DashboardPage = () => {
   return (
@@ -19,18 +20,10 @@ const DashboardPage = () => {
         {/* Top Donator */}
         <div>
           <h1 className="font-semibold text-xl md:text-2xl text-primary">Top Donator</h1>
-          <UserMention avatarURL="" username="imomaikel" text="Paid the most this month" />
+          <UserMention avatarUrl="" username="imomaikel" text="Paid the most this month" />
         </div>
         {/* Recent Payments */}
-        <div>
-          <h1 className="font-semibold text-xl md:text-2xl text-primary">Recent Payments</h1>
-          <div className="flex flex-col gap-y-2">
-            <UserMention avatarURL="" username="imomaikel" />
-            <UserMention avatarURL="" username="imomaikel" />
-            <UserMention avatarURL="" username="imomaikel" />
-            <UserMention avatarURL="" username="imomaikel" />
-          </div>
-        </div>
+        <RecentPayments />
         {/* Payment Goal */}
         <div>
           <h1 className="font-semibold text-xl md:text-2xl text-primary">Monthly Costs</h1>

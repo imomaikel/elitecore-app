@@ -3,9 +3,31 @@ import { authorizedProcedure, publicProcedure, router } from './trpc';
 import { adminRouter } from './admin-router';
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
+import { GetBasket } from 'tebex_headless';
 
 export const appRouter = router({
   admin: adminRouter,
+  getRecentPayments: publicProcedure.query(async ({ ctx }) => {
+    const { prisma } = ctx;
+    const users = (
+      await prisma.payment.findMany({
+        orderBy: { createdAt: 'asc' },
+        take: 4,
+        include: {
+          user: {
+            select: {
+              avatar: true,
+              name: true,
+            },
+          },
+        },
+      })
+    ).map((entry) => ({
+      username: entry.user.name,
+      avatarUrl: entry.user.avatar,
+    }));
+    return users;
+  }),
   getCurrencies: publicProcedure.mutation(async ({ ctx }) => {
     const { prisma } = ctx;
 
@@ -28,11 +50,21 @@ export const appRouter = router({
     const { req, user } = ctx;
     const { productId } = input;
 
+    if (!user) throw new TRPCError({ code: 'BAD_REQUEST' });
+
     const response = await addProduct({
       ipAddress: req.ip,
       productId: productId,
       user,
     });
+
+    if (response.status === 'success' && !user.steamId && user.basketIdent) {
+      const getBasket = await GetBasket(user.basketIdent);
+      await prisma.user.update({
+        where: { discordId: user.discordId },
+        data: { steamId: getBasket.username_id },
+      });
+    }
 
     return response;
   }),
