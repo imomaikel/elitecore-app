@@ -58,7 +58,7 @@ const Navbar = () => {
   const cartSize = basket?.packages.length ?? 0;
 
   return (
-    <div className="w-full h-16 fixed right-0 top-0 z-10 bg-background shadow-sm md:shadow-black/90">
+    <div className="w-full h-16 fixed right-0 top-0 z-20 bg-background shadow-sm md:shadow-black/90">
       <nav className="h-full">
         <div className="h-full px-3 lg:px-8 md:px-6 flex justify-between">
           <div className="flex">

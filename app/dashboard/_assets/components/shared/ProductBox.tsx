@@ -49,7 +49,7 @@ const ProductBox = ({ basePrice, description, imageURL, name, productId, gradien
 
   // TODO: Price hook
   return (
-    <div className="relative group transition-transform hover:-translate-y-3">
+    <div className="relative group transition-transform hover:-translate-y-3 max-w-[225px]">
       {gradient && (
         <div className="bg-gradient-to-r from-orange-600 to-primary absolute h-[50%] w-[50%] opacity-50 blur-[125px] -rotate-[50deg] z-0" />
       )}
@@ -77,11 +77,11 @@ const ProductBox = ({ basePrice, description, imageURL, name, productId, gradien
         <div className="font-bold tracking-wide group-hover:text-primary transition-colors">{name}</div>
         {/* Footer */}
         <div className="flex justify-between items-center">
-          <span className="font-extrabold">{formatPrice(basePrice)}</span>
+          <div className="font-extrabold mr-3 w-[100px] h-6">{formatPrice(basePrice)}</div>
           <div className="flex mr-2 gap-x-4">
             <Popover>
               <PopoverTrigger>
-                <FaCircleInfo className="h-8 w-8 cursor-pointer relative hover:text-primary transition-colors" />
+                <FaCircleInfo className="h-7 w-7 cursor-pointer relative hover:text-primary transition-colors" />
               </PopoverTrigger>
               <PopoverContent className="max-h-[350px] overflow-y-auto">
                 <div dangerouslySetInnerHTML={{ __html: description }} />
@@ -105,6 +105,6 @@ const ProductBox = ({ basePrice, description, imageURL, name, productId, gradien
 };
 
 ProductBox.Skeleton = function ShowSkeleton() {
-  return <Skeleton className="w-[275px] h-[300px]"></Skeleton>;
+  return <Skeleton className="w-[200px] h-[300px]"></Skeleton>;
 };
 export default ProductBox;

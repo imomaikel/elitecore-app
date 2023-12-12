@@ -1,9 +1,9 @@
 import { addProduct, removeProduct, shopGetCategories } from '../../../_shared/lib/tebex';
 import { authorizedProcedure, publicProcedure, router } from './trpc';
 import { adminRouter } from './admin-router';
+import { GetBasket } from 'tebex_headless';
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
-import { GetBasket } from 'tebex_headless';
 
 const getCurrentMonth = () => {
   const dateFrom = new Date();
@@ -19,6 +19,33 @@ const getCurrentMonth = () => {
 
 export const appRouter = router({
   admin: adminRouter,
+  getTopPicks: publicProcedure
+    .input(z.object({ activeProducts: z.array(z.number()) }))
+    .query(async ({ ctx, input }) => {
+      const { prisma } = ctx;
+      const { activeProducts } = input;
+
+      const productsCount: { productId: number; count: number }[] = [];
+
+      const products = await prisma.product.findMany({
+        where: {
+          productId: {
+            in: activeProducts,
+          },
+        },
+      });
+      for (const product of products) {
+        const isAlready = productsCount.find((entry) => entry.productId === product.productId);
+        if (isAlready) {
+          isAlready.count++;
+        } else {
+          productsCount.push({ count: 1, productId: product.productId });
+        }
+      }
+
+      const descOrder = productsCount.sort((a, b) => b.count - a.count).map((entry) => entry.productId);
+      return descOrder;
+    }),
   getMonthlyCosts: publicProcedure.query(async ({ ctx }) => {
     const { prisma } = ctx;
 

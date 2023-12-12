@@ -18,6 +18,7 @@ module.exports = {
     },
     extend: {
       screens: {
+        "smb": "550px",
         "3xl": "1850px",
       },
       maxWidth: {
