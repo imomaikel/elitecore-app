@@ -189,6 +189,7 @@ model User {
 
   admin_log Admin_Log[]
   payments  Payment[]
+  totalPaid Float       @default(0)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

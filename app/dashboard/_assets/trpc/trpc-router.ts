@@ -7,6 +7,53 @@ import { GetBasket } from 'tebex_headless';
 
 export const appRouter = router({
   admin: adminRouter,
+  getTopDonators: publicProcedure.query(async ({ ctx }) => {
+    const { prisma } = ctx;
+
+    const topDonator = (
+      await prisma.user.findMany({
+        orderBy: { totalPaid: 'desc' },
+        where: {
+          totalPaid: {
+            not: 0,
+          },
+        },
+        take: 1,
+      })
+    ).map((user) => ({
+      username: user.name,
+      avatarUrl: user.avatar,
+    }));
+
+    const dateFrom = new Date();
+    const dateTo = new Date();
+    dateFrom.setDate(1);
+    dateTo.setMonth(dateTo.getMonth() + 1);
+    dateTo.setDate(0);
+
+    const topMonthDonator = (
+      await prisma.payment.findMany({
+        orderBy: { priceAmount: 'desc' },
+        take: 1,
+        where: {
+          priceAmount: {
+            not: 0,
+          },
+        },
+        include: {
+          user: true,
+        },
+      })
+    ).map((entry) => ({
+      username: entry.user.name,
+      avatarUrl: entry.user.avatar,
+    }));
+
+    return {
+      overall: topDonator,
+      thisMonth: topMonthDonator,
+    };
+  }),
   getRecentPayments: publicProcedure.query(async ({ ctx }) => {
     const { prisma } = ctx;
     const users = (

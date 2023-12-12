@@ -73,6 +73,14 @@ const handleWebhookEvent = async ({ data, res }: THandleWebhookEvent) => {
           },
         },
       });
+      await prisma.user.update({
+        where: { steamId: customer.username.id },
+        data: {
+          totalPaid: {
+            increment: price_paid.amount,
+          },
+        },
+      });
       if (query?.id) return res.status(200).send('Payment received');
       return res.status(500).send('Failed to store payment');
     }
