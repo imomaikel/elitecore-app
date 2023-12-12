@@ -5,8 +5,51 @@ import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 import { GetBasket } from 'tebex_headless';
 
+const getCurrentMonth = () => {
+  const dateFrom = new Date();
+  const dateTo = new Date();
+  dateFrom.setDate(1);
+  dateTo.setMonth(dateTo.getMonth() + 1);
+  dateTo.setDate(0);
+  return {
+    from: dateFrom,
+    to: dateTo,
+  };
+};
+
 export const appRouter = router({
   admin: adminRouter,
+  getMonthlyCosts: publicProcedure.query(async ({ ctx }) => {
+    const { prisma } = ctx;
+
+    const monthlyGoal = (
+      await prisma.config.findFirst({
+        select: { monthlyPaymentGoal: true },
+      })
+    )?.monthlyPaymentGoal;
+
+    if (!monthlyGoal) throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
+
+    const thisMonth = getCurrentMonth();
+
+    const paymentsThisMonth = (
+      await prisma.payment.findMany({
+        where: {
+          priceAmount: {
+            not: 0,
+          },
+          createdAt: {
+            gte: thisMonth.from,
+            lte: thisMonth.to,
+          },
+        },
+      })
+    ).reduce((acc, curr) => (acc += curr.priceAmount), 0);
+
+    const progress = Math.round((paymentsThisMonth / monthlyGoal) * 100);
+
+    return progress;
+  }),
   getTopDonators: publicProcedure.query(async ({ ctx }) => {
     const { prisma } = ctx;
 
@@ -25,11 +68,7 @@ export const appRouter = router({
       avatarUrl: user.avatar,
     }));
 
-    const dateFrom = new Date();
-    const dateTo = new Date();
-    dateFrom.setDate(1);
-    dateTo.setMonth(dateTo.getMonth() + 1);
-    dateTo.setDate(0);
+    const thisMonth = getCurrentMonth();
 
     const topMonthDonator = (
       await prisma.payment.findMany({
@@ -38,6 +77,10 @@ export const appRouter = router({
         where: {
           priceAmount: {
             not: 0,
+          },
+          createdAt: {
+            gte: thisMonth.from,
+            lte: thisMonth.to,
           },
         },
         include: {
@@ -59,6 +102,11 @@ export const appRouter = router({
     const users = (
       await prisma.payment.findMany({
         orderBy: { createdAt: 'asc' },
+        where: {
+          priceAmount: {
+            not: 0,
+          },
+        },
         take: 4,
         include: {
           user: {

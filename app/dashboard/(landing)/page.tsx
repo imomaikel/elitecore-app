@@ -1,7 +1,7 @@
 import ProductBox from '../_assets/components/shared/ProductBox';
-import { Progress } from '@/shared/components/ui/progress';
 import RecentPayments from './_components/RecentPayments';
 import TopDonators from './_components/TopDonators';
+import PaymentGoal from './_components/PaymentGoal';
 
 const DashboardPage = () => {
   return (
@@ -22,14 +22,7 @@ const DashboardPage = () => {
         {/* Recent Payments */}
         <RecentPayments />
         {/* Payment Goal */}
-        <div>
-          <h1 className="font-semibold text-xl md:text-2xl text-primary">Monthly Costs</h1>
-          <div className="relative">
-            <Progress value={50} />
-            <div className="bg-gradient-to-r from-slate-900 via-purple-900 to-slate-900 absolute w-[110%] -top-3 h-12 blur-[150px] opacity-75" />
-          </div>
-          <p>50% completed</p>
-        </div>
+        <PaymentGoal />
       </div>
       {/* Top Picks */}
       <div>
