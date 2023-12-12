@@ -118,6 +118,46 @@ model Account {
   @@unique([provider, providerAccountId])
 }
 
+model Product {
+  id             String    @id @default(cuid())
+  productId      Int
+  productName    String    @db.TinyText
+  categoryName   String    @db.TinyText
+  description    String    @db.Text
+  image          String?
+  totalPrice     Float
+  basePrice      Float
+  salesTax       Float
+  discount       Float
+  expirationDate DateTime?
+  quantity       Int       @default(1)
+
+  Payment   Payment @relation(fields: [paymentId], references: [id])
+  paymentId String
+
+  createdAt DateTime @default(now())
+}
+
+model Payment {
+  id                 String @id @default(cuid())
+  transactionId      String
+  status             String @db.TinyText
+  priceAmount        Float
+  priceCurrency      String @db.TinyText
+  taxFeeAmount       Float
+  taxFeeCurrency     String @db.TinyText
+  gatewayFeeAmount   Float
+  gatewayFeeCurrency String
+  customerEmail      String @db.TinyText
+  customerSteamId    String @db.TinyText
+  customerUsername   String @db.TinyText
+  customerCountry    String @db.TinyText
+
+  products Product[]
+
+  createdAt DateTime @default(now())
+}
+
 model Session {
   id           String   @id @default(cuid())
   sessionToken String   @unique
