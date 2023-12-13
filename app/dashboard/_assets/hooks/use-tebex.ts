@@ -15,8 +15,7 @@ type TUseTebex = {
   authRedirectUrl: string;
   setAuthRedirectUrl: (path: string) => void;
 
-  priceIncrease: (productId: number) => void;
-  priceDecrease: (productId: number) => void;
+  updatePrice: () => void;
 };
 export const useTebex = create<TUseTebex>()(
   persist(
@@ -27,42 +26,23 @@ export const useTebex = create<TUseTebex>()(
       basket: undefined,
       setBasket: (data) => set(() => ({ basket: data })),
 
-      priceIncrease: (productId) => {
-        const item = get()
-          .categoryList.find((category) => category.packages.find((entry) => entry.id === productId))
-          ?.packages.find((entry) => entry.id === productId);
-        if (!item) return;
+      updatePrice: () => {
+        const idsInBasket = get().basket?.packages.map((item) => item.id);
+        const allProducts = get()
+          .categoryList.map((category) => category.packages)
+          .flat()
+          .filter((item) => idsInBasket?.includes(item.id));
+        const totalPrice = allProducts.reduce((acc, curr) => (acc += curr.total_price), 0);
+        const basePrice = allProducts.reduce((acc, curr) => (acc += curr.base_price), 0);
+        const salesTax = allProducts.reduce((acc, curr) => (acc += curr.sales_tax), 0);
         set((state) => ({
           basket: state.basket
-            ? {
-                ...state.basket,
-                total_price: state.basket.total_price + item.total_price,
-                base_price: state.basket.base_price + item.base_price,
-                sales_tax: state.basket.sales_tax + item.sales_tax,
-              }
-            : state.basket,
-        }));
-      },
-
-      priceDecrease: (productId) => {
-        const item = get()
-          .categoryList.find((category) => category.packages.find((entry) => entry.id === productId))
-          ?.packages.find((entry) => entry.id === productId);
-        if (!item) return;
-        set((state) => ({
-          basket: state.basket
-            ? {
-                ...state.basket,
-                total_price: state.basket.total_price - item.total_price,
-                base_price: state.basket.base_price - item.base_price,
-                sales_tax: state.basket.sales_tax - item.sales_tax,
-              }
+            ? { ...state.basket, base_price: basePrice, total_price: totalPrice, sales_tax: salesTax }
             : state.basket,
         }));
       },
 
       addToBasket: (item) => {
-        get().priceIncrease(item.id);
         set((state) => ({
           basket: state.basket
             ? {
@@ -88,7 +68,6 @@ export const useTebex = create<TUseTebex>()(
       },
 
       removeFromBasket: (productId) => {
-        get().priceDecrease(productId);
         set((state) => ({
           basket: state.basket
             ? {
