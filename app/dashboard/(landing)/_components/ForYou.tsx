@@ -44,6 +44,7 @@ const ForYou = () => {
         const randomProduct = extraProducts[Math.floor(Math.random() * extraProducts.length)];
         if (!_topPicks.includes(randomProduct.id)) _topPicks.push(randomProduct.id);
         if (_topPicks.length >= TOP_PICKS_TO_GENERATE) break;
+        if (products.length < TOP_PICKS_TO_GENERATE) break;
       }
     }
 

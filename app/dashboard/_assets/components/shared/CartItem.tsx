@@ -1,11 +1,12 @@
 import { BasketPackage, Package } from 'tebex_headless';
 import { BsFillCartDashFill } from 'react-icons/bs';
+import { useCurrency } from '@/hooks/use-currency';
 import { useTebex } from '@/hooks/use-tebex';
 import { ImSpinner9 } from 'react-icons/im';
 import Image from 'next/image';
 import { toast } from 'sonner';
 import { trpc } from '@/trpc';
-import { useCurrency } from '@/hooks/use-currency';
+import Link from 'next/link';
 
 type TCartItem = {
   productItem: Package | undefined;
@@ -36,13 +37,15 @@ const CartItem = ({ basketItem, productItem }: TCartItem) => {
         {isLoading ? (
           <ImSpinner9 className="h-full w-full animate-spin p-4" />
         ) : (
-          <Image
-            src={image}
-            width={64}
-            height={64}
-            alt="product"
-            className="h-16 w-16 object-cover object-center rounded-tl-md rounded-bl-md"
-          />
+          <Link href={`/dashboard/shop/${productItem?.id}`}>
+            <Image
+              src={image}
+              width={64}
+              height={64}
+              alt="product"
+              className="h-16 w-16 object-cover object-center rounded-tl-md rounded-bl-md cursor-pointer"
+            />
+          </Link>
         )}
       </div>
       <div className="w-[calc(100%-64px)] flex flex-col justify-between max-h-16">
@@ -50,7 +53,6 @@ const CartItem = ({ basketItem, productItem }: TCartItem) => {
           {basketItem.name}
         </div>
         <div className="px-2 flex justify-between items-center pb-2">
-          {/* TODO: PRICE HOOK */}
           <div className="flex">
             <div className="w-24 font-semibold">{formatPrice(basketItem.in_basket.price)}</div>
             <div className="">x{basketItem.in_basket.quantity}</div>

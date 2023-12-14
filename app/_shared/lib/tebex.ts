@@ -12,6 +12,9 @@ import {
   GetBasketAuthUrl,
   Basket,
   RemovePackage,
+  UpdateQuantity,
+  Apply,
+  Remove,
 } from 'tebex_headless';
 
 export const shopGetCategories = async (): Promise<Category[] | []> => {
@@ -87,6 +90,134 @@ const createBasket = async ({
   }
 };
 
+type TUpdateQuantityResponse =
+  | {
+      status: 'success';
+      data: Basket;
+    }
+  | {
+      status: 'error';
+      message: string;
+    };
+type TUpdateQuantity = {
+  user: NextAuthUser;
+  productId: number;
+  quantity: number;
+};
+export const updateQuantity = async ({
+  productId,
+  user,
+  quantity,
+}: TUpdateQuantity): Promise<TUpdateQuantityResponse> => {
+  if (!user.id || !user.basketIdent) {
+    return {
+      status: 'error',
+      message: 'Unauthorized',
+    };
+  }
+
+  try {
+    const response = await UpdateQuantity(user.basketIdent, productId, quantity);
+    return {
+      status: 'success',
+      data: response,
+    };
+  } catch (error: any) {
+    if (error?.response?.data?.detail) {
+      const detail = error.response.data.detail;
+      return {
+        status: 'error',
+        message: detail,
+      };
+    } else {
+      console.log('Update quantity - error', error);
+      return { status: 'error', message: 'Internal error' };
+    }
+  }
+};
+type TGiftCardResponse =
+  | {
+      status: 'success';
+      message: string;
+      giftCard: string;
+    }
+  | {
+      status: 'error';
+      message: string;
+    };
+type TGiftCard = {
+  user: NextAuthUser;
+  giftCard: string;
+};
+export const applyGiftCard = async ({ giftCard, user }: TGiftCard): Promise<TGiftCardResponse> => {
+  if (!user.id || !user.basketIdent) {
+    return {
+      status: 'error',
+      message: 'Unauthorized',
+    };
+  }
+  SetWebstoreIdentifier(process.env.NEXT_PUBLIC_TEBEX_WEBSTORE_IDENTIFIER!);
+  try {
+    const response = await Apply(
+      {
+        card_number: giftCard,
+      },
+      user.basketIdent,
+      'giftcards',
+    );
+    if (response?.message) {
+      return {
+        status: 'success',
+        message: response.message,
+        giftCard,
+      };
+    }
+    return { status: 'error', message: 'Internal error' };
+  } catch (error: any) {
+    if (error?.response?.data?.detail) {
+      const detail = error.response.data.detail;
+      return { status: 'error', message: detail };
+    } else {
+      console.log('Add gift card - error', error);
+      return { status: 'error', message: 'Internal error' };
+    }
+  }
+};
+
+export const removeGiftCard = async ({ giftCard, user }: TGiftCard): Promise<TGiftCardResponse> => {
+  if (!user.id || !user.basketIdent) {
+    return {
+      status: 'error',
+      message: 'Unauthorized',
+    };
+  }
+  SetWebstoreIdentifier(process.env.NEXT_PUBLIC_TEBEX_WEBSTORE_IDENTIFIER!);
+  try {
+    const response = await Remove(
+      {
+        card_number: giftCard,
+      },
+      user.basketIdent,
+      'giftcards',
+    );
+    if (response?.message) {
+      return {
+        status: 'success',
+        message: response.message,
+        giftCard,
+      };
+    }
+    return { status: 'error', message: 'Internal error' };
+  } catch (error: any) {
+    if (error?.response?.data?.detail) {
+      const detail = error.response.data.detail;
+      return { status: 'error', message: detail };
+    } else {
+      console.log('Remove gift card - error', error);
+      return { status: 'error', message: 'Internal error' };
+    }
+  }
+};
 type TAddProductToBasket = {
   userId: string;
   productId: number;

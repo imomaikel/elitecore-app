@@ -1,4 +1,11 @@
-import { addProduct, removeProduct, shopGetCategories } from '../../../_shared/lib/tebex';
+import {
+  addProduct,
+  applyGiftCard,
+  removeGiftCard,
+  removeProduct,
+  shopGetCategories,
+  updateQuantity,
+} from '../../../_shared/lib/tebex';
 import { authorizedProcedure, publicProcedure, router } from './trpc';
 import { adminRouter } from './admin-router';
 import { GetBasket } from 'tebex_headless';
@@ -164,6 +171,42 @@ export const appRouter = router({
     const response = await removeProduct({
       productId,
       user,
+    });
+
+    return response;
+  }),
+  updateQuantity: authorizedProcedure
+    .input(z.object({ productId: z.number(), quantity: z.number() }))
+    .mutation(async ({ ctx, input }) => {
+      const { user } = ctx;
+      const { productId, quantity } = input;
+
+      const response = await updateQuantity({
+        productId,
+        user,
+        quantity,
+      });
+
+      return response;
+    }),
+  applyGiftCard: authorizedProcedure.input(z.object({ giftCard: z.string() })).mutation(async ({ ctx, input }) => {
+    const { user } = ctx;
+    const { giftCard } = input;
+
+    const response = await applyGiftCard({
+      user,
+      giftCard,
+    });
+
+    return response;
+  }),
+  removeGiftCard: authorizedProcedure.input(z.object({ giftCard: z.string() })).mutation(async ({ ctx, input }) => {
+    const { user } = ctx;
+    const { giftCard } = input;
+
+    const response = await removeGiftCard({
+      user,
+      giftCard,
     });
 
     return response;

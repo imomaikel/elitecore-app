@@ -11,6 +11,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import CartItem from './CartItem';
 import Image from 'next/image';
+import Link from 'next/link';
 
 const WEBSTORE_IDENTIFIER = process.env.NEXT_PUBLIC_TEBEX_WEBSTORE_IDENTIFIER;
 const BASE_URL = process.env.NEXT_PUBLIC_TEBEX_BASE_URL;
@@ -18,9 +19,9 @@ const BASE_URL = process.env.NEXT_PUBLIC_TEBEX_BASE_URL;
 const ShoppingCart = () => {
   const { categoryList, setBasket, basket, updatePrice } = useTebex();
   const [isDataReady, setIsDataReady] = useState(false);
+  const { data: session, status } = useSession();
   const { isOpen, onOpenChange } = useSheet();
   const { formatPrice } = useCurrency();
-  const { data: session } = useSession();
   const router = useRouter();
 
   useEffect(() => {
@@ -32,7 +33,7 @@ const ShoppingCart = () => {
         setBasket(response.data);
         setIsDataReady(true);
       });
-  }, [session]);
+  }, [status]);
 
   useEffect(() => {
     updatePrice();
@@ -62,7 +63,9 @@ const ShoppingCart = () => {
             ) : (
               <div>
                 <div className="space-x-4 z-10 relative">
-                  <Button>Checkout</Button>
+                  <Button asChild>
+                    <Link href={`https://checkout.tebex.io/checkout/${session?.user.basketIdent}`}>CHECKOUT</Link>
+                  </Button>
                   <Button
                     variant="ghost"
                     onClick={() => {
