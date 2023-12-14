@@ -233,6 +233,30 @@ export const appRouter = router({
 
     return response;
   }),
+  addAsGift: authorizedProcedure
+    .input(z.object({ productId: z.number(), giftForUserId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const { req, user } = ctx;
+      const { productId, giftForUserId } = input;
+
+      if (!user) throw new TRPCError({ code: 'BAD_REQUEST' });
+      const response = await addProduct({
+        ipAddress: req.ip,
+        productId: productId,
+        user,
+        giftForUserId,
+      });
+
+      if (response.status === 'success' && !user.steamId && user.basketIdent) {
+        const getBasket = await GetBasket(user.basketIdent);
+        await prisma.user.update({
+          where: { discordId: user.discordId },
+          data: { steamId: getBasket.username_id },
+        });
+      }
+
+      return response;
+    }),
   getCategories: authorizedProcedure.query(async ({ ctx }) => {
     const { user, prisma } = ctx;
 

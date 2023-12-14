@@ -15,6 +15,7 @@ import {
   UpdateQuantity,
   Apply,
   Remove,
+  GiftPackage,
 } from 'tebex_headless';
 
 export const shopGetCategories = async (): Promise<Category[] | []> => {
@@ -221,6 +222,7 @@ export const removeGiftCard = async ({ giftCard, user }: TGiftCard): Promise<TGi
 type TAddProductToBasket = {
   userId: string;
   productId: number;
+  giftForUserId?: string;
 };
 type TAddProductToBasketResponse =
   | {
@@ -232,7 +234,11 @@ type TAddProductToBasketResponse =
       message: 'Unauthorized' | 'Basket does not exist' | 'Basket not authorized' | 'Internal error' | 'Unknown error';
       errorMessage?: string;
     };
-const addProductToBasket = async ({ userId, productId }: TAddProductToBasket): Promise<TAddProductToBasketResponse> => {
+const addProductToBasket = async ({
+  userId,
+  productId,
+  giftForUserId,
+}: TAddProductToBasket): Promise<TAddProductToBasketResponse> => {
   const userData = await prisma.user.findFirst({
     where: { id: userId },
   });
@@ -244,12 +250,15 @@ const addProductToBasket = async ({ userId, productId }: TAddProductToBasket): P
   }
 
   try {
-    const addedProduct = await AddPackageToBasket(userData.basketIdent, productId, 1, 'single');
+    const addedProduct = giftForUserId
+      ? await GiftPackage(userData.basketIdent, productId, giftForUserId)
+      : await AddPackageToBasket(userData.basketIdent, productId, 1, 'single');
     return {
       status: 'success',
       data: addedProduct,
     };
   } catch (error: any) {
+    console.log(error);
     if (error?.response?.data?.detail) {
       const detail = error.response.data.detail;
       if (detail === 'User must login before adding packages to basket') {
@@ -268,6 +277,7 @@ type TAddProduct = {
   ipAddress: string | undefined;
   user: NextAuthUser;
   productId: number;
+  giftForUserId?: string;
 };
 type TAddProductResponse =
   | {
@@ -284,7 +294,12 @@ type TAddProductResponse =
         | 'Unknown error';
       errorMessage?: string;
     };
-export const addProduct = async ({ ipAddress, user, productId }: TAddProduct): Promise<TAddProductResponse> => {
+export const addProduct = async ({
+  ipAddress,
+  user,
+  productId,
+  giftForUserId,
+}: TAddProduct): Promise<TAddProductResponse> => {
   if (!ipAddress || !user.id) {
     return {
       status: 'error',
@@ -295,6 +310,7 @@ export const addProduct = async ({ ipAddress, user, productId }: TAddProduct): P
   const addedProduct = await addProductToBasket({
     productId,
     userId: user.id,
+    giftForUserId: giftForUserId,
   });
 
   if (addedProduct.status === 'success') {
