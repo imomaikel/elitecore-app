@@ -257,3 +257,13 @@ def dbCreateTables():
         dbAppendNewLog(e, 'dbCreateTables')
         exit()
     return
+
+
+def updatePlayerPlaytime(playerName, playerId):
+    try:
+        conn = dbCreateConnection()
+        curr = conn.cursor()
+        curr.execute('INSERT INTO  webapp.player (playerName, playerId, playTime) VALUES(%s, %s, 0) ON DUPLICATE KEY UPDATE playTime = playTime + 10', (playerName, playerId))
+        conn.close()
+    except Exception as e:
+        dbAppendNewLog(e, 'Could not add playtime')

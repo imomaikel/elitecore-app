@@ -1,4 +1,4 @@
-from lib.db import handleRCONPassword, dbAppendNewLog, dbUpdatePlayerCount
+from lib.db import handleRCONPassword, dbAppendNewLog, dbUpdatePlayerCount, updatePlayerPlaytime
 from engine.getStatuses import getStatuses
 from utils.constans import ServerDetails
 from utils.constans import ServerDetails
@@ -18,16 +18,21 @@ def getServerRCONStatus(port: int, password: str, multiHome: str | None, mapName
         addr = multiHome if not multiHome == None else '127.0.0.1'
         playerCount = 0
         with Client(addr, port, passwd=password, timeout=3) as client:
-            command = client.run('ListPlayers')
-            if command == 'No Players Connected':
+            response = client.run('ListPlayers')
+            if 'no player' in response.lower():
                 status = 'online'
-            elif '.' in command:
+            elif '.' in response:
                 status = 'online'
-                rows = command.split('\n')
+                rows = response.split('\n')
                 for row in rows:
                     if not '.' in row:
                         continue
+                    separator = row.rindex(',') + 2
+                    playerId = row[separator::]
+                    playerName = row[row.index('.')+2::]
+                    playerName = playerName[:playerName.rindex(',')]
                     playerCount += 1
+                    updatePlayerPlaytime(playerName, playerId)
             client.close()
         if serverId:
             dbUpdatePlayerCount(serverId, playerCount)
