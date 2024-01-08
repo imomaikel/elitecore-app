@@ -60,7 +60,7 @@ const createBasket = async ({
   try {
     SetWebstoreIdentifier(process.env.NEXT_PUBLIC_TEBEX_WEBSTORE_IDENTIFIER!);
     SetPrivateKey(process.env.TEBEX_WEBSTORE_PRIVATE_KEY!);
-    const newBasket = await CreateBasket(paymentSuccessPath, paymentCancelPath, ipAddress);
+    const newBasket = await CreateBasket(paymentSuccessPath, paymentCancelPath, undefined, true, ipAddress);
 
     const basketAuthUrl = await GetBasketAuthUrl(newBasket.ident, basketAuthRedirectUrl);
 
@@ -159,13 +159,7 @@ export const applyGiftCard = async ({ giftCard, user }: TGiftCard): Promise<TGif
   }
   SetWebstoreIdentifier(process.env.NEXT_PUBLIC_TEBEX_WEBSTORE_IDENTIFIER!);
   try {
-    const response = await Apply(
-      {
-        card_number: giftCard,
-      },
-      user.basketIdent,
-      'giftcards',
-    );
+    const response = await Apply(user.basketIdent, 'giftcards', { card_number: giftCard });
     if (response?.message) {
       return {
         status: 'success',
@@ -194,13 +188,7 @@ export const removeGiftCard = async ({ giftCard, user }: TGiftCard): Promise<TGi
   }
   SetWebstoreIdentifier(process.env.NEXT_PUBLIC_TEBEX_WEBSTORE_IDENTIFIER!);
   try {
-    const response = await Remove(
-      {
-        card_number: giftCard,
-      },
-      user.basketIdent,
-      'giftcards',
-    );
+    const response = await Remove(user.basketIdent, 'giftcards', { card_number: giftCard });
     if (response?.message) {
       return {
         status: 'success',
