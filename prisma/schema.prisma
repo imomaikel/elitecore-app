@@ -18,8 +18,9 @@ model Player {
   id Int @id @default(autoincrement())
 
   playerName String
-  playerId   BigInt @unique
-  playTime   Int    @default(0)
+  playerId   String @unique
+  playTime   BigInt @default(0)
+  lastServer String
 }
 
 model Config {

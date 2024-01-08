@@ -60,8 +60,8 @@ const CartPage = () => {
             <Skeleton className="w-24 h-10" />
           </div>
           <div className="relative z-10">
-            <Skeleton className="w-6 h-8" />
-            <div className="max-w-sm space-y-2 mt-2">
+            <Skeleton className="w-6 h-8 mb-2" />
+            <div className="max-w-[250px] md:max-w-sm space-y-2">
               <div className="flex items-center justify-between">
                 <Skeleton className="w-28 h-6" />
                 <div className="h-[1px] w-full bg-primary/40 mx-3" />
@@ -89,8 +89,8 @@ const CartPage = () => {
             <Skeleton className="w-24 h-10" />
             <div>
               <Skeleton className="w-28 h-4 my-1" />
-              <div className="flex space-x-3">
-                <Skeleton className="w-96 h-9" />
+              <div className="flex md:space-y-0 space-y-3 md:space-x-3 flex-col md:flex-row">
+                <Skeleton className="w-[75%] md:w-96 h-9" />
                 <Skeleton className="w-16 h-9" />
               </div>
             </div>
@@ -107,7 +107,12 @@ const CartPage = () => {
         </div>
         <div className="fixed bottom-0 right-1 max-w-10xl">
           <div className="h-80 w-80 relative select-none z-10">
-            <Image src="/cart.png" alt="cart" fill className="h-80 w-80 object-contain object-center -scale-x-100" />
+            <Image
+              src="/cart.png"
+              alt="cart"
+              fill
+              className="h-80 w-80 object-contain object-center -scale-x-100 opacity-25 md:opacity-100"
+            />
             <div className="bg-gradient-to-l from-yellow-600 to-red-600 w-[50%] h-full absolute rotate-45 -top-5 right-28 blur-[300px]  opacity-60" />
           </div>
         </div>
@@ -132,7 +137,7 @@ const CartPage = () => {
         </div>
         <div className="relative z-10">
           <h2 className="font-medium text-xl mb-2 tracking-wide">Summary</h2>
-          <div className="max-w-sm space-y-2">
+          <div className="max-w-[250px] md:max-w-sm space-y-2">
             <div className="flex items-center justify-between">
               <div className="whitespace-nowrap">Total Items</div>
               <div className="h-[1px] w-full bg-primary/40 mx-3" />
@@ -161,7 +166,7 @@ const CartPage = () => {
           <h2 className="font-medium text-xl mb-2 tracking-wide">Gift Card</h2>
           <div>
             <Label htmlFor="coupon">Redeem Gift Card</Label>
-            <div className="flex space-x-3">
+            <div className="flex md:space-y-0 space-y-3 md:space-x-3 flex-col md:flex-row">
               <Input
                 id="coupon"
                 className="max-w-sm"
@@ -190,7 +195,7 @@ const CartPage = () => {
                         onClick={() => removeGiftCard({ giftCard: code.toString() })}
                       >
                         Remove
-                      </Button>{' '}
+                      </Button>
                     </li>
                   ))}
                 </ol>
@@ -220,7 +225,12 @@ const CartPage = () => {
       </div>
       <div className="fixed bottom-0 right-1 max-w-10xl">
         <div className="h-80 w-80 relative select-none z-10">
-          <Image src="/cart.png" alt="cart" fill className="h-80 w-80 object-contain object-center -scale-x-100" />
+          <Image
+            src="/cart.png"
+            alt="cart"
+            fill
+            className="h-80 w-80 object-contain object-center -scale-x-100 opacity-25 md:opacity-100"
+          />
           <div className="bg-gradient-to-l from-yellow-600 to-red-600 w-[50%] h-full absolute rotate-45 -top-5 right-28 blur-[300px]  opacity-60" />
         </div>
       </div>

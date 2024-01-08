@@ -4,6 +4,7 @@ import { TbDeviceRemote } from 'react-icons/tb';
 import { GiPointySword } from 'react-icons/gi';
 import { RiAdminFill } from 'react-icons/ri';
 import { FaBook } from 'react-icons/fa6';
+import { BsGlobe } from 'react-icons/bs';
 export const unknownAvatar = '/logo.png';
 
 export const panelTabs = [
@@ -25,6 +26,11 @@ export const panelTabs = [
         tabName: 'Server Status',
         Icon: HiOutlineStatusOnline,
         path: '/dashboard/admin/server-status',
+      },
+      {
+        tabName: 'Website',
+        Icon: BsGlobe,
+        path: '/dashboard/admin/website',
       },
       {
         tabName: 'Logs',

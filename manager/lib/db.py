@@ -248,6 +248,7 @@ def dbCreateTables():
         cur.execute(logsTableTemplate)
         cur.execute(serversTableTemplate)
         cur.execute(schemaTableTemplate)
+        conn.commit()
         conn.close()
     except Exception as e:
         if not isNotifyOpened:
@@ -259,11 +260,13 @@ def dbCreateTables():
     return
 
 
-def updatePlayerPlaytime(playerName, playerId):
+def updatePlayerPlaytime(playerName, playerId, mapName):
     try:
         conn = dbCreateConnection()
         curr = conn.cursor()
-        curr.execute('INSERT INTO  webapp.player (playerName, playerId, playTime) VALUES(%s, %s, 0) ON DUPLICATE KEY UPDATE playTime = playTime + 10', (playerName, playerId))
+        curr.execute('INSERT INTO webapp.player (playerName, playerId, playTime, lastServer) VALUES(%s, %s, 0, %s) ON DUPLICATE KEY UPDATE playTime = playTime + 10, lastServer = %s',
+                     (playerName, playerId, mapName, mapName))
+        conn.commit()
         conn.close()
     except Exception as e:
         dbAppendNewLog(e, 'Could not add playtime')

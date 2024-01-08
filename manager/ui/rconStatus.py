@@ -32,7 +32,7 @@ def getServerRCONStatus(port: int, password: str, multiHome: str | None, mapName
                     playerName = row[row.index('.')+2::]
                     playerName = playerName[:playerName.rindex(',')]
                     playerCount += 1
-                    updatePlayerPlaytime(playerName, playerId)
+                    updatePlayerPlaytime(playerName, playerId, mapName)
             client.close()
         if serverId:
             dbUpdatePlayerCount(serverId, playerCount)
