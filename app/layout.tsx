@@ -16,9 +16,9 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className="h-full">
-      <body className={cn('font-sans relative h-full', montserrat.className)}>
+      <body className={cn('font-sans relative h-full overflow-x-hidden', montserrat.className)}>
         <NextAuthProvider>{children}</NextAuthProvider>
-        <Toaster richColors position="top-center" />
+        <Toaster richColors position="top-center" theme="dark" />
       </body>
     </html>
   );

@@ -1,5 +1,7 @@
 'use client';
+import { Separator } from '@/shared/components/ui/separator';
 import { Skeleton } from '@/shared/components/ui/skeleton';
+import { usePathname } from 'next/navigation';
 import { useTebex } from '@/hooks/use-tebex';
 import { useEffect, useState } from 'react';
 import { trpc } from '@/trpc';
@@ -8,14 +10,7 @@ import Link from 'next/link';
 const ShopTab = () => {
   const { categoryList, setCategoryList } = useTebex();
   const [isMounted, setIsMounted] = useState(false);
-
-  // const { mutate: fetchCategories } = trpc.getCategories.useMutation({
-  //   onSuccess: (categories) => {
-  //     if (categories) {
-  //       setCategoryList(categories);
-  //     }
-  //   },
-  // });
+  const pathname = usePathname();
 
   const { data } = trpc.getCategories.useQuery(undefined, {
     refetchOnWindowFocus: false,
@@ -32,6 +27,16 @@ const ShopTab = () => {
       <div className="px-2 text-muted-foreground text-justify">
         Keep the server alive by purchasing some of our perks or packages
       </div>
+      {pathname !== '/dashboard' && (
+        <>
+          <Link href="/dashboard">
+            <div className="bg-primary/50 px-2 py-2 w-full rounded-sm truncate cursor-pointer transition-colors hover:bg-primary hover:underline text-sm">
+              <span>Home</span>
+            </div>
+          </Link>
+          <Separator className="my-2" />
+        </>
+      )}
       {isMounted ? (
         categoryList.map((category) => (
           <Link href={`/dashboard/shop/category/${category.id}`} key={category.id}>

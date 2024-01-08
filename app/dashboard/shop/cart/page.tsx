@@ -140,22 +140,22 @@ const CartPage = () => {
           <div className="max-w-[250px] md:max-w-sm space-y-2">
             <div className="flex items-center justify-between">
               <div className="whitespace-nowrap">Total Items</div>
-              <div className="h-[1px] w-full bg-primary/40 mx-3" />
+              <div className="h-[1px] w-full bg-primary/40 mx-4" />
               <div>{totalItems}</div>
             </div>
             <div className="flex items-center justify-between">
               <div className="whitespace-nowrap">Base Price</div>
-              <div className="h-[1px] w-full bg-primary/40 mx-3" />
+              <div className="h-[1px] w-full bg-primary/40 mx-4" />
               <div>{basePrice}</div>
             </div>
             <div className="flex items-center justify-between">
               <div className="whitespace-nowrap">Sales Tax</div>
-              <div className="h-[1px] w-full bg-primary/40 mx-3" />
+              <div className="h-[1px] w-full bg-primary/40 mx-4" />
               <div>{salesTax}</div>
             </div>
             <div className="flex items-center justify-between">
               <div className="whitespace-nowrap">Total Price</div>
-              <div className="h-[1px] w-full bg-primary/40 mx-3" />
+              <div className="h-[1px] w-full bg-primary/40 mx-4" />
               <div className="font-extrabold">{totalPrice}</div>
             </div>
           </div>
@@ -231,7 +231,7 @@ const CartPage = () => {
             fill
             className="h-80 w-80 object-contain object-center -scale-x-100 opacity-25 md:opacity-100"
           />
-          <div className="bg-gradient-to-l from-yellow-600 to-red-600 w-[50%] h-full absolute rotate-45 -top-5 right-28 blur-[300px]  opacity-60" />
+          <div className="bg-gradient-to-l from-yellow-600 to-red-600 w-[50%] h-full absolute rotate-45 -top-5 right-28 blur-[300px] opacity-60" />
         </div>
       </div>
     </div>

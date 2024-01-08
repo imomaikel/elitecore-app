@@ -23,6 +23,7 @@ import Image from 'next/image';
 import { toast } from 'sonner';
 import { trpc } from '@/trpc';
 import Link from 'next/link';
+import { useSheet } from '@/hooks/use-sheet';
 
 type TProductPage = {
   params: {
@@ -35,6 +36,7 @@ const ProductPage = ({ params }: TProductPage) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { addToBasket: clientAddToBasket } = useTebex();
   const [isMounted, setIsMounted] = useState(false);
+  const { onOpen: openShoppingCart } = useSheet();
   const [steamId, setSteamId] = useState('');
   const { formatPrice } = useCurrency();
   const router = useRouter();
@@ -67,6 +69,7 @@ const ProductPage = ({ params }: TProductPage) => {
           if (findProduct) {
             clientAddToBasket(findProduct);
             toast.success(`Added "${findProduct.name}" to the cart!`);
+            openShoppingCart();
           }
         }
       } else if (response.message === 'Basket not authorized') {
@@ -89,6 +92,7 @@ const ProductPage = ({ params }: TProductPage) => {
           const findProduct = basket.packages.find((entry) => entry.id === product.id);
           if (findProduct) {
             clientAddToBasket(findProduct);
+            openShoppingCart();
             toast.success(`Added "${findProduct.name}" to the cart!`);
           }
         }

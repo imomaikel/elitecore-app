@@ -4,6 +4,7 @@ import { FaCartPlus, FaCircleInfo } from 'react-icons/fa6';
 import { Skeleton } from '@/shared/components/ui/skeleton';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { useCurrency } from '@/hooks/use-currency';
+import { useSheet } from '@/hooks/use-sheet';
 import { useTebex } from '@/hooks/use-tebex';
 import { ImSpinner9 } from 'react-icons/im';
 import { useRouter } from 'next/navigation';
@@ -26,6 +27,7 @@ type TProductBox = {
 const ProductBox = ({ basePrice, description, imageURL, name, productId, gradient }: TProductBox) => {
   const { addToBasket: clientAddToBasket, categoryList, setAuthUrl, authUrl } = useTebex();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const { onOpen: openShoppingCart } = useSheet();
   const { formatPrice } = useCurrency();
   const { user } = useCurrentUser();
   const router = useRouter();
@@ -40,6 +42,7 @@ const ProductBox = ({ basePrice, description, imageURL, name, productId, gradien
           if (findProduct) {
             clientAddToBasket(findProduct);
             toast.success(`Added "${findProduct.name}" to the cart!`);
+            openShoppingCart();
           }
         }
       } else if (response.message === 'Basket not authorized') {
@@ -64,6 +67,7 @@ const ProductBox = ({ basePrice, description, imageURL, name, productId, gradien
         ?.packages.find(({ id }) => id === productId);
       if (product) {
         toast.success(`Added "${product.name}" to the cart!`);
+        openShoppingCart();
         clientAddToBasket({
           description: product.description,
           id: product.id,
@@ -88,7 +92,7 @@ const ProductBox = ({ basePrice, description, imageURL, name, productId, gradien
         title="Authentication needed!"
         description='Please click "Continue" to link your Steam account with your basket so we know where to send the package after purchase.'
       />
-      <div className="relative group transition-transform hover:-translate-y-3 max-w-[225px]">
+      <div className="relative group transition-all hover:!scale-105 max-w-[225px] hover:bg-black/60 rounded-lg">
         {gradient && (
           <div className="bg-gradient-to-r from-orange-600 to-primary absolute h-[50%] w-[50%] opacity-50 blur-[125px] -rotate-[50deg] z-0" />
         )}
@@ -106,7 +110,7 @@ const ProductBox = ({ basePrice, description, imageURL, name, productId, gradien
                 alt="product"
                 fill
                 sizes="100vw"
-                className="w-full h-full object-contain object-center"
+                className="w-full h-full object-cover object-center rounded-lg"
               />
             )}
           </div>
@@ -117,7 +121,7 @@ const ProductBox = ({ basePrice, description, imageURL, name, productId, gradien
           {/* Footer */}
           <div className="flex justify-between items-center">
             <div className="font-extrabold mr-3 w-[100px] h-6">{formatPrice(basePrice)}</div>
-            <div className="flex mr-2 gap-x-4">
+            <div className="flex mr-2 gap-x-4 relative">
               <Popover>
                 <PopoverTrigger>
                   <FaCircleInfo className="h-7 w-7 cursor-pointer relative hover:text-primary transition-colors" />
@@ -134,6 +138,7 @@ const ProductBox = ({ basePrice, description, imageURL, name, productId, gradien
                 )}
                 onClick={onAdd}
               />
+              <div className="w-8 right-0 h-full absolute bg-orange-700/60 animate-pulse blur-[15px] z-0" />
             </div>
           </div>
         </div>
@@ -143,6 +148,6 @@ const ProductBox = ({ basePrice, description, imageURL, name, productId, gradien
 };
 
 ProductBox.Skeleton = function ShowSkeleton() {
-  return <Skeleton className="w-[200px] h-[300px]"></Skeleton>;
+  return <Skeleton className="w-[220px] h-[295px]" />;
 };
 export default ProductBox;

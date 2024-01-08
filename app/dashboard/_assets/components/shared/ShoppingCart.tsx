@@ -12,6 +12,7 @@ import { useRouter } from 'next/navigation';
 import SignInConfirm from './SignInConfirm';
 import ActionDialog from './ActionDialog';
 import { signIn } from 'next-auth/react';
+import { motion } from 'framer-motion';
 import CartItem from './CartItem';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -59,7 +60,7 @@ const ShoppingCart = () => {
         description={<SignInConfirm />}
       />
       <Sheet open={isOpen} onOpenChange={onOpenChange}>
-        <SheetContent className="overflow-y-auto">
+        <SheetContent className="overflow-y-auto overflow-x-hidden">
           <SheetHeader>
             <SheetTitle className="mb-2">Your cart ({basket?.packages.length ?? 0})</SheetTitle>
           </SheetHeader>
@@ -70,12 +71,27 @@ const ShoppingCart = () => {
             )}
             <div className="relative">
               {!basket || basket.packages.length <= 0 ? (
-                <div className="flex flex-col select-none">
-                  <div className="w-full h-[350px] md:h-[450px]">
+                <motion.div
+                  className="flex flex-col select-none"
+                  initial={{ x: 200 }}
+                  whileInView={{ x: 0 }}
+                  viewport={{ once: false }}
+                  transition={{
+                    type: 'spring',
+                  }}
+                >
+                  <div className="w-full h-[350px] md:h-[425px]">
                     <Image src="/emptyCart.png" fill alt="empty cart" className="mt-4" />
                   </div>
-                  <span className="font-bold">Your cart is empty!</span>
-                </div>
+                  <motion.span
+                    initial={{ opacity: 0 }}
+                    viewport={{ once: false }}
+                    whileInView={{ opacity: 1 }}
+                    className="font-bold text-center text-xl translate-y-4"
+                  >
+                    Your cart is empty!
+                  </motion.span>
+                </motion.div>
               ) : (
                 <div>
                   <div className="space-x-4 z-10 relative">
@@ -96,18 +112,20 @@ const ShoppingCart = () => {
                       View details
                     </Button>
                   </div>
-                  {/* TODO PRICE HOOK */}
                   <div className="my-4">
-                    <div className="flex justify-between font-medium">
+                    <div className="flex justify-between items-center font-medium">
                       <span>Base price:</span>
+                      <div className="h-[1px] flex-1 bg-primary/40 mx-4"></div>
                       <span>{formatPrice(basket.base_price)}</span>
                     </div>
-                    <div className="flex justify-between font-medium">
+                    <div className="flex justify-between items-center font-medium">
                       <span>Tax:</span>
+                      <div className="h-[1px] flex-1 bg-primary/40 mx-4"></div>
                       <span>{formatPrice(basket.sales_tax)}</span>
                     </div>
-                    <div className="flex justify-between font-medium">
+                    <div className="flex justify-between items-center font-medium">
                       <span>Total price:</span>
+                      <div className="h-[1px] flex-1 bg-primary/40 mx-4"></div>
                       <span>{formatPrice(basket.total_price)}</span>
                     </div>
                     <Alert className="my-2 z-10 relative">

@@ -56,7 +56,7 @@ const Navbar = () => {
   }, []);
 
   const updateCurrency = (value: TCurrency['code']) => {
-    toast.info('Currency updated');
+    toast.success('Currency updated');
     setSelectedCurrency(value);
   };
 
@@ -82,12 +82,12 @@ const Navbar = () => {
                 </div>
               </div>
               {/* Logo */}
-              <div className="flex items-center">
+              <Link href="/dashboard" className="flex items-center group">
                 <Image src="/logo.png" width={48} height={48} alt="logo" />
-                <div className="font-extrabold text-2xl ml-2 transition-colors hover:text-primary">
-                  <Link href="/dashboard">EliteCore</Link>
+                <div className="font-extrabold text-2xl ml-2 transition-colors group-hover:text-primary">
+                  <span>EliteCore</span>
                 </div>
-              </div>
+              </Link>
             </div>
             {/* Profile and cart */}
             <div className="flex items-center">

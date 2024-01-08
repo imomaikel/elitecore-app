@@ -7,10 +7,17 @@ import {
   updateQuantity,
 } from '../../../_shared/lib/tebex';
 import { authorizedProcedure, publicProcedure, router } from './trpc';
+import { Category, GetBasket } from 'tebex_headless';
 import { adminRouter } from './admin-router';
-import { GetBasket } from 'tebex_headless';
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
+
+let categories: Category[] = [];
+
+setInterval(async () => {
+  const response = await shopGetCategories();
+  categories = response;
+}, 3 * 60 * 1000);
 
 const getCurrentMonth = () => {
   const dateFrom = new Date();
@@ -34,14 +41,14 @@ export const appRouter = router({
 
       const productsCount: { productId: number; count: number }[] = [];
 
-      const products = await prisma.product.findMany({
+      const boughtProducts = await prisma.product.findMany({
         where: {
           productId: {
             in: activeProducts,
           },
         },
       });
-      for (const product of products) {
+      for (const product of boughtProducts) {
         const isAlready = productsCount.find((entry) => entry.productId === product.productId);
         if (isAlready) {
           isAlready.count++;
@@ -51,7 +58,45 @@ export const appRouter = router({
       }
 
       const descOrder = productsCount.sort((a, b) => b.count - a.count).map((entry) => entry.productId);
-      return descOrder;
+
+      const products =
+        categories.length <= 0 ? await shopGetCategories() : categories.map((entry) => entry.packages).flat();
+      if (categories.length <= 0) categories = await shopGetCategories();
+
+      const TOP_PICKS_TO_GENERATE = 4;
+      let randomPicksToGenerate = 4;
+      const topPicks: number[] = [];
+
+      descOrder.forEach((entry) => {
+        if (topPicks.length < TOP_PICKS_TO_GENERATE) {
+          topPicks.push(entry);
+        }
+      });
+
+      const matchedProducts = descOrder?.length;
+      const needProducts = matchedProducts < TOP_PICKS_TO_GENERATE;
+
+      if (needProducts) {
+        const extraProducts = products.filter((product) => !topPicks.includes(product.id));
+        while (extraProducts.length >= 1) {
+          const randomProduct = extraProducts[Math.floor(Math.random() * extraProducts.length)];
+          if (!topPicks.includes(randomProduct.id)) topPicks.push(randomProduct.id);
+          if (topPicks.length >= TOP_PICKS_TO_GENERATE) break;
+          if (products.length < TOP_PICKS_TO_GENERATE) break;
+        }
+      }
+
+      while (randomPicksToGenerate) {
+        const extraProducts = products.filter((product) => !topPicks.includes(product.id));
+        if (!extraProducts || extraProducts.length <= 0) break;
+        const randomProduct = extraProducts[Math.floor(Math.random() * extraProducts.length)];
+        if (!topPicks.includes(randomProduct.id)) {
+          topPicks.push(randomProduct.id);
+          randomPicksToGenerate--;
+        }
+      }
+
+      return topPicks;
     }),
   getMonthlyCosts: publicProcedure.query(async ({ ctx }) => {
     const { prisma } = ctx;
@@ -258,7 +303,11 @@ export const appRouter = router({
       return response;
     }),
   getCategories: publicProcedure.query(async () => {
-    const categories = await shopGetCategories();
+    if (categories.length <= 0) {
+      const fetchCategories = await shopGetCategories();
+      categories = fetchCategories;
+      return fetchCategories;
+    }
 
     return categories;
   }),

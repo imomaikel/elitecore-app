@@ -54,12 +54,16 @@ const Sidebar = ({ className }: TSidebar) => {
         </Tabs>
         <Separator className="my-4 bg-primary/20" />
       </div>
-      <div className="text-muted-foreground flex flex-col px-4 pt-4 mb-2 text-xs select-none">
-        <p> &copy; 2023 EliteCore</p>
+      <div className="text-muted-foreground/75 flex flex-col px-2 pt-4 mb-2 text-xs select-none">
+        <p> &copy; 2024 EliteCore</p>
         <p>We do not have affiliation with any real world brands</p>
         <p>
           Website made by
-          <Link href="https://github.com/imomaikel" className="underline ml-1" target="_blank">
+          <Link
+            href="https://github.com/imomaikel"
+            className="underline ml-1 underline-offset-2 opacity-75"
+            target="_blank"
+          >
             imomaikel
           </Link>
         </p>
