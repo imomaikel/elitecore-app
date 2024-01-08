@@ -257,36 +257,7 @@ export const appRouter = router({
 
       return response;
     }),
-  getCategories: authorizedProcedure.query(async ({ ctx }) => {
-    const { user, prisma } = ctx;
-
-    const userData = await prisma.user.findFirst({
-      where: { id: user.id },
-    });
-    if (!userData) throw new TRPCError({ code: 'UNAUTHORIZED' });
-
-    let allowRefetch = false;
-
-    if (!userData.lastCategoryFetch) {
-      allowRefetch = true;
-    } else {
-      const timeNow = new Date().getTime();
-      const lastTime = userData.lastCategoryFetch.getTime();
-
-      const timeDiffInMs = timeNow - lastTime;
-      const timeDiffInMinutes = Math.round(timeDiffInMs / 60_000);
-      if (timeDiffInMinutes >= 1) {
-        allowRefetch = true;
-        await prisma.user.update({
-          where: { id: user.id },
-          data: { lastCategoryFetch: new Date() },
-        });
-      }
-    }
-
-    // if (!allowRefetch) throw new TRPCError({ code: 'TOO_MANY_REQUESTS' });
-    if (!allowRefetch) return undefined;
-
+  getCategories: publicProcedure.query(async () => {
     const categories = await shopGetCategories();
 
     return categories;

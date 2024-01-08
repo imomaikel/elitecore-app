@@ -9,13 +9,13 @@ import {
 } from '@/shared/components/ui/dialog';
 import { Separator } from '@/shared/components/ui/separator';
 import ActionButton from '@/components/shared/ActionButton';
+import ActionDialog from '@/components/shared/ActionDialog';
 import { Skeleton } from '@/shared/components/ui/skeleton';
 import { Button } from '@/shared/components/ui/button';
 import { redirect, useRouter } from 'next/navigation';
 import { Input } from '@/shared/components/ui/input';
 import { IoArrowBackOutline } from 'react-icons/io5';
 import { useCurrency } from '@/hooks/use-currency';
-import { useDialog } from '@/hooks/use-dialog';
 import { useTebex } from '@/hooks/use-tebex';
 import { FaCartPlus } from 'react-icons/fa6';
 import { useEffect, useState } from 'react';
@@ -30,13 +30,13 @@ type TProductPage = {
   };
 };
 const ProductPage = ({ params }: TProductPage) => {
+  const [isAuthorizeDialogOpen, setIsAuthorizeDialogOpen] = useState(false);
+  const { categoryList, authUrl, setAuthUrl } = useTebex();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const { onOpen: openDialog, setAuthUrl } = useDialog();
   const { addToBasket: clientAddToBasket } = useTebex();
   const [isMounted, setIsMounted] = useState(false);
   const [steamId, setSteamId] = useState('');
   const { formatPrice } = useCurrency();
-  const { categoryList } = useTebex();
   const router = useRouter();
 
   const { productId } = params;
@@ -71,7 +71,7 @@ const ProductPage = ({ params }: TProductPage) => {
         }
       } else if (response.message === 'Basket not authorized') {
         setAuthUrl(response.errorMessage as string);
-        openDialog();
+        setIsAuthorizeDialogOpen(true);
       } else {
         toast.error(`Something went wrong! ${response.errorMessage ?? response.message}`);
       }
@@ -94,7 +94,7 @@ const ProductPage = ({ params }: TProductPage) => {
         }
       } else if (response.message === 'Basket not authorized') {
         setAuthUrl(response.errorMessage as string);
-        openDialog();
+        setIsAuthorizeDialogOpen(true);
       } else {
         toast.error(`Something went wrong! ${response.errorMessage ?? response.message}`);
       }
@@ -107,6 +107,13 @@ const ProductPage = ({ params }: TProductPage) => {
   if (isMounted && product) {
     return (
       <>
+        <ActionDialog
+          onOpenChange={() => setIsAuthorizeDialogOpen(!isDialogOpen)}
+          onClick={() => router.push(authUrl)}
+          isOpen={isAuthorizeDialogOpen}
+          title="Authentication needed!"
+          description='Please click "Continue" to link your Steam account with your basket so we know where to send the package after purchase.'
+        />
         <div className="relative">
           <div className="flex flex-col lg:flex-row">
             <div className="w-64 h-64 relative mb-6 lg:mb-0">

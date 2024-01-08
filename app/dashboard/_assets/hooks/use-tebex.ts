@@ -6,10 +6,10 @@ type TUseTebex = {
   categoryList: Category[] | [];
   setCategoryList: (categories: Category[] | []) => void;
 
-  basket: undefined | Basket;
+  basket: Basket;
   setBasket: (basket: Basket) => void;
 
-  addToBasket: (product: BasketPackage) => void;
+  addToBasket: (product: BasketPackage, setQuantity?: number) => void;
   removeFromBasket: (productId: number) => void;
 
   authRedirectUrl: string;
@@ -19,6 +19,9 @@ type TUseTebex = {
 
   applyGiftCard: (code: string) => void;
   removeGiftCard: (code: string) => void;
+
+  authUrl: string;
+  setAuthUrl: (url: string) => void;
 };
 export const useTebex = create<TUseTebex>()(
   persist(
@@ -26,7 +29,28 @@ export const useTebex = create<TUseTebex>()(
       categoryList: [],
       setCategoryList: (data) => set(() => ({ categoryList: data })),
 
-      basket: undefined,
+      basket: {
+        ident: '',
+        complete: false,
+        id: 0,
+        country: '',
+        ip: '',
+        username_id: null,
+        username: null,
+        cancel_url: '',
+        complete_url: '',
+        complete_auto_redirect: false,
+        base_price: 0,
+        sales_tax: 0,
+        total_price: 0,
+        currency: '',
+        packages: [],
+        coupons: [],
+        giftcards: [],
+        creator_code: '',
+        links: { checkout: '' },
+        custom: { '': '' },
+      },
       setBasket: (data) => set(() => ({ basket: data })),
 
       updatePrice: () => {
@@ -59,7 +83,7 @@ export const useTebex = create<TUseTebex>()(
         }));
       },
 
-      addToBasket: (item) => {
+      addToBasket: (item, setQuantity) => {
         set((state) => ({
           basket: state.basket
             ? {
@@ -71,7 +95,7 @@ export const useTebex = create<TUseTebex>()(
                           ...entry,
                           in_basket: {
                             ...entry.in_basket,
-                            quantity: entry.in_basket.quantity + 1,
+                            quantity: setQuantity ? setQuantity : entry.in_basket.quantity + 1,
                           },
                         };
                       } else {
@@ -111,6 +135,9 @@ export const useTebex = create<TUseTebex>()(
             : state.basket,
         }));
       },
+
+      authUrl: '',
+      setAuthUrl: (data) => set(() => ({ authUrl: data })),
     }),
     {
       name: 'tebex-storage',

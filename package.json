@@ -17,8 +17,8 @@
     "production": "pip install -r requirements.txt && npm install && npx prisma generate && npm run build && npm run start"
   },
   "dependencies": {
-    "@auth/prisma-adapter": "^1.0.9",
-    "@prisma/client": "^5.7.0",
+    "@auth/prisma-adapter": "1.0.9",
+    "@prisma/client": "5.7.0",
     "@radix-ui/react-alert-dialog": "^1.0.5",
     "@radix-ui/react-avatar": "^1.0.4",
     "@radix-ui/react-dialog": "^1.0.5",
@@ -47,7 +47,7 @@
     "express": "^4.18.2",
     "net": "^1.0.2",
     "next": "14.0.4",
-    "next-auth": "^4.24.5",
+    "next-auth": "4.24.5",
     "rcon-client": "^4.2.4",
     "react": "^18",
     "react-dom": "^18",
@@ -56,7 +56,7 @@
     "sonner": "^1.2.4",
     "tailwind-merge": "^2.1.0",
     "tailwindcss-animate": "^1.0.7",
-    "tebex_headless": "^1.4.0",
+    "tebex_headless": "^1.6.2",
     "usehooks-ts": "^2.9.1",
     "zod": "^3.22.4",
     "zustand": "^4.4.7"
@@ -72,7 +72,7 @@
     "eslint": "^8.54.0",
     "eslint-config-next": "14.0.3",
     "postcss": "^8",
-    "prisma": "^5.7.0",
+    "prisma": "5.7.0",
     "tailwindcss": "^3.3.0",
     "ts-node": "^10.9.1",
     "typescript": "^5.3.2"

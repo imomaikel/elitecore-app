@@ -1,6 +1,7 @@
 import { Basket, BasketPackage, Category, Package } from 'tebex_headless';
 import ActionButton from '@/components/shared/ActionButton';
 import { Skeleton } from '@/shared/components/ui/skeleton';
+import { useCurrentUser } from '@/hooks/use-current-user';
 import { Button } from '@/shared/components/ui/button';
 import { Input } from '@/shared/components/ui/input';
 import { Label } from '@/shared/components/ui/label';
@@ -18,9 +19,10 @@ type TControlCartItem = {
   productData: Package;
 };
 const ControlCartItem = ({ basketItem, category, productData }: TControlCartItem) => {
-  const { removeFromBasket: clientRemoveFromBasket, setBasket, updatePrice } = useTebex();
-  const { formatPrice } = useCurrency();
+  const { removeFromBasket: clientRemoveFromBasket, setBasket, updatePrice, addToBasket } = useTebex();
   const [quantity, setQuantity] = useState(basketItem.in_basket.quantity);
+  const { formatPrice } = useCurrency();
+  const { user } = useCurrentUser();
 
   const { mutate: removeFromBasket, isLoading: isRemoveLoading } = trpc.removeFromBasket.useMutation({
     onSuccess: (data) => {
@@ -50,6 +52,24 @@ const ControlCartItem = ({ basketItem, category, productData }: TControlCartItem
     },
   });
 
+  const onRemove = () => {
+    if (user?.id) {
+      removeFromBasket({ productId: basketItem.id });
+    } else {
+      clientRemoveFromBasket(basketItem.id);
+      toast.success(`Removed "${basketItem.name}" from the cart!`);
+    }
+  };
+  const onUpdate = () => {
+    if (user?.id) {
+      updateQuantity({ productId: basketItem.id, quantity });
+    } else {
+      addToBasket(basketItem, quantity <= 0 ? 1 : quantity);
+      toast.success(`Updated "${basketItem.name}" quantity!`);
+      setQuantity(1);
+    }
+  };
+
   const itemBasePrice = basketItem.in_basket.quantity * productData.base_price;
   const itemSalesTax = basketItem.in_basket.quantity * productData.sales_tax;
   const itemTotalPrice = itemBasePrice + itemSalesTax;
@@ -71,11 +91,7 @@ const ControlCartItem = ({ basketItem, category, productData }: TControlCartItem
         <div className="flex items-center w-full h-min justify-between flex-col md:flex-row">
           <div className="text-2xl tracking-wide font-bold truncate max-w-[400px]">{basketItem.name}</div>
           <div className="flex">
-            <ActionButton
-              variant="ghost"
-              disabled={isRemoveLoading}
-              onClick={() => removeFromBasket({ productId: basketItem.id })}
-            >
+            <ActionButton variant="ghost" disabled={isRemoveLoading} onClick={onRemove}>
               Remove
             </ActionButton>
             <div className="w-[1px] flex mx-2 my-2 bg-muted-foreground" />
@@ -93,6 +109,7 @@ const ControlCartItem = ({ basketItem, category, productData }: TControlCartItem
               <Input
                 id="quantity"
                 type="number"
+                min={1}
                 className="text-xs h-8 w-[70px] mt-1"
                 disabled={productData.disable_quantity}
                 value={quantity}
@@ -103,7 +120,7 @@ const ControlCartItem = ({ basketItem, category, productData }: TControlCartItem
                   variant="ghost"
                   size="sm"
                   disabled={isUpdateQuantityLoading}
-                  onClick={() => updateQuantity({ productId: basketItem.id, quantity })}
+                  onClick={onUpdate}
                   className="ml-2 mt-1"
                 >
                   Update

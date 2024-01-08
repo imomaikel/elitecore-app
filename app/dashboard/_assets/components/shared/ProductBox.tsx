@@ -2,11 +2,14 @@
 import { Popover, PopoverContent, PopoverTrigger } from '@/shared/components/ui/popover';
 import { FaCartPlus, FaCircleInfo } from 'react-icons/fa6';
 import { Skeleton } from '@/shared/components/ui/skeleton';
+import { useCurrentUser } from '@/hooks/use-current-user';
 import { useCurrency } from '@/hooks/use-currency';
-import { useDialog } from '@/hooks/use-dialog';
 import { useTebex } from '@/hooks/use-tebex';
 import { ImSpinner9 } from 'react-icons/im';
+import { useRouter } from 'next/navigation';
+import ActionDialog from './ActionDialog';
 import { cn } from '@/shared/lib/utils';
+import { useState } from 'react';
 import { toast } from 'sonner';
 import Image from 'next/image';
 import { trpc } from '@/trpc';
@@ -21,15 +24,19 @@ type TProductBox = {
   gradient?: true;
 };
 const ProductBox = ({ basePrice, description, imageURL, name, productId, gradient }: TProductBox) => {
-  const { onOpen: openDialog, setAuthUrl } = useDialog();
-  const { addToBasket: clientAddToBasket } = useTebex();
+  const { addToBasket: clientAddToBasket, categoryList, setAuthUrl, authUrl } = useTebex();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { formatPrice } = useCurrency();
+  const { user } = useCurrentUser();
+  const router = useRouter();
+
   const { mutate: addToBasket, isLoading } = trpc.addToBasket.useMutation({
     onSuccess: (response) => {
       if (response.status === 'success') {
-        const basket = response.data;
-        if (typeof basket === 'object') {
-          const findProduct = basket.packages.find((product) => product.id === productId);
+        const updatedBasket = response.data;
+        if (typeof updatedBasket === 'object') {
+          const findProduct = updatedBasket.packages.find(({ id }) => id === productId);
+
           if (findProduct) {
             clientAddToBasket(findProduct);
             toast.success(`Added "${findProduct.name}" to the cart!`);
@@ -37,7 +44,7 @@ const ProductBox = ({ basePrice, description, imageURL, name, productId, gradien
         }
       } else if (response.message === 'Basket not authorized') {
         setAuthUrl(response.errorMessage as string);
-        openDialog();
+        setIsDialogOpen(true);
       } else {
         toast.error(`Something went wrong! ${response.errorMessage ?? response.message}`);
       }
@@ -47,60 +54,91 @@ const ProductBox = ({ basePrice, description, imageURL, name, productId, gradien
     },
   });
 
-  // TODO: Price hook
-  return (
-    <div className="relative group transition-transform hover:-translate-y-3 max-w-[225px]">
-      {gradient && (
-        <div className="bg-gradient-to-r from-orange-600 to-primary absolute h-[50%] w-[50%] opacity-50 blur-[125px] -rotate-[50deg] z-0" />
-      )}
-      {/* Image */}
-      <Link href={`/dashboard/shop/${productId}`}>
-        <div className="h-[225px] relative cursor-pointer">
-          {isLoading ? (
-            <div className="flex w-full h-full items-center justify-center">
-              <ImSpinner9 className="w-[50%] h-[50%] animate-spin" />
-            </div>
-          ) : (
-            <Image
-              loading="eager"
-              src={imageURL}
-              alt="product"
-              fill
-              sizes="100vw"
-              className="w-full h-full object-contain object-center"
-            />
-          )}
-        </div>
-      </Link>
-      <div className="px-3 pb-2 pt-1.5">
-        {/* Title */}
-        <div className="font-bold tracking-wide group-hover:text-primary transition-colors">{name}</div>
-        {/* Footer */}
-        <div className="flex justify-between items-center">
-          <div className="font-extrabold mr-3 w-[100px] h-6">{formatPrice(basePrice)}</div>
-          <div className="flex mr-2 gap-x-4">
-            <Popover>
-              <PopoverTrigger>
-                <FaCircleInfo className="h-7 w-7 cursor-pointer relative hover:text-primary transition-colors" />
-              </PopoverTrigger>
-              <PopoverContent className="max-h-[350px] overflow-y-auto">
-                <div dangerouslySetInnerHTML={{ __html: description }} />
-              </PopoverContent>
-            </Popover>
+  const onAdd = () => {
+    if (user?.id) {
+      if (!isLoading) addToBasket({ productId });
+    } else {
+      const product = categoryList
+        .filter((category) => category.packages)
+        .find((entry) => entry.packages.some((item) => item.id === productId))
+        ?.packages.find(({ id }) => id === productId);
+      if (product) {
+        toast.success(`Added "${product.name}" to the cart!`);
+        clientAddToBasket({
+          description: product.description,
+          id: product.id,
+          in_basket: {
+            gift_username: null,
+            gift_username_id: null,
+            price: product.base_price,
+            quantity: 1,
+          },
+          name: product.name,
+        });
+      }
+    }
+  };
 
-            <FaCartPlus
-              className={cn(
-                'h-8 w-8 cursor-pointer hover:text-primary transition-colors z-10',
-                isLoading && 'cursor-default',
-              )}
-              onClick={() => {
-                if (!isLoading) addToBasket({ productId });
-              }}
-            />
+  return (
+    <>
+      <ActionDialog
+        onOpenChange={() => setIsDialogOpen(!isDialogOpen)}
+        onClick={() => router.push(authUrl)}
+        isOpen={isDialogOpen}
+        title="Authentication needed!"
+        description='Please click "Continue" to link your Steam account with your basket so we know where to send the package after purchase.'
+      />
+      <div className="relative group transition-transform hover:-translate-y-3 max-w-[225px]">
+        {gradient && (
+          <div className="bg-gradient-to-r from-orange-600 to-primary absolute h-[50%] w-[50%] opacity-50 blur-[125px] -rotate-[50deg] z-0" />
+        )}
+        {/* Image */}
+        <Link href={`/dashboard/shop/${productId}`}>
+          <div className="h-[225px] relative cursor-pointer">
+            {isLoading ? (
+              <div className="flex w-full h-full items-center justify-center">
+                <ImSpinner9 className="w-[50%] h-[50%] animate-spin" />
+              </div>
+            ) : (
+              <Image
+                loading="eager"
+                src={imageURL}
+                alt="product"
+                fill
+                sizes="100vw"
+                className="w-full h-full object-contain object-center"
+              />
+            )}
+          </div>
+        </Link>
+        <div className="px-3 pb-2 pt-1.5">
+          {/* Title */}
+          <div className="font-bold tracking-wide group-hover:text-primary transition-colors">{name}</div>
+          {/* Footer */}
+          <div className="flex justify-between items-center">
+            <div className="font-extrabold mr-3 w-[100px] h-6">{formatPrice(basePrice)}</div>
+            <div className="flex mr-2 gap-x-4">
+              <Popover>
+                <PopoverTrigger>
+                  <FaCircleInfo className="h-7 w-7 cursor-pointer relative hover:text-primary transition-colors" />
+                </PopoverTrigger>
+                <PopoverContent className="max-h-[350px] overflow-y-auto">
+                  <div dangerouslySetInnerHTML={{ __html: description }} />
+                </PopoverContent>
+              </Popover>
+
+              <FaCartPlus
+                className={cn(
+                  'h-8 w-8 cursor-pointer hover:text-primary transition-colors z-10',
+                  isLoading && 'cursor-default',
+                )}
+                onClick={onAdd}
+              />
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

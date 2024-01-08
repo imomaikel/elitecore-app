@@ -1,7 +1,4 @@
 'use client';
-import { useRouter } from 'next/navigation';
-import { useDialog } from '@/hooks/use-dialog';
-import { useEffect, useState } from 'react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -12,31 +9,34 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/shared/components/ui/alert-dialog';
+import { ReactNode } from 'react';
 
-const ActionDialog = () => {
-  const [isMounted, setIsMounted] = useState(false);
-  const { isOpen, onOpenChange, authUrl } = useDialog();
-  const router = useRouter();
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  if (!isMounted) return;
-
+type TActionDialog = {
+  isOpen: boolean;
+  onOpenChange: () => void;
+  title: string;
+  description: string | ReactNode;
+  onClick: () => void;
+  proceedLabel?: string;
+};
+const ActionDialog = ({
+  isOpen,
+  onOpenChange,
+  description,
+  title,
+  onClick,
+  proceedLabel = 'Continue',
+}: TActionDialog) => {
   return (
     <AlertDialog open={isOpen} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Authentication needed!</AlertDialogTitle>
-          <AlertDialogDescription>
-            Please click &quot;Continue&quot; to link your Steam account with your basket so we know where to send the
-            package after purchase.
-          </AlertDialogDescription>
+          <AlertDialogTitle>{title}</AlertDialogTitle>
+          <AlertDialogDescription>{description}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={() => router.push(authUrl)}>Continue</AlertDialogAction>
+          <AlertDialogAction onClick={onClick}>{proceedLabel}</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

@@ -1,3 +1,4 @@
+import { useCurrentUser } from '@/hooks/use-current-user';
 import { BasketPackage, Package } from 'tebex_headless';
 import { BsFillCartDashFill } from 'react-icons/bs';
 import { useCurrency } from '@/hooks/use-currency';
@@ -14,7 +15,9 @@ type TCartItem = {
 };
 const CartItem = ({ basketItem, productItem }: TCartItem) => {
   const { removeFromBasket: clientRemoveFromBasket } = useTebex();
+  const { user } = useCurrentUser();
   const { formatPrice } = useCurrency();
+
   const image = productItem?.image ?? '/logo.png';
 
   const { mutate: removeFromBasket, isLoading } = trpc.removeFromBasket.useMutation({
@@ -30,6 +33,15 @@ const CartItem = ({ basketItem, productItem }: TCartItem) => {
       toast.error('Something went wrong!');
     },
   });
+
+  const onRemove = () => {
+    if (user?.id) {
+      if (!isLoading) removeFromBasket({ productId: basketItem.id });
+    } else {
+      clientRemoveFromBasket(basketItem.id);
+      toast.success(`Removed "${basketItem.name}" from the cart!`);
+    }
+  };
 
   return (
     <div className="my-6 group hover:bg-muted-foreground/25 rounded-md transition-colors flex relative">
@@ -60,11 +72,7 @@ const CartItem = ({ basketItem, productItem }: TCartItem) => {
           <div>
             <BsFillCartDashFill
               className="h-6 w-6 cursor-pointer hover:text-primary transition-colors opacity-70"
-              onClick={() => {
-                if (!isLoading) {
-                  removeFromBasket({ productId: basketItem.id });
-                }
-              }}
+              onClick={onRemove}
             />
           </div>
         </div>
