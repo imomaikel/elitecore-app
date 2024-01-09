@@ -257,7 +257,7 @@ export const appRouter = router({
     return response;
   }),
   addToBasket: authorizedProcedure.input(z.object({ productId: z.number() })).mutation(async ({ ctx, input }) => {
-    const { req, user } = ctx;
+    const { req, user, prisma } = ctx;
     const { productId } = input;
 
     if (!user) throw new TRPCError({ code: 'BAD_REQUEST' });
@@ -281,7 +281,7 @@ export const appRouter = router({
   addAsGift: authorizedProcedure
     .input(z.object({ productId: z.number(), giftForUserId: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      const { req, user } = ctx;
+      const { req, user, prisma } = ctx;
       const { productId, giftForUserId } = input;
 
       if (!user) throw new TRPCError({ code: 'BAD_REQUEST' });

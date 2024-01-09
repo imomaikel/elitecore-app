@@ -1,32 +1,10 @@
 import { TicketCategoryCreateSchema, TicketCategoryEditSchema } from '../../admin/tickets/_assets/validators';
 import { apiAvailableChannels, apiAvailableRoles, apiMutualGuilds, apiUpdateChannel } from '../../../../bot/api';
 import { API_CHANNEL_ACTIONS } from '../../../../bot/api/updateChannel';
+import { createAdminLog } from '../../admin/_actions';
 import { adminProcedure, router } from './trpc';
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
-
-type TCreateAdminLog = {
-  userId: string;
-  content: string;
-  guildId: string;
-};
-const createAdminLog = async ({ content, guildId, userId }: TCreateAdminLog) => {
-  await prisma.user.update({
-    where: { id: userId },
-    data: {
-      adminLogs: {
-        create: {
-          content,
-          Guild: {
-            connect: {
-              guildId,
-            },
-          },
-        },
-      },
-    },
-  });
-};
 
 export const adminRouter = router({
   getDiscordGuilds: adminProcedure.query(async ({ ctx }) => {
