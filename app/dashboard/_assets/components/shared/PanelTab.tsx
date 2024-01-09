@@ -1,19 +1,19 @@
+import { useCurrentUser } from '@/hooks/use-current-user';
 import { usePathname } from 'next/navigation';
-import { useSession } from 'next-auth/react';
 import { cn } from '@/shared/lib/utils';
 import { panelTabs } from '@/constans';
 import Link from 'next/link';
 
 const PanelTab = () => {
+  const { user } = useCurrentUser();
   const pathname = usePathname();
-  const { data: session } = useSession();
 
   return (
     <div className="flex flex-col gap-y-2">
       {panelTabs
         .filter((tab) => {
           if (tab.categoryName !== 'Admin') return true;
-          if (!session?.user.isAdmin) return false;
+          if (!(user?.role === 'ADMIN' || user?.role === 'MANAGER')) return false;
           return true;
         })
         .map((category, index) => (

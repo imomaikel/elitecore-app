@@ -55,7 +55,7 @@ def dbAppendNewLog(content: str, fileName: str):
         conn = dbCreateConnection()
         cur = conn.cursor()
         cur.execute(
-            'INSERT INTO app_log(content, file) VALUES (%s, %s);', (content, fileName))
+            'INSERT INTO AppLog(content, file) VALUES (%s, %s);', (content, fileName))
         conn.commit()
         conn.close()
     except:

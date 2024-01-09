@@ -35,7 +35,21 @@ const isLoggedIn = middleware(async ({ ctx, next }) => {
 const isAdmin = middleware(async ({ ctx, next }) => {
   const { req } = ctx;
   const session = (await getSession({ req })) as NextAuthSession | null;
-  if (session && session.user.id && session.user.isAdmin) {
+  if (session && session.user.id && session.user.role === 'ADMIN') {
+    return next({
+      ctx: {
+        user: session.user,
+        prisma,
+      },
+    });
+  } else {
+    throw new TRPCError({ code: 'UNAUTHORIZED' });
+  }
+});
+const isManager = middleware(async ({ ctx, next }) => {
+  const { req } = ctx;
+  const session = (await getSession({ req })) as NextAuthSession | null;
+  if (session && session.user.id && (session.user.role === 'ADMIN' || session.user.role === 'MANAGER')) {
     return next({
       ctx: {
         user: session.user,
@@ -49,3 +63,4 @@ const isAdmin = middleware(async ({ ctx, next }) => {
 
 export const authorizedProcedure = publicProcedure.use(isLoggedIn);
 export const adminProcedure = publicProcedure.use(isAdmin);
+export const managerProcedure = publicProcedure.use(isManager);

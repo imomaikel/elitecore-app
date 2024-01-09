@@ -34,3 +34,19 @@ The bot was built using module [discord.js](https://discord.js.org/)
 - A custom widget that allows you to start, stop, or restart any server if you have permission
 - A slash command that lets you see online players on each server
 - Multi-bot presences that show each game server's players and status
+
+## Advanced Discord & Website Ticket System (TypeScript)
+
+- [ ] Create and close the ticket both on the website and on Discord
+- [ ] Send messages through both Discord and the website
+- [ ] Custom user input verified by RegEX to prevent spam and unwanted tickets
+- [ ] A custom select menu allows the user to select related server
+- [ ] Website ticket logs (+ transcript download)
+- [ ] Require authentication with the provider (Steam)
+- [ ] Menu that allows to add more people to the ticket
+- [ ] Limit ticket creation per user
+- [ ] Creation confirmation
+- [ ] Auto close empty tickets
+- [ ] Support roles
+- [ ] Banned role
+- and various other features for an improved user experience

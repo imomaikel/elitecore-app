@@ -30,7 +30,7 @@ const scheduler = () => {
               for await (const code of codes) {
                 const rate = data.rates[code];
 
-                await prisma.currencies.upsert({
+                await prisma.currency.upsert({
                   where: { code },
                   update: { code, rate },
                   create: { code, rate },

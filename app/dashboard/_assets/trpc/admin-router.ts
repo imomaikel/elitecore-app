@@ -121,7 +121,7 @@ export const adminRouter = router({
           },
         },
       });
-      const totalLogsSize = await prisma.admin_Log.count({
+      const totalLogsSize = await prisma.adminLog.count({
         where: {
           guildId: data?.id,
           content: { contains: contentFilter },

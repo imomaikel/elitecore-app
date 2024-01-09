@@ -205,7 +205,7 @@ export const appRouter = router({
   getCurrencies: publicProcedure.mutation(async ({ ctx }) => {
     const { prisma } = ctx;
 
-    const currencies = await prisma.currencies.findMany({ select: { code: true, rate: true } });
+    const currencies = await prisma.currency.findMany({ select: { code: true, rate: true } });
 
     return currencies;
   }),

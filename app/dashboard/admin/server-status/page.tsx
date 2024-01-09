@@ -1,17 +1,17 @@
 'use client';
+import { useCurrentUser } from '@/hooks/use-current-user';
 import ChannelPicker from '../_components/ChannelPicker';
 import Loader from '@/components/shared/Loader';
-import { useSession } from 'next-auth/react';
 import { redirect } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { trpc } from '@/trpc';
 
 const AdminServerStatusPage = () => {
-  const { data: session, status } = useSession();
+  const { user, sessionStatus } = useCurrentUser();
   const [newWidgetChannelId, setNewWidgetChannelId] = useState('');
 
-  if (session?.user && !session.user.selectedGuildId) redirect('/dashboard/admin/discord-selection');
+  if (user && !user.selectedGuildId) redirect('/dashboard/admin/discord-selection');
 
   const { mutate: updateWidgetChannel, isLoading: isWidgetUpdating } = trpc.admin.updateWidget.useMutation();
   const { mutate: updateNotifyChannel, isLoading: isNotifyUpdating } = trpc.admin.updateWidget.useMutation();
@@ -24,7 +24,7 @@ const AdminServerStatusPage = () => {
     refetchOnWindowFocus: false,
   });
 
-  const isLoading = !(session?.user && status === 'authenticated' && !isApiLoading);
+  const isLoading = !(user && sessionStatus === 'authenticated' && !isApiLoading);
 
   if (!isLoading && newWidgetChannelId.length <= 1 && data && data.serverStatusChannelId) {
     setNewWidgetChannelId(data.serverStatusChannelId);
@@ -48,7 +48,7 @@ const AdminServerStatusPage = () => {
             <Loader />
           ) : (
             <ChannelPicker
-              guildId={session.user.selectedGuildId as string}
+              guildId={user.selectedGuildId as string}
               onSelect={(channelId) => {
                 if (!channelId) return;
                 updateWidgetChannel(
@@ -79,7 +79,7 @@ const AdminServerStatusPage = () => {
           <Loader />
         ) : (
           <ChannelPicker
-            guildId={session.user.selectedGuildId as string}
+            guildId={user.selectedGuildId as string}
             onSelect={(channelId) => {
               if (!channelId) return;
               updateNotifyChannel(

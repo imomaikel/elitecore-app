@@ -1,9 +1,10 @@
 import { DefaultSession } from 'next-auth';
+import { UserRole } from '@prisma/client';
 
 interface NextAuthUser {
   id?: string;
   discordId?: string;
-  isAdmin?: boolean;
+  role?: UserRole;
   selectedGuildId?: string | null;
   basketIdent?: string | null;
   currency?: string;

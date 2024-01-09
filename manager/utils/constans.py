@@ -51,7 +51,7 @@ serversTableTemplate = '''CREATE TABLE IF NOT EXISTS webapp.server (
   position TINYINT DEFAULT 1 NOT NULL,
   PRIMARY KEY (id));'''
 # Logs schema table
-logsTableTemplate = '''CREATE TABLE IF NOT EXISTS webapp.app_log (
+logsTableTemplate = '''CREATE TABLE IF NOT EXISTS webapp.AppLog (
   id INT NOT NULL AUTO_INCREMENT,
   content VARCHAR(1024) NOT NULL,
   file VARCHAR(64) NOT NULL,

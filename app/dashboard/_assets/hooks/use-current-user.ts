@@ -7,5 +7,6 @@ export const useCurrentUser = () => {
   return {
     user: session.data?.user,
     sessionStatus: session.status,
+    update: session.update,
   };
 };

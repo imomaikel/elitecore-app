@@ -3,12 +3,12 @@ import { Separator } from '@/shared/components/ui/separator';
 import ActionButton from '@/components/shared/ActionButton';
 import ControlCartItem from './_components/ControlCartItem';
 import { Skeleton } from '@/shared/components/ui/skeleton';
+import { useCurrentUser } from '@/hooks/use-current-user';
 import { Button } from '@/shared/components/ui/button';
 import { Input } from '@/shared/components/ui/input';
 import { Label } from '@/shared/components/ui/label';
 import { useCurrency } from '@/hooks/use-currency';
 import { useTebex } from '@/hooks/use-tebex';
-import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { toast } from 'sonner';
@@ -20,7 +20,7 @@ const CartPage = () => {
   const [giftCard, setGiftCard] = useState('');
   const { basket, categoryList, applyGiftCard: clientApplyGiftCard, removeGiftCard: clientRemoveGiftCard } = useTebex();
   const { formatPrice } = useCurrency();
-  const { data: session } = useSession();
+  const { user } = useCurrentUser();
 
   useEffect(() => setIsMounted(true), []);
 
@@ -132,7 +132,7 @@ const CartPage = () => {
         <div className="relative z-10 flex items-center space-x-6">
           <h1 className="text-4xl tracking-wide font-bold">Your Cart</h1>
           <Button asChild>
-            <Link href={`https://checkout.tebex.io/checkout/${session?.user.basketIdent}`}>CHECKOUT</Link>
+            <Link href={`https://checkout.tebex.io/checkout/${user?.basketIdent}`}>CHECKOUT</Link>
           </Button>
         </div>
         <div className="relative z-10">

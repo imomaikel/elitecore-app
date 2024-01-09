@@ -1,12 +1,12 @@
 'use client';
+import { useCurrentUser } from '@/hooks/use-current-user';
 import GuildPicker from '../_components/GuildPicker';
 import Loader from '@/components/shared/Loader';
-import { useSession } from 'next-auth/react';
 import { toast } from 'sonner';
 import { trpc } from '@/trpc';
 
 const AdminDiscordSelectionPage = () => {
-  const { data: session, status, update } = useSession();
+  const { user, sessionStatus, update } = useCurrentUser();
 
   const { mutate: selectDiscordServer, isLoading: isUpdating } = trpc.admin.selectDiscordServer.useMutation({
     onSuccess: (guildName) => {
@@ -25,11 +25,11 @@ const AdminDiscordSelectionPage = () => {
   });
 
   const onSelect = (guildId: string) => {
-    if (session?.user.selectedGuildId === guildId || !guildId) return;
+    if (user?.selectedGuildId === guildId || !guildId) return;
     selectDiscordServer({ guildId });
   };
 
-  const isLoading = isUpdating || status !== 'authenticated';
+  const isLoading = isUpdating || sessionStatus === 'loading';
 
   return (
     <>
@@ -39,7 +39,7 @@ const AdminDiscordSelectionPage = () => {
         {isLoading ? (
           <Loader />
         ) : (
-          <GuildPicker onSelect={onSelect} selectedValue={session?.user.selectedGuildId ?? undefined} />
+          <GuildPicker onSelect={onSelect} selectedValue={user?.selectedGuildId ?? undefined} />
         )}
       </div>
     </>
