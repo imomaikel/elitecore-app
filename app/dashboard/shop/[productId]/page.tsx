@@ -113,7 +113,7 @@ const ProductPage = ({ params }: TProductPage) => {
       <>
         <ActionDialog
           onOpenChange={() => setIsAuthorizeDialogOpen(!isDialogOpen)}
-          onClick={() => router.push(authUrl)}
+          onProceed={() => router.push(authUrl)}
           isOpen={isAuthorizeDialogOpen}
           title="Authentication needed!"
           description='Please click "Continue" to link your Steam account with your basket so we know where to send the package after purchase.'

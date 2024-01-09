@@ -7,7 +7,7 @@ import { cn } from '@/shared/lib/utils';
 import { useState } from 'react';
 
 type TSelectBox = {
-  onSelect: (value: string) => void;
+  onSelect: (value: string, label: string) => void;
   searchLabel: string;
   noResultLabel: string;
   buttonText: string;
@@ -16,8 +16,17 @@ type TSelectBox = {
     value: string;
   }[];
   preSelectedValue?: string;
+  noSelect?: boolean;
 };
-const SelectBox = ({ onSelect, options, searchLabel, noResultLabel, buttonText, preSelectedValue }: TSelectBox) => {
+const SelectBox = ({
+  onSelect,
+  options,
+  searchLabel,
+  noResultLabel,
+  buttonText,
+  preSelectedValue,
+  noSelect,
+}: TSelectBox) => {
   const preSelectedData = preSelectedValue && options.find((entry) => entry.value === preSelectedValue);
   const generatePreSelectedValue = preSelectedData && `${preSelectedData.value}:${preSelectedData.label}`;
   const [open, setOpen] = useState(false);
@@ -47,8 +56,11 @@ const SelectBox = ({ onSelect, options, searchLabel, noResultLabel, buttonText, 
                 value={`${option.value}:${option.label}`}
                 onSelect={(currentValue) => {
                   const newValue = currentValue === value ? '' : currentValue;
-                  setValue(newValue);
-                  onSelect(newValue.substring(0, currentValue.indexOf(':')));
+                  if (!noSelect) setValue(newValue);
+                  onSelect(
+                    newValue.substring(0, currentValue.indexOf(':')),
+                    newValue.substring(currentValue.indexOf(':') + 1),
+                  );
                   setOpen(false);
                 }}
               >

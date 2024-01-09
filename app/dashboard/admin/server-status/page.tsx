@@ -48,6 +48,7 @@ const AdminServerStatusPage = () => {
             <Loader />
           ) : (
             <ChannelPicker
+              type="TEXT"
               guildId={user.selectedGuildId as string}
               onSelect={(channelId) => {
                 if (!channelId) return;
@@ -79,6 +80,7 @@ const AdminServerStatusPage = () => {
           <Loader />
         ) : (
           <ChannelPicker
+            type="TEXT"
             guildId={user.selectedGuildId as string}
             onSelect={(channelId) => {
               if (!channelId) return;

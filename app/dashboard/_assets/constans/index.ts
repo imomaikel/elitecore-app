@@ -1,5 +1,6 @@
 import { FaPeopleRoof, FaDiscord } from 'react-icons/fa6';
 import { HiOutlineStatusOnline } from 'react-icons/hi';
+import { IoTicketOutline } from 'react-icons/io5';
 import { TbDeviceRemote } from 'react-icons/tb';
 import { GiPointySword } from 'react-icons/gi';
 import { RiAdminFill } from 'react-icons/ri';
@@ -16,6 +17,11 @@ export const panelTabs = [
         tabName: 'Discord Selection',
         Icon: FaDiscord,
         path: '/dashboard/admin/discord-selection',
+      },
+      {
+        tabName: 'Tickets',
+        Icon: IoTicketOutline,
+        path: '/dashboard/admin/tickets',
       },
       {
         tabName: 'Server Control',

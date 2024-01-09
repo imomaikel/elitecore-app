@@ -3,7 +3,7 @@ import Loader from '@/components/shared/Loader';
 import { trpc } from '@/trpc';
 
 type TGuildPicker = {
-  onSelect: (response: string) => void;
+  onSelect: (value: string) => void;
   className?: string;
   selectedValue?: string;
 };

@@ -3,8 +3,11 @@ import { ExpressContext } from '../../../../server';
 import { TRPCError, initTRPC } from '@trpc/server';
 import prisma from '../../../_shared/lib/prisma';
 import { getSession } from 'next-auth/react';
+import SuperJSON from 'superjson';
 
-const t = initTRPC.context<ExpressContext>().create();
+const t = initTRPC.context<ExpressContext>().create({
+  transformer: SuperJSON,
+});
 
 export const router = t.router;
 export const middleware = t.middleware;

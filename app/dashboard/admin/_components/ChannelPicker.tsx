@@ -3,18 +3,33 @@ import Loader from '@/components/shared/Loader';
 import { trpc } from '@/trpc';
 
 type TChannelPicker = {
-  onSelect: (response: string) => void;
+  onSelect: (value: string) => void;
   guildId: string;
   className?: string;
   selectedValue?: string;
+  isLoading?: boolean;
+  type: 'TEXT' | 'CATEGORY';
 };
-const ChannelPicker = ({ onSelect, className, guildId, selectedValue }: TChannelPicker) => {
-  const { data, isLoading, isError } = trpc.admin.getAllChannels.useQuery(
-    { guildId },
+const ChannelPicker = ({
+  onSelect,
+  className,
+  guildId,
+  selectedValue,
+  type,
+  isLoading: isDisabled,
+}: TChannelPicker) => {
+  const {
+    data,
+    isLoading: isFetching,
+    isError,
+  } = trpc.admin.getAllChannels.useQuery(
+    { guildId, type },
     {
       refetchOnWindowFocus: true,
     },
   );
+
+  const isLoading = isDisabled || isFetching;
 
   return (
     <div className={className}>
@@ -23,14 +38,14 @@ const ChannelPicker = ({ onSelect, className, guildId, selectedValue }: TChannel
       {isLoading && <Loader />}
       {!isLoading && data && (
         <SelectBox
-          buttonText="Select channel"
-          noResultLabel="No channels found"
+          buttonText={`Select ${type === 'CATEGORY' ? 'category' : 'channel'}`}
+          noResultLabel={`No ${type === 'CATEGORY' ? 'categories' : 'channels'} found`}
           onSelect={onSelect}
           options={data.map((entry) => ({
             label: entry.channelName,
             value: entry.channelId,
           }))}
-          searchLabel="Search for a channel"
+          searchLabel={`Search for a ${type === 'CATEGORY' ? 'category' : 'channel'}`}
           preSelectedValue={selectedValue ?? undefined}
         />
       )}

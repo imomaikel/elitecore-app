@@ -54,7 +54,7 @@ const ShoppingCart = () => {
     <>
       <ActionDialog
         onOpenChange={() => setIsDialogOpen(!isDialogOpen)}
-        onClick={() => signIn('discord')}
+        onProceed={() => signIn('discord')}
         isOpen={isDialogOpen}
         title="Disclaimer"
         description={<SignInConfirm />}

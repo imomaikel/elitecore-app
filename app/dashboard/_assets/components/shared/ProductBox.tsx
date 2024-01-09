@@ -87,7 +87,7 @@ const ProductBox = ({ basePrice, description, imageURL, name, productId, gradien
     <>
       <ActionDialog
         onOpenChange={() => setIsDialogOpen(!isDialogOpen)}
-        onClick={() => router.push(authUrl)}
+        onProceed={() => router.push(authUrl)}
         isOpen={isDialogOpen}
         title="Authentication needed!"
         description='Please click "Continue" to link your Steam account with your basket so we know where to send the package after purchase.'

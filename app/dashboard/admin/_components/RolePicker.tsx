@@ -3,18 +3,35 @@ import Loader from '@/components/shared/Loader';
 import { trpc } from '@/trpc';
 
 type TRolePicker = {
-  onSelect: (response: string) => void;
+  onSelect: (value: string, label: string) => void;
   guildId: string;
   className?: string;
   selectedValue?: string;
+  isLoading?: boolean;
+  noSelect?: boolean;
+  exclude?: string[];
 };
-const RolePicker = ({ onSelect, className, guildId, selectedValue }: TRolePicker) => {
-  const { data, isLoading, isError } = trpc.admin.getAllRoles.useQuery(
+const RolePicker = ({
+  onSelect,
+  className,
+  guildId,
+  selectedValue,
+  isLoading: isDisabled,
+  noSelect,
+  exclude,
+}: TRolePicker) => {
+  const {
+    data,
+    isLoading: isFetching,
+    isError,
+  } = trpc.admin.getAllRoles.useQuery(
     { guildId },
     {
       refetchOnWindowFocus: true,
     },
   );
+
+  const isLoading = isFetching || isDisabled;
 
   return (
     <div className={className}>
@@ -23,14 +40,17 @@ const RolePicker = ({ onSelect, className, guildId, selectedValue }: TRolePicker
       {isLoading && <Loader />}
       {!isLoading && data && (
         <SelectBox
+          noSelect={noSelect}
           buttonText="Select role"
           noResultLabel="No roles found"
           onSelect={onSelect}
-          options={data.map((entry) => ({
-            label: entry.roleName,
-            value: entry.roleId,
-          }))}
-          searchLabel="Search for a server"
+          options={data
+            .map((entry) => ({
+              label: entry.roleName,
+              value: entry.roleId,
+            }))
+            .filter((entry) => (exclude ? !exclude.includes(entry.value) : true))}
+          searchLabel="Search for a role"
           preSelectedValue={selectedValue}
         />
       )}

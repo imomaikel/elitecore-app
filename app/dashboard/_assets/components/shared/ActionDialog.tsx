@@ -16,7 +16,7 @@ type TActionDialog = {
   onOpenChange: () => void;
   title: string;
   description: string | ReactNode;
-  onClick: () => void;
+  onProceed: () => void;
   proceedLabel?: string;
 };
 const ActionDialog = ({
@@ -24,7 +24,7 @@ const ActionDialog = ({
   onOpenChange,
   description,
   title,
-  onClick,
+  onProceed,
   proceedLabel = 'Continue',
 }: TActionDialog) => {
   return (
@@ -36,7 +36,7 @@ const ActionDialog = ({
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={onClick}>{proceedLabel}</AlertDialogAction>
+          <AlertDialogAction onClick={onProceed}>{proceedLabel}</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

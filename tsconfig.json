@@ -20,7 +20,8 @@
     ],
     "paths": {
       "@/*": ["./app/dashboard/_assets/*"],
-      "@/shared/*": ["./app/_shared/*"]
+      "@/shared/*": ["./app/_shared/*"],
+      "@/admin/*": ["./app/dashboard/admin/_components/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

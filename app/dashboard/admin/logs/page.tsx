@@ -128,7 +128,7 @@ const AdminLogsPage = () => {
               ))
             : data?.guild?.logs.map((log) => (
                 <TableRow key={log.id}>
-                  <TableCell>{log.author.name}</TableCell>
+                  <TableCell>{log.Author.name}</TableCell>
                   <TableCell>{log.content}</TableCell>
                   <TableCell>{format(new Date(log.createdAt), 'dd/MM h:m')}</TableCell>
                 </TableRow>

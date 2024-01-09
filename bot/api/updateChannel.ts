@@ -88,7 +88,7 @@ const apiUpdateChannel = async ({
             logs: {
               create: {
                 content: `Updated server status widget channel to "${channel.name}"`,
-                author: {
+                Author: {
                   connect: {
                     discordId: userDiscordId,
                   },
@@ -110,7 +110,7 @@ const apiUpdateChannel = async ({
           logs: {
             create: {
               content: `Updated server status notification channel to "${channel.name}"`,
-              author: {
+              Author: {
                 connect: {
                   discordId: userDiscordId,
                 },

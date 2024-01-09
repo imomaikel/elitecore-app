@@ -237,8 +237,10 @@ model TicketCategory {
 }
 
 model TicketSupport {
-  id     Int    @id @default(autoincrement())
-  roleId String @db.TinyText
+  id Int @id @default(autoincrement())
+
+  roleId   String @db.TinyText
+  roleName String @db.TinyText
 
   TicketCategory   TicketCategory? @relation(fields: [ticketCategoryId], references: [id], onDelete: Cascade)
   ticketCategoryId String?
