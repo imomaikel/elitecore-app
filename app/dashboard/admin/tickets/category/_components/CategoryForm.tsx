@@ -37,6 +37,7 @@ type TCategoryEdit = {
   guildId: string;
   values: TTicketCategoryEditSchema;
   id: string;
+  refetch: () => void;
 };
 type TCategoryForm = TCategoryCreate | TCategoryEdit;
 
@@ -82,6 +83,7 @@ const CategoryForm = (props: TCategoryForm) => {
     onSuccess: (data) => {
       if (data.success) {
         toast.success(`Updated category "${form.getValues('name')}"`);
+        if (mode === 'EDIT') props.refetch();
       } else {
         toast.error('Something went wrong!');
       }
@@ -213,7 +215,6 @@ const CategoryForm = (props: TCategoryForm) => {
                 </div>
               )}
 
-              <FormDescription>Select role(s) that can have access to the ticket</FormDescription>
               <FormControl>
                 <RolePicker
                   noSelect
@@ -230,7 +231,7 @@ const CategoryForm = (props: TCategoryForm) => {
                   }}
                 />
               </FormControl>
-              <FormDescription>Save to update the roles</FormDescription>
+              <FormDescription>Select role(s) that can have access to the ticket</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -245,9 +246,9 @@ const CategoryForm = (props: TCategoryForm) => {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Category channel</FormLabel>
-                <FormDescription>New ticket channels will be appended to selected category channel.</FormDescription>
                 <FormControl>
                   <ChannelPicker
+                    showCancel
                     isLoading={isLoading}
                     type="CATEGORY"
                     selectedValue={field.value ?? undefined}
@@ -258,6 +259,7 @@ const CategoryForm = (props: TCategoryForm) => {
                     }}
                   />
                 </FormControl>
+                <FormDescription>New ticket channels will be appended to selected category channel.</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -268,9 +270,9 @@ const CategoryForm = (props: TCategoryForm) => {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Banned role</FormLabel>
-                <FormDescription>Select a role that can not create tickets</FormDescription>
                 <FormControl>
                   <RolePicker
+                    showCancel
                     isLoading={isLoading}
                     guildId={guildId}
                     selectedValue={field.value ?? undefined}
@@ -280,6 +282,7 @@ const CategoryForm = (props: TCategoryForm) => {
                     }}
                   />
                 </FormControl>
+                <FormDescription>Select a role that can not create tickets</FormDescription>
                 <FormMessage />
               </FormItem>
             )}

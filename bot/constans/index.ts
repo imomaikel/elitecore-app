@@ -2,7 +2,8 @@ export type TEnvVars =
   | 'DISCORD_DEVELOPMENT_BOT_TOKEN'
   | 'DISCORD_PRODUCTION_BOT_TOKEN'
   | 'NODE_ENV'
-  | 'EXCHANGE_RATES_API_URL';
+  | 'EXCHANGE_RATES_API_URL'
+  | 'NEXT_PUBLIC_SERVER_URL';
 
 // https://flatuicolors.com/
 export const colors = {
@@ -18,6 +19,7 @@ export const extraSigns = {
   star: '💫',
   family: '👪',
   redCircle: '🔴',
+  ticket: '🎫',
 };
 
 export const gifs = {

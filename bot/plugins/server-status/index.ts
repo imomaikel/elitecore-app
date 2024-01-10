@@ -5,7 +5,7 @@ import prisma from '../../lib/prisma';
 import { updateBots } from './bots';
 
 /**
- * Create embed of all servers and update all widgets
+ * Create server-status widget message embed for all servers and update message
  * @param updateOnlyOneGuildId If specified, the widget will be sent to only one guild, and the returned value will be more detailed
  */
 const updateServerStatusWidget = async (updateOnlyOneGuildId: string | undefined = undefined) => {

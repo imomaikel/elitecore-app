@@ -1,3 +1,5 @@
+import { GuildBasedChannel } from 'discord.js';
+
 // Define a custom response for each plugin
 type PluginResponses = {
   sendMessage: {
@@ -22,6 +24,22 @@ type PluginResponses = {
         | 'The widget channel is not set'
         | 'User has no permission'
         | 'The channel does not exist'
+        | 'Bad request';
+      success: 'Widget sent' | 'Verified';
+    };
+    data: {
+      error?: never;
+      success: {
+        channel?: GuildBasedChannel;
+      };
+    };
+  };
+  ticketWidget: {
+    status: {
+      error:
+        | 'Internal Server Error'
+        | 'There are no ticket categories created'
+        | 'The ticket widget channel is not set'
         | 'Bad request';
       success: 'Widget sent';
     };

@@ -10,6 +10,7 @@ type TRolePicker = {
   isLoading?: boolean;
   noSelect?: boolean;
   exclude?: string[];
+  showCancel?: boolean;
 };
 const RolePicker = ({
   onSelect,
@@ -19,6 +20,7 @@ const RolePicker = ({
   isLoading: isDisabled,
   noSelect,
   exclude,
+  showCancel,
 }: TRolePicker) => {
   const {
     data,
@@ -40,6 +42,7 @@ const RolePicker = ({
       {isLoading && <Loader />}
       {!isLoading && data && (
         <SelectBox
+          showCancel={showCancel}
           noSelect={noSelect}
           buttonText="Select role"
           noResultLabel="No roles found"

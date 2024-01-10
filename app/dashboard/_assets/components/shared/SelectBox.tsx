@@ -17,6 +17,7 @@ type TSelectBox = {
   }[];
   preSelectedValue?: string;
   noSelect?: boolean;
+  showCancel?: boolean;
 };
 const SelectBox = ({
   onSelect,
@@ -26,6 +27,7 @@ const SelectBox = ({
   buttonText,
   preSelectedValue,
   noSelect,
+  showCancel,
 }: TSelectBox) => {
   const preSelectedData = preSelectedValue && options.find((entry) => entry.value === preSelectedValue);
   const generatePreSelectedValue = preSelectedData && `${preSelectedData.value}:${preSelectedData.label}`;
@@ -40,7 +42,7 @@ const SelectBox = ({
       <PopoverTrigger asChild>
         <Button variant="outline" role="combobox" aria-expanded={open} className="w-[200px] justify-between">
           {value
-            ? options.find((option) => option.value === value.substring(0, value.indexOf(':')))?.label
+            ? options.find((option) => option.value === value.substring(0, value.indexOf(':')))?.label ?? buttonText
             : buttonText}
           <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
@@ -73,6 +75,22 @@ const SelectBox = ({
                 />
               </CommandItem>
             ))}
+            {showCancel && (
+              <CommandItem
+                value="cancel:Cancel"
+                onSelect={(currentValue) => {
+                  const newValue = currentValue === value ? '' : currentValue;
+                  if (!noSelect) setValue(newValue);
+                  onSelect(
+                    newValue.substring(0, currentValue.indexOf(':')),
+                    newValue.substring(currentValue.indexOf(':') + 1),
+                  );
+                  setOpen(false);
+                }}
+              >
+                Cancel
+              </CommandItem>
+            )}
           </CommandGroup>
         </Command>
       </PopoverContent>

@@ -9,6 +9,7 @@ type TChannelPicker = {
   selectedValue?: string;
   isLoading?: boolean;
   type: 'TEXT' | 'CATEGORY';
+  showCancel?: boolean;
 };
 const ChannelPicker = ({
   onSelect,
@@ -17,6 +18,7 @@ const ChannelPicker = ({
   selectedValue,
   type,
   isLoading: isDisabled,
+  showCancel,
 }: TChannelPicker) => {
   const {
     data,
@@ -38,6 +40,7 @@ const ChannelPicker = ({
       {isLoading && <Loader />}
       {!isLoading && data && (
         <SelectBox
+          showCancel={showCancel}
           buttonText={`Select ${type === 'CATEGORY' ? 'category' : 'channel'}`}
           noResultLabel={`No ${type === 'CATEGORY' ? 'categories' : 'channels'} found`}
           onSelect={onSelect}

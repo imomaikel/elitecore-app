@@ -39,6 +39,7 @@ The bot was built using module [discord.js](https://discord.js.org/)
 
 - [ ] Create and close the ticket both on the website and on Discord
 - [ ] Send messages through both Discord and the website
+- [ ] Multiple ticket categories with custom settings
 - [ ] Custom user input verified by RegEX to prevent spam and unwanted tickets
 - [ ] A custom select menu allows the user to select related server
 - [ ] Website ticket logs (+ transcript download)

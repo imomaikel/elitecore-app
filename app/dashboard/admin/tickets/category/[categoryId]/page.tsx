@@ -11,7 +11,11 @@ const AdminTicketsEditCategoryPanel = () => {
   const { user } = useCurrentUser();
   const router = useRouter();
 
-  const { data: category, isLoading } = trpc.admin.fetchTicketCategory.useQuery(
+  const {
+    data: category,
+    isLoading,
+    refetch,
+  } = trpc.admin.fetchTicketCategory.useQuery(
     { id: typeof categoryId === 'object' ? categoryId[0] : categoryId },
     {
       refetchOnWindowFocus: false,
@@ -35,6 +39,7 @@ const AdminTicketsEditCategoryPanel = () => {
     <AdminPageWrapper title={`Ticket - Editing (${data.name}) category`} showGoBack>
       <p className="text-muted-foreground mb-2">Remember to save your changes at the bottom of the page.</p>
       <CategoryForm
+        refetch={refetch}
         id={data.id}
         mode="EDIT"
         guildId={user.selectedGuildId}

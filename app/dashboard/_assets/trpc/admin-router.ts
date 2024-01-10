@@ -1,6 +1,8 @@
 import { TicketCategoryCreateSchema, TicketCategoryEditSchema } from '../../admin/tickets/_assets/validators';
-import { apiAvailableChannels, apiAvailableRoles, apiMutualGuilds, apiUpdateChannel } from '../../../../bot/api';
-import { API_CHANNEL_ACTIONS } from '../../../../bot/api/updateChannel';
+import { apiAvailableChannels, apiAvailableRoles, apiMutualGuilds } from '../../../../bot/api';
+import apiUpdateBroadcastChannel from '../../../../bot/api/broadcastUpdate';
+import { API_CHANNEL_ACTIONS_LIST } from '../../../../bot/constans/types';
+import { apiUpdateWidget } from '../../../../bot/api/widgetUpdate';
 import { createAdminLog } from '../../admin/_actions';
 import { adminProcedure, router } from './trpc';
 import { TRPCError } from '@trpc/server';
@@ -66,19 +68,29 @@ export const adminRouter = router({
     return data;
   }),
   updateWidget: adminProcedure
-    .input(z.object({ widgetName: z.string(), channelId: z.string() }))
+    .input(z.object({ widgetName: API_CHANNEL_ACTIONS_LIST, channelId: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const { user } = ctx;
       const { channelId, widgetName } = input;
       const guildId = user.selectedGuildId;
-      if (!user.discordId || !guildId || !API_CHANNEL_ACTIONS.includes(widgetName)) return null;
+      if (!user.discordId || !guildId) return null;
 
-      const action = await apiUpdateChannel({
-        channelId,
-        guildId,
-        userDiscordId: user.discordId,
-        widgetName: widgetName as API_CHANNEL_ACTIONS,
-      });
+      let action;
+      if (widgetName === 'ticketWidget') {
+        action = await apiUpdateWidget({
+          channelId,
+          guildId,
+          userDiscordId: user.discordId,
+          widgetName: 'ticketWidget',
+        });
+      } else {
+        action = await apiUpdateBroadcastChannel({
+          channelId,
+          guildId,
+          userDiscordId: user.discordId,
+          widgetName: widgetName,
+        });
+      }
 
       return action;
     }),
@@ -149,18 +161,24 @@ export const adminRouter = router({
     const supportList = values.supportRoles;
 
     try {
-      await prisma.ticketCategory.create({
+      await prisma.guild.update({
+        where: { guildId: user.selectedGuildId },
         data: {
-          ...values,
-          supportRoles: supportList
-            ? {
-                createMany: {
-                  data: [...supportList],
-                },
-              }
-            : undefined,
+          ticketCategories: {
+            create: {
+              ...values,
+              supportRoles: supportList
+                ? {
+                    createMany: {
+                      data: [...supportList],
+                    },
+                  }
+                : undefined,
+            },
+          },
         },
       });
+
       return { success: true };
     } catch {
       return { success: false };
@@ -174,23 +192,39 @@ export const adminRouter = router({
   }),
   getTicketCategories: adminProcedure.query(async ({ ctx }) => {
     const { prisma } = ctx;
+    const { user } = ctx;
 
-    const categories = await prisma.ticketCategory.findMany({
+    if (!user.selectedGuildId || !user.id) {
+      throw new TRPCError({ code: 'BAD_REQUEST' });
+    }
+
+    const getCategories = await prisma.guild.findUnique({
+      where: { guildId: user.selectedGuildId },
       select: {
-        name: true,
-        id: true,
+        ticketCategories: true,
       },
     });
+
+    const categories = getCategories?.ticketCategories;
 
     return categories;
   }),
   fetchTicketCategory: adminProcedure.input(z.object({ id: z.string().min(1) })).query(async ({ ctx, input }) => {
     const { id } = input;
-    const { prisma } = ctx;
+    const { prisma, user } = ctx;
+
+    if (!user.selectedGuildId || !user.id) {
+      throw new TRPCError({ code: 'BAD_REQUEST' });
+    }
 
     try {
       const category = await prisma.ticketCategory.findFirst({
-        where: { id },
+        where: {
+          id,
+          Guild: {
+            guildId: user.selectedGuildId,
+          },
+        },
         include: {
           supportRoles: {
             select: {
@@ -218,7 +252,12 @@ export const adminRouter = router({
 
     try {
       const category = await prisma.ticketCategory.delete({
-        where: { id },
+        where: {
+          id,
+          Guild: {
+            guildId: user.selectedGuildId,
+          },
+        },
       });
       categoryName = category.name;
       return { success: category.name };
@@ -244,7 +283,12 @@ export const adminRouter = router({
 
       const currentSupporters = (
         await prisma.ticketCategory.findUnique({
-          where: { id: input.id },
+          where: {
+            id: input.id,
+            Guild: {
+              guildId: user.selectedGuildId,
+            },
+          },
           select: {
             supportRoles: true,
           },
@@ -272,6 +316,8 @@ export const adminRouter = router({
           where: { id: input.id },
           data: {
             ...values,
+            parentChannelId: values.parentChannelId === 'cancel' ? '' : values.parentChannelId,
+            bannedRoleId: values.bannedRoleId === 'cancel' ? '' : values.bannedRoleId,
             supportRoles: values.supportRoles
               ? {
                   deleteMany: {
