@@ -59,9 +59,12 @@ export const appRouter = router({
 
       const descOrder = productsCount.sort((a, b) => b.count - a.count).map((entry) => entry.productId);
 
-      const products =
-        categories.length <= 0 ? await shopGetCategories() : categories.map((entry) => entry.packages).flat();
-      if (categories.length <= 0) categories = await shopGetCategories();
+      if (categories.length <= 0) {
+        const getCategories = await shopGetCategories();
+        categories = getCategories;
+      }
+
+      const products = categories.map(({ packages }) => packages).flat();
 
       const TOP_PICKS_TO_GENERATE = 4;
       let randomPicksToGenerate = 4;

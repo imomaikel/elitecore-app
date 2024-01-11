@@ -22,40 +22,35 @@ const RolePicker = ({
   exclude,
   showCancel,
 }: TRolePicker) => {
-  const {
-    data,
-    isLoading: isFetching,
-    isError,
-  } = trpc.admin.getAllRoles.useQuery(
+  const { data: roles, isLoading: isFetching } = trpc.admin.getAllRoles.useQuery(
     { guildId },
-    {
-      refetchOnWindowFocus: true,
-    },
+    { refetchOnWindowFocus: true },
   );
 
   const isLoading = isFetching || isDisabled;
 
   return (
     <div className={className}>
-      {!isLoading && !data && !isError && <p>No roles</p>}
-      {isError && <p>Something went wrong.</p>}
-      {isLoading && <Loader />}
-      {!isLoading && data && (
+      {isLoading ? (
+        <Loader />
+      ) : roles?.length ? (
         <SelectBox
           showCancel={showCancel}
           noSelect={noSelect}
           buttonText="Select role"
           noResultLabel="No roles found"
           onSelect={onSelect}
-          options={data
-            .map((entry) => ({
-              label: entry.roleName,
-              value: entry.roleId,
+          options={roles
+            .map(({ roleId, roleName }) => ({
+              label: roleName,
+              value: roleId,
             }))
-            .filter((entry) => (exclude ? !exclude.includes(entry.value) : true))}
+            .filter(({ value }) => (exclude ? !exclude.includes(value) : true))}
           searchLabel="Search for a role"
           preSelectedValue={selectedValue}
         />
+      ) : (
+        <p>No roles found</p>
       )}
     </div>
   );

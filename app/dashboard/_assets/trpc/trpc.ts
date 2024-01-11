@@ -38,10 +38,19 @@ const isLoggedIn = middleware(async ({ ctx, next }) => {
 const isAdmin = middleware(async ({ ctx, next }) => {
   const { req } = ctx;
   const session = (await getSession({ req })) as NextAuthSession | null;
-  if (session && session.user.id && session.user.role === 'ADMIN') {
+  if (
+    session &&
+    session.user.id &&
+    session.user.role === 'ADMIN' &&
+    session.user.discordId &&
+    session.user.discordId &&
+    session.user.selectedGuildId
+  ) {
     return next({
       ctx: {
         user: session.user,
+        selectedGuildId: session.user.selectedGuildId,
+        userDiscordId: session.user.discordId,
         prisma,
       },
     });
@@ -49,13 +58,21 @@ const isAdmin = middleware(async ({ ctx, next }) => {
     throw new TRPCError({ code: 'UNAUTHORIZED' });
   }
 });
+
 const isManager = middleware(async ({ ctx, next }) => {
   const { req } = ctx;
   const session = (await getSession({ req })) as NextAuthSession | null;
-  if (session && session.user.id && (session.user.role === 'ADMIN' || session.user.role === 'MANAGER')) {
+  if (
+    session &&
+    session.user.id &&
+    session.user.discordId &&
+    (session.user.role === 'ADMIN' || session.user.role === 'MANAGER')
+  ) {
     return next({
       ctx: {
         user: session.user,
+        selectedGuildId: session.user.selectedGuildId,
+        userDiscordId: session.user.discordId,
         prisma,
       },
     });

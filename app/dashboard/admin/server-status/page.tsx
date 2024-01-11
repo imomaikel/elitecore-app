@@ -13,31 +13,21 @@ const AdminServerStatusPage = () => {
 
   if (user && !user.selectedGuildId) redirect('/dashboard/admin/discord-selection');
 
-  const { mutate: updateWidgetChannel, isLoading: isWidgetUpdating } = trpc.admin.updateWidget.useMutation();
-  const { mutate: updateNotifyChannel, isLoading: isNotifyUpdating } = trpc.admin.updateWidget.useMutation();
+  const { mutate: updateWidgetChannel, isLoading: isWidgetUpdating } = trpc.admin.updateBroadcastWidget.useMutation();
+  const { mutate: updateNotifyChannel, isLoading: isNotifyUpdating } = trpc.admin.updateBroadcastWidget.useMutation();
+
   const {
-    data,
+    data: channelIds,
     isLoading: isApiLoading,
-    isError,
     refetch,
-  } = trpc.admin.getGuildDbChannels.useQuery(undefined, {
-    refetchOnWindowFocus: false,
-  });
+  } = trpc.admin.getGuildDbChannels.useQuery(undefined, { refetchOnWindowFocus: false });
 
   const isLoading = !(user && sessionStatus === 'authenticated' && !isApiLoading);
 
-  if (!isLoading && newWidgetChannelId.length <= 1 && data && data.serverStatusChannelId) {
-    setNewWidgetChannelId(data.serverStatusChannelId);
+  if (!isLoading && newWidgetChannelId.length <= 1 && channelIds && channelIds.serverStatusChannelId) {
+    setNewWidgetChannelId(channelIds.serverStatusChannelId);
   }
 
-  if (isError) {
-    return (
-      <>
-        <h1 className="mb-4 text-2xl font-bold">Admin - Server Status</h1>
-        <div>Something went wrong</div>
-      </>
-    );
-  }
   return (
     <>
       <h1 className="mb-4 text-2xl font-bold">Admin - Server Status</h1>
@@ -70,7 +60,9 @@ const AdminServerStatusPage = () => {
                   },
                 );
               }}
-              selectedValue={data && data.serverStatusChannelId ? data.serverStatusChannelId : undefined}
+              selectedValue={
+                channelIds && channelIds.serverStatusChannelId ? channelIds.serverStatusChannelId : undefined
+              }
             />
           )}
         </div>
@@ -102,7 +94,9 @@ const AdminServerStatusPage = () => {
                 },
               );
             }}
-            selectedValue={data && data.serverStatusNotifyChannelId ? data.serverStatusNotifyChannelId : undefined}
+            selectedValue={
+              channelIds && channelIds.serverStatusNotifyChannelId ? channelIds.serverStatusNotifyChannelId : undefined
+            }
           />
         )}
       </div>

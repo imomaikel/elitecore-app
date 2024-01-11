@@ -53,7 +53,7 @@ const Navbar = () => {
     if (requestNewCurrencies) refreshCurrencies();
 
     setIsMounted(true);
-  }, []);
+  }, [currencies, lastUpdatedAt, refreshCurrencies]);
 
   const updateCurrency = (value: TCurrency['code']) => {
     toast.success('Currency updated');

@@ -1,14 +1,13 @@
 import { createTicketCategoryWidget } from '../plugins/tickets';
-import { API_CHANNEL_ACTIONS_LIST } from '../constans/types';
 import { verifyApiRequest } from '../helpers/verifyApi';
+import { TAPI_WIDGETS } from '../constans/types';
 import prisma from '../lib/prisma';
-import { z } from 'zod';
 
 type TApiUpdateWidget = {
   guildId: string;
   userDiscordId: string;
   channelId: string;
-  widgetName: z.infer<typeof API_CHANNEL_ACTIONS_LIST>;
+  widgetName: TAPI_WIDGETS;
 };
 export const apiUpdateWidget = async ({ channelId, guildId, userDiscordId, widgetName }: TApiUpdateWidget) => {
   const verifyRequest = await verifyApiRequest({ channelId, guildId, userDiscordId });

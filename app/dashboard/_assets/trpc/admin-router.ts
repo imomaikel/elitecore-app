@@ -1,96 +1,104 @@
 import { TicketCategoryCreateSchema, TicketCategoryEditSchema } from '../../admin/tickets/_assets/validators';
 import { apiAvailableChannels, apiAvailableRoles, apiMutualGuilds } from '../../../../bot/api';
+import { API_BROADCAST_WIDGETS, API_WIDGETS } from '../../../../bot/constans/types';
 import apiUpdateBroadcastChannel from '../../../../bot/api/broadcastUpdate';
-import { API_CHANNEL_ACTIONS_LIST } from '../../../../bot/constans/types';
 import { apiUpdateWidget } from '../../../../bot/api/widgetUpdate';
+import { adminProcedure, managerProcedure, router } from './trpc';
 import { createAdminLog } from '../../admin/_actions';
-import { adminProcedure, router } from './trpc';
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 
 export const adminRouter = router({
-  getDiscordGuilds: adminProcedure.query(async ({ ctx }) => {
-    if (!ctx.user.discordId) return null;
-    const guilds = await apiMutualGuilds(ctx.user.discordId);
+  getDiscordGuilds: managerProcedure.query(async ({ ctx }) => {
+    const { userDiscordId } = ctx;
+
+    const guilds = await apiMutualGuilds(userDiscordId);
+
     return guilds;
   }),
-  selectDiscordServer: adminProcedure.input(z.object({ guildId: z.string() })).mutation(async ({ ctx, input }) => {
-    if (!ctx.user.discordId) return false;
-    const { prisma, user } = ctx;
+  selectDiscordServer: managerProcedure.input(z.object({ guildId: z.string() })).mutation(async ({ ctx, input }) => {
+    const { prisma, userDiscordId } = ctx;
     const { guildId } = input;
-    const guilds = await apiMutualGuilds(ctx.user.discordId);
-    if (!guilds?.some((guild) => guild.guildId === guildId)) return false;
+
+    const guilds = await apiMutualGuilds(userDiscordId);
+    const guildName = guilds?.find((guild) => guild.guildId === guildId)?.guildName;
+    if (!guilds?.some((guild) => guild.guildId === guildId) || !guildName) {
+      throw new TRPCError({ code: 'UNAUTHORIZED' });
+    }
 
     try {
       await prisma.user.update({
-        where: { id: user.id },
+        where: { discordId: userDiscordId },
         data: { selectedDiscordId: guildId },
       });
+
       ctx.user.selectedGuildId = guildId;
-      return guilds.find((guild) => guild.guildId === guildId)?.guildName;
+
+      return { success: true, guildName: guildName };
     } catch {
-      return false;
+      return { error: true };
     }
   }),
   getAllChannels: adminProcedure
     .input(z.object({ guildId: z.string(), type: z.enum(['TEXT', 'CATEGORY']) }))
-    .query(async ({ ctx, input }) => {
-      if (!ctx.user.discordId) return null;
+    .query(async ({ input }) => {
       const { guildId, type } = input;
 
       const channels = await apiAvailableChannels(guildId, type);
       return channels;
     }),
-  getAllRoles: adminProcedure.input(z.object({ guildId: z.string() })).query(async ({ ctx, input }) => {
-    if (!ctx.user.discordId) return null;
+  getAllRoles: adminProcedure.input(z.object({ guildId: z.string() })).query(async ({ input }) => {
+    const { guildId } = input;
 
-    const roles = await apiAvailableRoles(input.guildId);
+    const roles = await apiAvailableRoles(guildId);
     return roles;
   }),
   getGuildDbChannels: adminProcedure.query(async ({ ctx }) => {
-    const { prisma } = ctx;
-    const guildId = ctx.user.selectedGuildId;
-    if (!ctx.user.discordId || !guildId) return null;
+    const { prisma, userDiscordId, selectedGuildId } = ctx;
 
-    const guilds = await apiMutualGuilds(ctx.user.discordId);
-    if (!guilds?.some((guild) => guild.guildId === guildId)) return false;
+    const guilds = await apiMutualGuilds(userDiscordId);
+    if (!guilds?.some((guild) => guild.guildId === selectedGuildId)) return false;
 
-    const data = await prisma.guild.findFirst({
-      where: { guildId },
+    const data = await prisma.guild.findUnique({
+      where: { guildId: selectedGuildId },
       select: {
         playersCmdChannelId: true,
         serverStatusChannelId: true,
         serverControlChannelId: true,
         serverControlLogChannelId: true,
         serverStatusNotifyChannelId: true,
+        ticketCategoryChannelId: true,
       },
     });
     return data;
   }),
-  updateWidget: adminProcedure
-    .input(z.object({ widgetName: API_CHANNEL_ACTIONS_LIST, channelId: z.string() }))
+  updateBroadcastWidget: adminProcedure
+    .input(z.object({ widgetName: API_BROADCAST_WIDGETS, channelId: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      const { user } = ctx;
+      const { selectedGuildId, userDiscordId } = ctx;
       const { channelId, widgetName } = input;
-      const guildId = user.selectedGuildId;
-      if (!user.discordId || !guildId) return null;
 
-      let action;
-      if (widgetName === 'ticketWidget') {
-        action = await apiUpdateWidget({
-          channelId,
-          guildId,
-          userDiscordId: user.discordId,
-          widgetName: 'ticketWidget',
-        });
-      } else {
-        action = await apiUpdateBroadcastChannel({
-          channelId,
-          guildId,
-          userDiscordId: user.discordId,
-          widgetName: widgetName,
-        });
-      }
+      const action = await apiUpdateBroadcastChannel({
+        channelId,
+        guildId: selectedGuildId,
+        userDiscordId: userDiscordId,
+        widgetName,
+      });
+
+      return action;
+    }),
+  updateWidget: adminProcedure
+    .input(z.object({ widgetName: API_WIDGETS, channelId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const { selectedGuildId, userDiscordId } = ctx;
+      const { channelId, widgetName } = input;
+
+      const action = await apiUpdateWidget({
+        channelId,
+        guildId: selectedGuildId,
+        userDiscordId: userDiscordId,
+        widgetName,
+      });
 
       return action;
     }),
@@ -103,19 +111,16 @@ export const adminRouter = router({
           .max(50, { message: 'Maximum fifty logs per page' }),
         authorFilter: z.string().optional(),
         contentFilter: z.string().optional(),
-        order: z.string(),
+        order: z.enum(['asc', 'desc']),
         currentPage: z.number().min(1, { message: 'Page could not be lower than one' }),
       }),
     )
     .query(async ({ ctx, input }) => {
-      const { prisma, user } = ctx;
       const { logsPerPage, authorFilter, contentFilter, currentPage, order } = input;
-      const guildId = user.selectedGuildId;
-      if (!user.discordId || !guildId) return null;
-      if (!(order === 'asc' || order === 'desc')) return null;
+      const { prisma, selectedGuildId } = ctx;
 
-      const data = await prisma.guild.findFirst({
-        where: { guildId: guildId },
+      const data = await prisma.guild.findUnique({
+        where: { guildId: selectedGuildId },
         include: {
           logs: {
             orderBy: {
@@ -137,32 +142,28 @@ export const adminRouter = router({
             take: logsPerPage,
             skip: (currentPage - 1) * logsPerPage,
           },
+          _count: true,
         },
       });
-      const totalLogsSize = await prisma.adminLog.count({
-        where: {
-          guildId: data?.id,
-          content: { contains: contentFilter },
-          Author: { name: { contains: authorFilter } },
-        },
-      });
+
+      if (!data) {
+        throw new TRPCError({ code: 'BAD_REQUEST' });
+      }
+
       return {
         guild: data,
-        totalLogsSize,
+        totalLogsSize: data._count.logs,
       };
     }),
   createTicketCategory: adminProcedure.input(TicketCategoryCreateSchema).mutation(async ({ ctx, input }) => {
-    const { prisma, user } = ctx;
+    const { prisma, selectedGuildId, userDiscordId } = ctx;
     const values = input;
 
-    if (!user.selectedGuildId || !user.id) {
-      throw new TRPCError({ code: 'BAD_REQUEST' });
-    }
     const supportList = values.supportRoles;
 
     try {
       await prisma.guild.update({
-        where: { guildId: user.selectedGuildId },
+        where: { guildId: selectedGuildId },
         data: {
           ticketCategories: {
             create: {
@@ -181,48 +182,43 @@ export const adminRouter = router({
 
       return { success: true };
     } catch {
-      return { success: false };
+      return { error: true };
     } finally {
       await createAdminLog({
         content: `Created ticket category "${input.name}"`,
-        guildId: user.selectedGuildId,
-        userId: user.id,
+        guildId: selectedGuildId,
+        userDiscordId,
       });
     }
   }),
   getTicketCategories: adminProcedure.query(async ({ ctx }) => {
-    const { prisma } = ctx;
-    const { user } = ctx;
-
-    if (!user.selectedGuildId || !user.id) {
-      throw new TRPCError({ code: 'BAD_REQUEST' });
-    }
+    const { prisma, selectedGuildId } = ctx;
 
     const getCategories = await prisma.guild.findUnique({
-      where: { guildId: user.selectedGuildId },
+      where: { guildId: selectedGuildId },
       select: {
         ticketCategories: true,
+        ticketCategoryChannelId: true,
       },
     });
 
     const categories = getCategories?.ticketCategories;
 
-    return categories;
+    return {
+      categories,
+      channelId: getCategories?.ticketCategoryChannelId,
+    };
   }),
   fetchTicketCategory: adminProcedure.input(z.object({ id: z.string().min(1) })).query(async ({ ctx, input }) => {
+    const { prisma, selectedGuildId } = ctx;
     const { id } = input;
-    const { prisma, user } = ctx;
-
-    if (!user.selectedGuildId || !user.id) {
-      throw new TRPCError({ code: 'BAD_REQUEST' });
-    }
 
     try {
       const category = await prisma.ticketCategory.findFirst({
         where: {
           id,
           Guild: {
-            guildId: user.selectedGuildId,
+            guildId: selectedGuildId,
           },
         },
         include: {
@@ -235,18 +231,14 @@ export const adminRouter = router({
         },
       });
       if (!category) return { success: false };
-      return { data: category };
+      return { success: true, data: category };
     } catch {
-      return { success: false };
+      return { error: true };
     }
   }),
   deleteTicketCategory: adminProcedure.input(z.object({ id: z.string() })).mutation(async ({ ctx, input }) => {
+    const { prisma, selectedGuildId, userDiscordId } = ctx;
     const { id } = input;
-    const { prisma, user } = ctx;
-
-    if (!user.selectedGuildId || !user.id) {
-      throw new TRPCError({ code: 'BAD_REQUEST' });
-    }
 
     let categoryName;
 
@@ -255,38 +247,34 @@ export const adminRouter = router({
         where: {
           id,
           Guild: {
-            guildId: user.selectedGuildId,
+            guildId: selectedGuildId,
           },
         },
       });
       categoryName = category.name;
-      return { success: category.name };
+      return { success: true, data: categoryName };
     } catch {
-      return { success: false };
+      return { error: true };
     } finally {
       await createAdminLog({
         content: `Deleted ticket "${categoryName}" category`,
-        guildId: user.selectedGuildId,
-        userId: user.id,
+        guildId: selectedGuildId,
+        userDiscordId,
       });
     }
   }),
   editTicketCategory: adminProcedure
     .input(z.object({ values: TicketCategoryEditSchema, id: z.string().min(1) }))
     .mutation(async ({ ctx, input }) => {
-      const { prisma, user } = ctx;
+      const { prisma, userDiscordId, selectedGuildId } = ctx;
       const { values } = input;
-
-      if (!user.selectedGuildId || !user.id) {
-        throw new TRPCError({ code: 'BAD_REQUEST' });
-      }
 
       const currentSupporters = (
         await prisma.ticketCategory.findUnique({
           where: {
             id: input.id,
             Guild: {
-              guildId: user.selectedGuildId,
+              guildId: selectedGuildId,
             },
           },
           select: {
@@ -340,8 +328,8 @@ export const adminRouter = router({
       } finally {
         await createAdminLog({
           content: `Updated ticket "${categoryName}" category`,
-          guildId: user.selectedGuildId,
-          userId: user.id,
+          guildId: selectedGuildId,
+          userDiscordId,
         });
       }
     }),

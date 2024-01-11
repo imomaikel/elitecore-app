@@ -35,9 +35,9 @@ const AdminLogsPage = () => {
 
   useEffect(() => {
     refetch();
-  }, [contentDebounce, authorDebounce, logsPerPage, order]);
+  }, [contentDebounce, authorDebounce, logsPerPage, order, refetch]);
 
-  const totalPages = (data?.guild?.logs && Math.round(data.totalLogsSize / logsPerPage)) ?? 0;
+  const totalPages = (data?.totalLogsSize && Math.round(data.totalLogsSize / logsPerPage)) ?? 0;
 
   return (
     <div>

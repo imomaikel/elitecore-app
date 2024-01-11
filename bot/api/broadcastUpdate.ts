@@ -1,16 +1,15 @@
 import updateServerStatusWidget from '../plugins/server-status';
-import { API_CHANNEL_ACTIONS_LIST } from '../constans/types';
+import { TAPI_BROADCAST_WIDGETS } from '../constans/types';
 import { verifyApiRequest } from '../helpers/verifyApi';
 import { CustomResponse } from '../constans/responses';
 import logger from '../scripts/logger';
 import prisma from '../lib/prisma';
-import { z } from 'zod';
 
 type TUpdateChannel = {
   guildId: string;
   userDiscordId: string;
   channelId: string;
-  widgetName: z.infer<typeof API_CHANNEL_ACTIONS_LIST>;
+  widgetName: TAPI_BROADCAST_WIDGETS;
 };
 /**
  * Updates a channel in the database if it exists and the user has access to that guild also sends a widget with a response if needed

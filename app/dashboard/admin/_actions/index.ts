@@ -2,13 +2,13 @@
 import prisma from '../../../_shared/lib/prisma';
 
 type TCreateAdminLog = {
-  userId: string;
+  userDiscordId: string;
   content: string;
   guildId: string;
 };
-export const createAdminLog = async ({ content, guildId, userId }: TCreateAdminLog) => {
+export const createAdminLog = async ({ content, guildId, userDiscordId }: TCreateAdminLog) => {
   await prisma.user.update({
-    where: { id: userId },
+    where: { discordId: userDiscordId },
     data: {
       adminLogs: {
         create: {

@@ -10,11 +10,11 @@ const ItemInfo = ({ children, title, description }: TItemInfo) => {
     <div>
       {description ? (
         <Accordion type="single" collapsible className="max-w-[16rem]">
-          <AccordionItem value="item-1">
+          <AccordionItem value="item-1" className="border-none">
             <AccordionTrigger>
               <h2 className="font-semibold text-lg">{title}</h2>
             </AccordionTrigger>
-            <AccordionContent>{description}</AccordionContent>
+            <AccordionContent className="text-muted-foreground">{description}</AccordionContent>
           </AccordionItem>
         </Accordion>
       ) : (

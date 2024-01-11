@@ -8,27 +8,28 @@ type TGuildPicker = {
   selectedValue?: string;
 };
 const GuildPicker = ({ onSelect, className, selectedValue }: TGuildPicker) => {
-  const { data, isLoading, isError } = trpc.admin.getDiscordGuilds.useQuery(undefined, {
+  const { data: guilds, isLoading } = trpc.admin.getDiscordGuilds.useQuery(undefined, {
     refetchOnWindowFocus: false,
   });
 
   return (
     <div className={className}>
-      {!isLoading && !data && !isError && <p>No servers</p>}
-      {isError && <p>Something went wrong.</p>}
-      {isLoading && <Loader />}
-      {!isLoading && data && (
+      {isLoading ? (
+        <Loader />
+      ) : guilds?.length ? (
         <SelectBox
           buttonText="Select server"
           noResultLabel="No servers found"
           onSelect={onSelect}
-          options={data.map((entry) => ({
-            label: entry.guildName,
-            value: entry.guildId,
+          options={guilds.map(({ guildId, guildName }) => ({
+            label: guildName,
+            value: guildId,
           }))}
           searchLabel="Search for a server"
           preSelectedValue={selectedValue}
         />
+      ) : (
+        <p>No servers found</p>
       )}
     </div>
   );

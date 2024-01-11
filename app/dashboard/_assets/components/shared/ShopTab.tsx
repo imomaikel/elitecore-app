@@ -20,7 +20,7 @@ const ShopTab = () => {
   useEffect(() => {
     if (!isMounted) setIsMounted(true);
     if (data) setCategoryList(data);
-  }, [data]);
+  }, [isMounted, setCategoryList, data]);
 
   return (
     <div className="flex flex-col gap-y-2">

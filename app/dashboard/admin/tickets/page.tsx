@@ -3,11 +3,12 @@ import ActionDialog from '@/components/shared/ActionDialog';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { Button } from '@/shared/components/ui/button';
 import CategoryCard from './_components/CategoryCard';
-import { useEffect, useRef, useState } from 'react';
 import AdminPageWrapper from '@/admin/PageWrapper';
 import ChannelPicker from '@/admin/ChannelPicker';
+import { errorToast } from '@/shared/lib/utils';
 import { useRouter } from 'next/navigation';
 import ItemInfo from '@/admin/ItemWrapper';
+import { useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { trpc } from '@/trpc';
 import Link from 'next/link';
@@ -18,21 +19,23 @@ const AdminTicketsPage = () => {
   const deleteId = useRef('');
   const router = useRouter();
 
-  // TODO
-  const [isMounted, setIsMounted] = useState(false);
-  useEffect(() => setIsMounted(true));
-  if (!isMounted) return;
-
-  if (!user?.selectedGuildId) {
+  if (user && !user?.selectedGuildId) {
     router.push('/dashboard/admin/discord-selection');
     return;
   }
 
+  const { data, isLoading, refetch } = trpc.admin.getTicketCategories.useQuery(undefined, {
+    enabled: !!user?.selectedGuildId,
+  });
+
   const { mutate: updateWidgetChannel, isLoading: isWidgetUpdating } = trpc.admin.updateWidget.useMutation();
-  const { data: categories, isLoading, refetch } = trpc.admin.getTicketCategories.useQuery();
   const { mutate: deleteTicketCategory, isLoading: isDeleting } = trpc.admin.deleteTicketCategory.useMutation({
-    onSuccess: () => {
-      toast.success('Deleted!');
+    onSuccess: ({ data: categoryName, error, success }) => {
+      if (success) {
+        toast.success(`Deleted "${categoryName}" category`);
+      } else if (error) {
+        errorToast();
+      }
       refetch();
     },
   });
@@ -49,29 +52,32 @@ const AdminTicketsPage = () => {
         title="Ticket Channel"
         description="This is the channel where the widget with categories and buttons is located."
       >
-        <ChannelPicker
-          type="TEXT"
-          guildId={user?.selectedGuildId}
-          isLoading={isWidgetUpdating}
-          onSelect={(channelId) => {
-            if (!channelId) return;
-            updateWidgetChannel(
-              { channelId, widgetName: 'ticketWidget' },
-              {
-                onSuccess: (response) => {
-                  if (response?.status === 'error') {
-                    toast.error(`Something went wrong! ${response?.details?.message}`);
-                  } else {
-                    toast.success('Widget sent!');
-                  }
+        {user?.selectedGuildId && (
+          <ChannelPicker
+            type="TEXT"
+            selectedValue={data?.channelId ?? undefined}
+            guildId={user.selectedGuildId}
+            isLoading={isWidgetUpdating}
+            onSelect={(channelId) => {
+              if (!channelId) return;
+              updateWidgetChannel(
+                { channelId, widgetName: 'ticketWidget' },
+                {
+                  onSuccess: (response) => {
+                    if (response?.status === 'error') {
+                      toast.error(`Something went wrong! ${response?.details?.message}`);
+                    } else {
+                      toast.success('Widget sent!');
+                    }
+                  },
+                  onError: () => {
+                    toast.error('Something went wrong!');
+                  },
                 },
-                onError: () => {
-                  toast.error('Something went wrong!');
-                },
-              },
-            );
-          }}
-        />
+              );
+            }}
+          />
+        )}
       </ItemInfo>
 
       {/* Current categories */}
@@ -81,7 +87,7 @@ const AdminTicketsPage = () => {
             'Loading'
           ) : (
             <>
-              {categories?.map(({ id, name }) => (
+              {data?.categories?.map(({ id, name }) => (
                 <CategoryCard key={id} onDelete={() => confirmDelete(id)} id={id} name={name} isDeleting={isDeleting} />
               ))}
               <div className="bg-white/5 max-w-sm p-4 space-y-2 rounded-lg">

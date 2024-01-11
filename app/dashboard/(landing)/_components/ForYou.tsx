@@ -34,7 +34,7 @@ const ForYou = () => {
         <p className="text-muted-foreground text-sm">Click on an image to see the full description</p>
       </div>
       <div
-        className="grid grid-cols-1 smb:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 2.5xl:grid-cols-3
+        className="grid grid-cols-1 smb:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 2.5xl:grid-cols-3
                   gap-y-12 md:gap-y-6 md:gap-x-6 2.5xl:gap-x-12 2.5xl:gap-y-12 3xl:grid-cols-4"
       >
         {isLoading

@@ -22,6 +22,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Badge } from '@/shared/components/ui/badge';
 import { Input } from '@/shared/components/ui/input';
 import ChannelPicker from '@/admin/ChannelPicker';
+import { errorToast } from '@/shared/lib/utils';
 import RolePicker from '@/admin/RolePicker';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
@@ -69,15 +70,15 @@ const CategoryForm = (props: TCategoryForm) => {
   });
 
   const { mutate: createTicketCategory, isLoading: isCreating } = trpc.admin.createTicketCategory.useMutation({
-    onSuccess: (data) => {
-      if (data.success) {
+    onSuccess: ({ error, success }) => {
+      if (success) {
         toast.success(`Created new category "${form.getValues('name')}"`);
         router.push('/dashboard/admin/tickets');
-      } else {
-        toast.error('Something went wrong!');
+      } else if (error) {
+        errorToast();
       }
     },
-    onError: () => toast.error('Something went wrong!'),
+    onError: () => errorToast(),
   });
   const { mutate: editTicketCategory, isLoading: isUpdating } = trpc.admin.editTicketCategory.useMutation({
     onSuccess: (data) => {
@@ -85,10 +86,10 @@ const CategoryForm = (props: TCategoryForm) => {
         toast.success(`Updated category "${form.getValues('name')}"`);
         if (mode === 'EDIT') props.refetch();
       } else {
-        toast.error('Something went wrong!');
+        errorToast;
       }
     },
-    onError: () => toast.error('Something went wrong!'),
+    onError: () => errorToast(),
   });
 
   const onSubmit = (values: TForm) => {
@@ -193,7 +194,7 @@ const CategoryForm = (props: TCategoryForm) => {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Support role(s)</FormLabel>
-              {field.value && field.value?.length >= 1 && (
+              {field.value && field.value.length >= 1 && (
                 <div>
                   <FormDescription>Click on the role to remove access</FormDescription>
                   <div className="my-1 flex flex-wrap gap-2">

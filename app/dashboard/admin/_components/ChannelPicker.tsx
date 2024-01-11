@@ -20,37 +20,32 @@ const ChannelPicker = ({
   isLoading: isDisabled,
   showCancel,
 }: TChannelPicker) => {
-  const {
-    data,
-    isLoading: isFetching,
-    isError,
-  } = trpc.admin.getAllChannels.useQuery(
+  const { data: channels, isLoading: isFetching } = trpc.admin.getAllChannels.useQuery(
     { guildId, type },
-    {
-      refetchOnWindowFocus: true,
-    },
+    { refetchOnWindowFocus: true },
   );
 
   const isLoading = isDisabled || isFetching;
 
   return (
     <div className={className}>
-      {!isLoading && !data && !isError && <p>No channels</p>}
-      {isError && <p>Something went wrong.</p>}
-      {isLoading && <Loader />}
-      {!isLoading && data && (
+      {isLoading ? (
+        <Loader />
+      ) : channels?.length ? (
         <SelectBox
           showCancel={showCancel}
           buttonText={`Select ${type === 'CATEGORY' ? 'category' : 'channel'}`}
           noResultLabel={`No ${type === 'CATEGORY' ? 'categories' : 'channels'} found`}
           onSelect={onSelect}
-          options={data.map((entry) => ({
-            label: entry.channelName,
-            value: entry.channelId,
+          options={channels.map(({ channelId, channelName }) => ({
+            label: channelName,
+            value: channelId,
           }))}
           searchLabel={`Search for a ${type === 'CATEGORY' ? 'category' : 'channel'}`}
           preSelectedValue={selectedValue ?? undefined}
         />
+      ) : (
+        <p>No channels found</p>
       )}
     </div>
   );
