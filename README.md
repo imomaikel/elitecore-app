@@ -39,14 +39,14 @@ The bot was built using module [discord.js](https://discord.js.org/)
 
 - [ ] Create and close the ticket both on the website and on Discord
 - [ ] Send messages through both Discord and the website
-- [ ] Multiple ticket categories with custom settings
+- [x] Multiple ticket categories with custom settings
 - [ ] Custom user input verified by RegEX to prevent spam and unwanted tickets
 - [ ] A custom select menu allows the user to select related server
 - [ ] Website ticket logs (+ transcript download)
 - [ ] Require authentication with the provider (Steam)
 - [ ] Menu that allows to add more people to the ticket
-- [ ] Limit ticket creation per user
-- [ ] Creation confirmation
+- [x] Limit ticket creation per user
+- [x] Creation confirmation
 - [ ] Auto close empty tickets
 - [ ] Support roles
 - [ ] Banned role

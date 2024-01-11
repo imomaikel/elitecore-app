@@ -53,7 +53,8 @@ const Navbar = () => {
     if (requestNewCurrencies) refreshCurrencies();
 
     setIsMounted(true);
-  }, [currencies, lastUpdatedAt, refreshCurrencies]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const updateCurrency = (value: TCurrency['code']) => {
     toast.success('Currency updated');

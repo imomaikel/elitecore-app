@@ -45,13 +45,11 @@ export default event('ready', async (client) => {
     message: `Discord Client started as '${client.user?.username}' (${process.env.NODE_ENV})`,
   });
 
-  // Login all bots
+  // Only production
   if (process.env.NODE_ENV === 'production') {
+    // Login all bots
     await setupBots();
-  }
-
-  // Schedule tasks
-  if (process.env.NODE_ENV === 'production') {
+    // Schedule tasks
     scheduler();
   }
 

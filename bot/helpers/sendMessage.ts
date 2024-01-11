@@ -40,7 +40,7 @@ export const sendMessage = async ({
     if (editMessageId) {
       try {
         const message = await channel.messages.fetch(editMessageId);
-        if (message && message.id) findMessage = message;
+        if (message && message.id === message.author.id) findMessage = message;
       } catch {
         // Message not found
         findMessage = null;

@@ -5,7 +5,7 @@ import ForYou from './_components/ForYou';
 
 const DashboardPage = () => {
   return (
-    <div className="flex flex-col xl:flex-row lg:space-x-3 xl:space-x-16 space-y-10 lg:space-y-0">
+    <div className="flex flex-col xl:flex-row xl:space-x-8 2xl:space-x-16 space-y-10 lg:space-y-0">
       <div className="space-y-6 max-w-[400px] lg:max-w-[450px] xl:max-w-[600px]">
         <div className="relative z-10">
           <h1 className="text-2xl md:text-4xl font-bold mb-2 text-primary z-10 relative whitespace-nowrap">

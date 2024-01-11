@@ -51,7 +51,7 @@ export const _createCategoryWidget = async (
     const { steamRequired, mapSelection, coordinateInput, name, description } = category;
     buttons.push(
       new ButtonBuilder()
-        .setCustomId(`${client.user.id}|${category.id}`)
+        .setCustomId(`${client.user.id}|ticket:create-${category.id}`)
         .setLabel(category.name)
         .setStyle(ButtonStyle.Primary),
     );

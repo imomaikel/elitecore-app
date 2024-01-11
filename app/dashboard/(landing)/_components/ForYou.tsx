@@ -28,14 +28,14 @@ const ForYou = () => {
   if (!products) return null;
 
   return (
-    <div>
+    <div className="w-full relative">
       <div className="flex space-x-2 items-center mb-2">
         <h1 className="font-semibold text-2xl md:text-2xl text-primary">For You</h1>
         <p className="text-muted-foreground text-sm">Click on an image to see the full description</p>
       </div>
       <div
         className="grid grid-cols-1 smb:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 2.5xl:grid-cols-3
-                  gap-y-12 md:gap-y-6 md:gap-x-6 2.5xl:gap-x-12 2.5xl:gap-y-12 3xl:grid-cols-4"
+                  gap-y-12 md:gap-y-6 gap-x-3 md:gap-x-6 2.5xl:gap-x-12 2.5xl:gap-y-12 3xl:grid-cols-4 place-items-center md:place-items-start mt-6 mb:mt-0"
       >
         {isLoading
           ? [...Array.from(Array(8).keys())].map((index) => <ProductBox.Skeleton key={`${index}-skeleton`} />)

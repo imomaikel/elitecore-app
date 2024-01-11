@@ -20,7 +20,8 @@ const ShopTab = () => {
   useEffect(() => {
     if (!isMounted) setIsMounted(true);
     if (data) setCategoryList(data);
-  }, [isMounted, setCategoryList, data]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data, isMounted]);
 
   return (
     <div className="flex flex-col gap-y-2">

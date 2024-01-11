@@ -42,11 +42,13 @@ const ShoppingCart = () => {
         setBasket(response.data);
         setIsDataReady(true);
       });
-  }, [sessionStatus, setBasket, user]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sessionStatus, user]);
 
   useEffect(() => {
     updatePrice();
-  }, [isOpen, basket?.packages, updatePrice]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen, basket?.packages]);
 
   if (!isDataReady) return;
 
@@ -66,7 +68,7 @@ const ShoppingCart = () => {
           </SheetHeader>
 
           <div className="relative">
-            {basket.packages.length >= 1 && (
+            {basket?.packages?.length >= 1 && (
               <div className="bg-gradient-to-r from-red-800 via-yellow-600 to-yellow-500 absolute h-80 w-[30%] right-28 -rotate-45 opacity-75 blur-[175px] z-0" />
             )}
             <div className="relative">
@@ -139,7 +141,7 @@ const ShoppingCart = () => {
                     </Alert>
                   </div>
                   <div className="z-10 relative">
-                    {basket.packages.map((basketItem, index) => {
+                    {basket?.packages?.map((basketItem, index) => {
                       const productData = categoryList
                         .find((category) => category.packages.find((entry) => entry.id === basketItem.id))
                         ?.packages.find((entry) => entry.id === basketItem.id);
