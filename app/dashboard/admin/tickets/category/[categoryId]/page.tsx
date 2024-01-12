@@ -59,6 +59,7 @@ const AdminTicketsEditCategoryPanel = () => {
           bannedRoleId: data.bannedRoleId ?? undefined,
           closeCommand: data.closeCommand ?? undefined,
           createConfirmation: data.createConfirmation ?? undefined,
+          format: data.format,
         }}
       />
     </AdminPageWrapper>

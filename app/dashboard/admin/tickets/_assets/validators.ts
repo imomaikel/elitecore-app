@@ -10,6 +10,7 @@ const TicketCategorySchemaOptional = {
   closeCommand: z.optional(z.string().max(16)),
   image: z.optional(z.string().max(2048)),
   mentionSupport: z.optional(z.boolean()),
+  format: z.optional(z.string().min(1)),
   supportRoles: z.optional(
     z.array(
       z.object({

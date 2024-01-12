@@ -43,11 +43,11 @@ The bot was built using module [discord.js](https://discord.js.org/)
 - [ ] Custom user input verified by RegEX to prevent spam and unwanted tickets
 - [ ] A custom select menu allows the user to select related server
 - [ ] Website ticket logs (+ transcript download)
-- [ ] Require authentication with the provider (Steam)
+- [x] Require authentication with the provider (Steam)
 - [ ] Menu that allows to add more people to the ticket
 - [x] Limit ticket creation per user
 - [x] Creation confirmation
 - [ ] Auto close empty tickets
-- [ ] Support roles
-- [ ] Banned role
+- [x] Support roles
+- [x] Banned role
 - and various other features for an improved user experience

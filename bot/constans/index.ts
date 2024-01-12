@@ -3,7 +3,10 @@ export type TEnvVars =
   | 'DISCORD_PRODUCTION_BOT_TOKEN'
   | 'NODE_ENV'
   | 'EXCHANGE_RATES_API_URL'
-  | 'NEXT_PUBLIC_SERVER_URL';
+  | 'NEXT_PUBLIC_SERVER_URL'
+  | 'DATABASE_USER'
+  | 'DATABASE_PASSWORD'
+  | 'DATABASE_HOST';
 
 // https://flatuicolors.com/
 export const colors = {

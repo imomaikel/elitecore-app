@@ -47,7 +47,6 @@ const CategoryForm = (props: TCategoryForm) => {
   const router = useRouter();
 
   type TForm = typeof mode extends 'EDIT' ? TTicketCategoryEditSchema : TTicketCategoryCreateSchema;
-
   const form = useForm<TForm>({
     resolver: zodResolver(mode === 'EDIT' ? TicketCategoryEditSchema : TicketCategoryCreateSchema),
     defaultValues: {
@@ -66,6 +65,7 @@ const CategoryForm = (props: TCategoryForm) => {
       mapSelection: mode === 'EDIT' ? props.values.mapSelection : false,
       mentionSupport: mode === 'EDIT' ? props.values.mentionSupport : false,
       supportRoles: mode === 'EDIT' ? props.values.supportRoles : [],
+      format: mode === 'EDIT' ? props.values.format : '',
     },
   });
 
@@ -143,6 +143,26 @@ const CategoryForm = (props: TCategoryForm) => {
                   <Input disabled={isLoading} {...field} placeholder="$close" />
                 </FormControl>
                 <FormDescription>The command that is used to close the ticket (with prefix)</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="format"
+            render={({ field }) => (
+              <FormItem className="col-span-2">
+                <FormLabel>Channel format</FormLabel>
+                <FormControl>
+                  <Input disabled={isLoading} {...field} placeholder="#category-#user-#index" />
+                </FormControl>
+                <FormDescription className="flex flex-col">
+                  <span>This is the channel name of a new ticket.</span>
+                  <span>#user - username</span>
+                  <span>#category - ticket category</span>
+                  <span>#index - ticket number</span>
+                  <span>Spaces will be replaced with &quot;-&quot;</span>
+                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
