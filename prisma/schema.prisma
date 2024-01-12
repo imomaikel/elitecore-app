@@ -257,15 +257,17 @@ model TicketSupport {
 
 model Ticket {
   id              String @id @default(cuid())
-  authorDiscordId String @unique
+  authorDiscordId String
   inviteUrl       String @db.TinyText
   channelId       String @unique
 
   // Optional
-  authorSteamId String? @db.TinyText
-  authorEOSId   String? @db.TinyText
-  mapName       String? @db.TinyText
-  coordinates   String? @db.TinyText
+  authorSteamId        String? @db.TinyText
+  authorEOSId          String? @db.TinyText
+  mapName              String? @db.TinyText
+  mapNameMessageId     String? @db.TinyText
+  coordinates          String? @db.TinyText
+  coordinatesMessageId String? @db.TinyText
 
   TicketCategory   TicketCategory? @relation(fields: [ticketCategoryId], references: [id])
   ticketCategoryId String?

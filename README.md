@@ -41,7 +41,7 @@ The bot was built using module [discord.js](https://discord.js.org/)
 - [ ] Send messages through both Discord and the website
 - [x] Multiple ticket categories with custom settings
 - [ ] Custom user input verified by RegEX to prevent spam and unwanted tickets
-- [ ] A custom select menu allows the user to select related server
+- [x] A custom select menu allows the user to select related server
 - [ ] Website ticket logs (+ transcript download)
 - [x] Require authentication with the provider (Steam)
 - [ ] Menu that allows to add more people to the ticket

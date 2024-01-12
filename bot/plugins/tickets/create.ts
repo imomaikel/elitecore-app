@@ -2,13 +2,20 @@ import {
   ActionRowBuilder,
   ButtonInteraction,
   DiscordAPIError,
+  EmbedBuilder,
   ModalBuilder,
   ModalSubmitInteraction,
   PermissionsBitField,
+  StringSelectMenuBuilder,
+  StringSelectMenuOptionBuilder,
+  TextChannel,
   TextInputBuilder,
   TextInputStyle,
 } from 'discord.js';
 import { TFindReturn, findPairedAccount } from './verification';
+import { colors, extraSigns } from '../../constans';
+import logger from '../../scripts/logger';
+import { Ticket } from '@prisma/client';
 import prisma from '../../lib/prisma';
 import { client } from '../../client';
 
@@ -21,7 +28,7 @@ type TCreateTicket = {
 export const _createTicket = async ({ categoryId, guildId, userId, interaction }: TCreateTicket) => {
   if (!client.user?.id) return { error: true, message: 'Internal server error' };
 
-  const [user, guildData] = await Promise.all([
+  const [user, guildData, userData] = await Promise.all([
     client.guilds.cache.get(guildId)?.members.fetch(userId),
     prisma.guild.findUnique({
       where: { guildId },
@@ -41,15 +48,11 @@ export const _createTicket = async ({ categoryId, guildId, userId, interaction }
               },
             },
             supportRoles: true,
-            _count: {
-              select: {
-                tickets: true,
-              },
-            },
           },
         },
       },
     }),
+    prisma.user.findUnique({ where: { discordId: userId } }),
   ]);
 
   const category = guildData?.ticketCategories.find(({ id }) => id === categoryId);
@@ -68,13 +71,21 @@ export const _createTicket = async ({ categoryId, guildId, userId, interaction }
     bannedRoleId,
     supportRoles,
     steamRequired,
+    afterCreateDescription,
+    description,
+    coordinateInput,
+    mapSelection,
+    closeCommand,
+    mentionSupport,
+    image,
+    autoClose,
   } = category;
 
   if (user.roles.cache.some((role) => role.id === bannedRoleId)) {
     return { error: true, message: 'You are not allowed to create a ticket!' };
   }
 
-  let pairedData: TFindReturn;
+  let pairedData: TFindReturn | undefined;
   if (steamRequired) {
     const pairedAccount = await findPairedAccount(user.id);
     if (typeof pairedAccount === 'boolean') {
@@ -114,17 +125,10 @@ export const _createTicket = async ({ categoryId, guildId, userId, interaction }
     };
   }
 
-  const ticketCount = (guildData.ticketCategories[1]._count.tickets + 1).toString();
-
-  const ticketFormat = format
-    .replace(/#user/gi, user.user.username)
-    .replace(/#category/gi, categoryName)
-    .replace(/#index/gi, ticketCount);
-
-  let chn;
+  let chn: TextChannel | undefined, ticket: Ticket | undefined;
   try {
     const ticketChn = await guild.channels.create({
-      name: ticketFormat,
+      name: 'ticket',
       parent: parentChannelId ?? undefined,
       permissionOverwrites: [
         {
@@ -133,6 +137,10 @@ export const _createTicket = async ({ categoryId, guildId, userId, interaction }
         },
         {
           id: client.user.id,
+          allow: [PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.SendMessages],
+        },
+        {
+          id: user.id,
           allow: [PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.SendMessages],
         },
       ],
@@ -146,12 +154,159 @@ export const _createTicket = async ({ categoryId, guildId, userId, interaction }
     }
     await ticketChn.permissionOverwrites.edit(guild.roles.everyone.id, { ViewChannel: false });
 
-    // TODO
+    const welcomeEmbed = new EmbedBuilder()
+      .setColor(colors.purple)
+      .setDescription(afterCreateDescription ?? description)
+      .setFooter({ text: `If you do not send a message within ${autoClose} minutes, the ticket will be closed` });
+
+    if (image) welcomeEmbed.setImage(image);
+
+    const command = closeCommand && closeCommand.length >= 2 ? closeCommand : '$close';
+
+    const howToClose = new EmbedBuilder()
+      .setColor(colors.purple)
+      .setAuthor({ name: 'How to close the ticket?' })
+      .setDescription(`Type at any time \`${command}\` to close the ticket ${extraSigns.zap}`);
+
+    if (mentionSupport) {
+      await ticketChn
+        .send('@here')
+        .then((msg) => msg.delete())
+        .catch();
+    }
+    await ticketChn.send({
+      embeds: [welcomeEmbed, howToClose],
+    });
+
+    const inviteUrl = (
+      await chn.createInvite({
+        maxAge: 14 * 24 * 60 * 60,
+      })
+    ).url;
+
+    ticket = await prisma.ticket.create({
+      data: {
+        authorDiscordId: user.id,
+        channelId: ticketChn.id,
+        inviteUrl,
+        authorSteamId: pairedData?.method === 'EOS' ? pairedData.id : undefined,
+        authorEOSId: pairedData?.method === 'EOS' ? pairedData.id : undefined,
+        ...(userData?.id && {
+          User: {
+            connect: {
+              id: userData.id,
+            },
+          },
+        }),
+        TicketCategory: {
+          connect: {
+            id: categoryId,
+          },
+        },
+      },
+    });
+    let ticketCount = '1';
+    if (format.includes('#index')) {
+      const getCount = await prisma.ticketCategory.findUnique({
+        where: { id: categoryId },
+        select: {
+          _count: {
+            select: {
+              tickets: true,
+            },
+          },
+        },
+      });
+      if (getCount) {
+        ticketCount = (getCount._count.tickets + 1).toString();
+      }
+    }
+    const ticketFormat = format
+      .replace(/#user/gi, user.user.username)
+      .replace(/#category/gi, categoryName)
+      .replace(/#index/gi, ticketCount);
+    await ticketChn.setName(ticketFormat);
+
+    if (!ticket) return { error: true, message: 'Internal server error' };
+
+    if (coordinateInput || mapSelection) {
+      if (coordinateInput) {
+        const coordsEmbed = new EmbedBuilder().setColor(colors.blue)
+          .setDescription(`:warning: For this ticket, we need your in-game coordinates.
+          Please follow the instructions below. 
+          :octagonal_sign: :octagonal_sign: **Any other messages will be deleted unless the coordinates are specified.** :octagonal_sign: :octagonal_sign: 
+        **1.** Stand at the location you want to copy your ccc-cords from. 
+        **2.** Type "ccc" in the tab menu and press enter. You won't see anything happen, but your coordinates are now "copied"
+        **3.** You can now select all and paste your cords (ctrl + a and then ctrl + v)
+        `);
+
+        await ticketChn
+          .send({
+            embeds: [coordsEmbed],
+          })
+          .then(async (msg) => {
+            await prisma.ticket.update({
+              where: { id: ticket!.id },
+              data: { coordinatesMessageId: msg.id },
+            });
+          });
+      }
+      if (mapSelection) {
+        const mapEmbed = new EmbedBuilder().setColor(colors.blue).setDescription('**Select your game map**');
+        const servers = await prisma.server.findMany();
+        if (servers.length <= 0) {
+          return { success: true, message: inviteUrl };
+        }
+        const select = new StringSelectMenuBuilder()
+          .setCustomId(`${client.user?.id}|ticket:map-${categoryId}`)
+          .setPlaceholder('Click to open');
+
+        const options: StringSelectMenuOptionBuilder[] = [];
+
+        for (const server of servers) {
+          const label = server.customName && server.customName.length >= 4 ? server.customName : server.mapName;
+          const optionDescription = `ARK: ${server.gameType} (${server.gameMode})`;
+
+          options.push(
+            new StringSelectMenuOptionBuilder()
+              .setLabel(label)
+              .setDescription(optionDescription)
+              .setValue(server.id.toString()),
+          );
+        }
+
+        select.addOptions(...options);
+        const row = new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(select);
+
+        await ticketChn
+          .send({
+            embeds: [mapEmbed],
+            components: [row],
+          })
+          .then(async (msg) => {
+            await prisma.ticket.update({
+              where: { id: ticket!.id },
+              data: { mapNameMessageId: msg.id },
+            });
+          });
+      }
+    }
+    return { success: true, message: inviteUrl };
   } catch (error) {
-    if (chn?.id) await chn.delete().catch(() => {});
+    if (chn?.id) await chn.delete().catch();
     if (error instanceof DiscordAPIError) {
       return { error: true, message: error.message };
     }
-    console.log(error);
+    if (ticket?.id) {
+      await prisma.ticket.delete({
+        where: { id: ticket.id },
+      });
+    }
+    logger({
+      message: 'Ticket Error',
+      type: 'error',
+      data: JSON.stringify(error),
+      file: 'create.ts',
+    });
   }
 };
