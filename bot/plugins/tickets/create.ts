@@ -13,11 +13,12 @@ import {
   TextInputStyle,
 } from 'discord.js';
 import { TFindReturn, findPairedAccount } from './verification';
+import { CustomResponse } from '../../constans/responses';
 import { colors, extraSigns } from '../../constans';
 import logger from '../../scripts/logger';
 import { Ticket } from '@prisma/client';
-import prisma from '../../lib/prisma';
 import { client } from '../../client';
+import prisma from '../../lib/prisma';
 
 type TCreateTicket = {
   categoryId: string;
@@ -25,8 +26,13 @@ type TCreateTicket = {
   guildId: string;
   interaction?: ButtonInteraction | ModalSubmitInteraction;
 };
-export const _createTicket = async ({ categoryId, guildId, userId, interaction }: TCreateTicket) => {
-  if (!client.user?.id) return { error: true, message: 'Internal server error' };
+export const _createTicket = async ({
+  categoryId,
+  guildId,
+  userId,
+  interaction,
+}: TCreateTicket): Promise<CustomResponse<'ticketCreate'>> => {
+  if (!client.user?.id) return { status: 'error', details: { message: 'Something went wrong' } };
 
   const [user, guildData, userData] = await Promise.all([
     client.guilds.cache.get(guildId)?.members.fetch(userId),
@@ -59,7 +65,7 @@ export const _createTicket = async ({ categoryId, guildId, userId, interaction }
   const guild = client.guilds.cache.get(guildId);
 
   if (!user?.id || !guildData?.id || !category || !guild?.id) {
-    return { error: true, message: 'Bad request' };
+    return { status: 'error', details: { message: 'Bad request' } };
   }
 
   const {
@@ -82,16 +88,15 @@ export const _createTicket = async ({ categoryId, guildId, userId, interaction }
   } = category;
 
   if (user.roles.cache.some((role) => role.id === bannedRoleId)) {
-    return { error: true, message: 'You are not allowed to create a ticket!' };
+    return { status: 'error', details: { message: 'You are not allowed to create a ticket!' } };
   }
 
-  let pairedData: TFindReturn | undefined;
-  if (steamRequired) {
-    const pairedAccount = await findPairedAccount(user.id);
-    if (typeof pairedAccount === 'boolean') {
-      return { error: true, message: 'Your game account is not paired with Discord!' };
-    }
-    pairedData = pairedAccount;
+  const userOpenedTickets = category.tickets.length;
+  if (userOpenedTickets + 1 > limit) {
+    return {
+      status: 'error',
+      details: { message: 'You have reached your ticket limit! Close the previous ticket to open a new one.' },
+    };
   }
 
   const createConfirmation = _createConfirmation && _createConfirmation?.length >= 4 ? _createConfirmation : false;
@@ -112,17 +117,16 @@ export const _createTicket = async ({ categoryId, guildId, userId, interaction }
     modal.addComponents(row);
 
     await interaction.showModal(modal);
-    return { success: true, message: 'Modal opened' };
+    return { status: 'success', details: { message: 'Modal opened', data: { inviteLink: null } } };
   }
 
-  const userOpenedTickets = category.tickets.length;
-  if (userOpenedTickets + 1 > limit) {
-    return {
-      error: true,
-      message: `You have reached your ticket limit! Close the previous ticket${
-        userOpenedTickets >= 2 ? 's' : ''
-      } to open a new one.`,
-    };
+  let pairedData: TFindReturn | undefined;
+  if (steamRequired) {
+    const pairedAccount = await findPairedAccount(user.id);
+    if (typeof pairedAccount === 'boolean') {
+      return { status: 'error', details: { message: 'Your game account is not paired with Discord!' } };
+    }
+    pairedData = pairedAccount;
   }
 
   let chn: TextChannel | undefined, ticket: Ticket | undefined;
@@ -168,14 +172,21 @@ export const _createTicket = async ({ categoryId, guildId, userId, interaction }
       .setAuthor({ name: 'How to close the ticket?' })
       .setDescription(`Type at any time \`${command}\` to close the ticket ${extraSigns.zap}`);
 
+    const howToAddMember = new EmbedBuilder()
+      .setColor(colors.purple)
+      .setAuthor({ name: 'How to add other members to this ticket?' })
+      .setDescription(
+        `Use the \`/add\` command and enter a username that will be added to this ticket ${extraSigns.zap}`,
+      );
+
     if (mentionSupport) {
       await ticketChn
         .send('@here')
         .then((msg) => msg.delete())
-        .catch();
+        .catch(() => {});
     }
     await ticketChn.send({
-      embeds: [welcomeEmbed, howToClose],
+      embeds: [welcomeEmbed, howToClose, howToAddMember],
     });
 
     const inviteUrl = (
@@ -227,7 +238,7 @@ export const _createTicket = async ({ categoryId, guildId, userId, interaction }
       .replace(/#index/gi, ticketCount);
     await ticketChn.setName(ticketFormat);
 
-    if (!ticket) return { error: true, message: 'Internal server error' };
+    if (!ticket) return { status: 'error', details: { message: 'Something went wrong' } };
 
     if (coordinateInput || mapSelection) {
       if (coordinateInput) {
@@ -255,7 +266,7 @@ export const _createTicket = async ({ categoryId, guildId, userId, interaction }
         const mapEmbed = new EmbedBuilder().setColor(colors.blue).setDescription('**Select your game map**');
         const servers = await prisma.server.findMany();
         if (servers.length <= 0) {
-          return { success: true, message: inviteUrl };
+          return { status: 'success', details: { message: 'Ticket created', data: { inviteLink: inviteUrl } } };
         }
         const select = new StringSelectMenuBuilder()
           .setCustomId(`${client.user?.id}|ticket:map-${categoryId}`)
@@ -291,11 +302,16 @@ export const _createTicket = async ({ categoryId, guildId, userId, interaction }
           });
       }
     }
-    return { success: true, message: inviteUrl };
+    return { status: 'success', details: { message: 'Ticket created', data: { inviteLink: inviteUrl } } };
   } catch (error) {
-    if (chn?.id) await chn.delete().catch();
+    if (chn?.id) await chn.delete().catch(() => {});
     if (error instanceof DiscordAPIError) {
-      return { error: true, message: error.message };
+      return {
+        status: 'error',
+        details: {
+          message: error.message.includes('Missing Permissions') ? 'The bot has no permission' : 'Something went wrong',
+        },
+      };
     }
     if (ticket?.id) {
       await prisma.ticket.delete({
@@ -308,5 +324,6 @@ export const _createTicket = async ({ categoryId, guildId, userId, interaction }
       data: JSON.stringify(error),
       file: 'create.ts',
     });
+    return { status: 'error', details: { message: 'Something went wrong' } };
   }
 };

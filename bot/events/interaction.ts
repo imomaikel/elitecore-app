@@ -1,6 +1,6 @@
 import serverControlSelectionHandler from '../plugins/server-control/selectionHandler';
 import { serverControlButtonHandler } from '../plugins/server-control/buttonHandler';
-import { ticketInteraction } from '../plugins/tickets';
+import { ticketInteraction, ticketSelectMap } from '../plugins/tickets';
 import { event } from '../utils/events';
 import commands from '../commands';
 
@@ -37,6 +37,8 @@ export default event('interactionCreate', async (client, interaction) => {
     if (!command) return;
     if (command.startsWith('server')) {
       await serverControlSelectionHandler({ interaction });
+    } else if (command.startsWith('ticket:map')) {
+      await ticketSelectMap(interaction);
     }
     return;
   }

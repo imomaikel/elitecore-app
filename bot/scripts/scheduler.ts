@@ -1,5 +1,6 @@
 import { updateServerControlWidget } from '../plugins/server-control';
 import updateServerStatusWidget from '../plugins/server-status';
+import { ticketCleaner } from '../plugins/tickets';
 import { getEnv } from '../utils/env';
 import prisma from '../lib/prisma';
 
@@ -13,6 +14,10 @@ const scheduler = () => {
     updateServerStatusWidget();
   }, 1000 * 60 * 5);
   updateServerStatusWidget();
+
+  setInterval(() => {
+    ticketCleaner();
+  }, 1000 * 60 * 2);
 
   setInterval(async () => {
     const config = await prisma.config.findFirst();

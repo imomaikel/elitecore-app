@@ -1,5 +1,7 @@
-import { ButtonInteraction, ModalSubmitInteraction } from 'discord.js';
-import { errorEmbed } from '../../constans/embeds';
+import { ButtonInteraction, ModalSubmitInteraction, hyperlink } from 'discord.js';
+import { errorEmbed, successEmbed } from '../../constans/embeds';
+import logger from '../../scripts/logger';
+import prisma from '../../lib/prisma';
 import { createTicket } from '.';
 
 export const _ticketInteraction = async (interaction: ButtonInteraction | ModalSubmitInteraction) => {
@@ -10,28 +12,53 @@ export const _ticketInteraction = async (interaction: ButtonInteraction | ModalS
     if (!interaction.guild?.id) return;
 
     if (action === 'create' || action === 'confirm') {
+      // Check if confirmation is needed
+      const confirmation = !!(
+        await prisma.ticketCategory.findUnique({
+          where: { id },
+          select: { createConfirmation: true },
+        })
+      )?.createConfirmation;
+
+      if (!confirmation) await interaction.deferReply({ ephemeral: true });
       if (interaction instanceof ModalSubmitInteraction) {
         const modalInput = interaction.fields.fields.first()?.value;
         const fixFormat = modalInput?.replace(/ /gi, '').toLowerCase();
 
         if (!(fixFormat?.includes('yes') && !fixFormat.includes('no'))) {
           await interaction.reply({
-            ephemeral: true,
             embeds: [errorEmbed('You didn\'t type "yes" in the modal so the ticket creation has been canceled.')],
           });
           return;
+        } else {
+          await interaction.deferReply({ ephemeral: true });
         }
       }
 
-      const newTicket = await createTicket({
+      const { status, details } = await createTicket({
         categoryId: id,
         guildId: interaction.guild.id,
         userId: interaction.user.id,
         interaction,
       });
-      console.log(newTicket, 'response');
+      const message = details?.message as string;
+      if (status === 'success') {
+        if (message === 'Ticket created' && details) {
+          const inviteLink = details.data!.inviteLink as string;
+          await interaction.editReply({
+            embeds: [successEmbed(`**Your ticket is ready!** ${hyperlink('Click', inviteLink)} to open.`)],
+          });
+        }
+      } else if (status === 'error') {
+        await interaction.editReply({ embeds: [errorEmbed(message)] });
+      }
     }
   } catch (error) {
-    console.log(error);
+    logger({
+      message: 'Ticket Error',
+      type: 'error',
+      data: JSON.stringify(error),
+      file: 'tickets/interaction.ts',
+    });
   }
 };

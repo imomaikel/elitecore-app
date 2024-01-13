@@ -45,6 +45,24 @@ type PluginResponses = {
     };
     data: never;
   };
+  ticketCreate: {
+    status: {
+      error:
+        | 'Something went wrong'
+        | 'Bad request'
+        | 'Your game account is not paired with Discord!'
+        | 'You are not allowed to create a ticket!'
+        | 'The bot has no permission'
+        | 'You have reached your ticket limit! Close the previous ticket to open a new one.';
+      success: 'Modal opened' | 'Ticket created';
+    };
+    data: {
+      error: never;
+      success: {
+        inviteLink: string | null;
+      };
+    };
+  };
 };
 
 // Function return type that will allow you to go through all possible options
