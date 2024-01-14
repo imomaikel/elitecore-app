@@ -2,13 +2,25 @@ import { FaPeopleRoof, FaDiscord } from 'react-icons/fa6';
 import { HiOutlineStatusOnline } from 'react-icons/hi';
 import { IoTicketOutline } from 'react-icons/io5';
 import { TbDeviceRemote } from 'react-icons/tb';
+import { MdLibraryBooks } from 'react-icons/md';
 import { GiPointySword } from 'react-icons/gi';
 import { RiAdminFill } from 'react-icons/ri';
 import { FaBook } from 'react-icons/fa6';
 import { BsGlobe } from 'react-icons/bs';
 export const unknownAvatar = '/logo.png';
+import { IoAdd } from 'react-icons/io5';
+import { IconType } from 'react-icons';
 
-export const panelTabs = [
+type TPanelTabs = {
+  categoryName: string;
+  Icon: IconType;
+  tabs: {
+    tabName: string;
+    Icon: IconType;
+    path: string;
+  }[];
+}[];
+export const panelTabs: TPanelTabs = [
   {
     categoryName: 'Admin',
     Icon: RiAdminFill,
@@ -42,6 +54,22 @@ export const panelTabs = [
         tabName: 'Logs',
         Icon: FaBook,
         path: '/dashboard/admin/logs',
+      },
+    ],
+  },
+  {
+    categoryName: 'Tickets',
+    Icon: IoTicketOutline,
+    tabs: [
+      {
+        tabName: 'New ticket',
+        Icon: IoAdd,
+        path: '/dashboard/tickets/create',
+      },
+      {
+        tabName: 'Logs',
+        Icon: MdLibraryBooks,
+        path: '/dashboard/tickets',
       },
     ],
   },

@@ -26,6 +26,7 @@ export const _ticketCleaner = async () => {
       closeTicket({
         channelId,
         closedBy: 'Auto closed - channel not found',
+        autoClose: true,
       });
       continue;
     }
@@ -38,6 +39,7 @@ export const _ticketCleaner = async () => {
     await closeTicket({
       channelId,
       closedBy: 'Auto closed',
+      autoClose: true,
     });
   }
 };

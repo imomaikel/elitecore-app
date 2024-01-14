@@ -1,10 +1,10 @@
+import { enteredCoordsEmbed, errorEmbed } from '../../constans/embeds';
 import { colors, extraSigns } from '../../constans';
 import { EmbedBuilder, Message } from 'discord.js';
-import { errorEmbed } from '../../constans/embeds';
 import { closeTicket, ticketLog } from '.';
 import prisma from '../../lib/prisma';
 
-const COORDS_REGEX = /-?[0-9]*\s-?[0-9]*\s-?[0-9]*\s-?[0-9]*\.[0-9]+\s-?[0-9]*\.[0-9]*/g;
+export const COORDS_REGEX = /-?[0-9]*\s-?[0-9]*\s-?[0-9]*\s-?[0-9]*\.[0-9]+\s-?[0-9]*\.[0-9]*/g;
 
 export const _ticketMessage = async (message: Message) => {
   const channelId = message.channel.id;
@@ -84,9 +84,7 @@ export const _ticketMessage = async (message: Message) => {
         .catch(() => {});
 
       await message.channel.send({
-        embeds: [
-          new EmbedBuilder().setColor(colors.green).setDescription(`:compass: **Coordinates entered:** \`${coords}\``),
-        ],
+        embeds: [enteredCoordsEmbed(coords)],
       });
 
       if (mapPass) {

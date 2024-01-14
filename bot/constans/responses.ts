@@ -60,6 +60,7 @@ type PluginResponses = {
       error: never;
       success: {
         inviteLink: string | null;
+        ticketId: string | null;
       };
     };
   };

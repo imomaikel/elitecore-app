@@ -12,6 +12,7 @@ import {
   TextInputBuilder,
   TextInputStyle,
 } from 'discord.js';
+import { changeMapEmbed, enteredCoordsEmbed, selectedMapEmbed } from '../../constans/embeds';
 import { TFindReturn, findPairedAccount } from './verification';
 import { CustomResponse } from '../../constans/responses';
 import { colors, extraSigns } from '../../constans';
@@ -25,12 +26,16 @@ type TCreateTicket = {
   userId: string;
   guildId: string;
   interaction?: ButtonInteraction | ModalSubmitInteraction;
+  forceCoords?: string;
+  forceServerId?: number;
 };
 export const _createTicket = async ({
   categoryId,
   guildId,
   userId,
   interaction,
+  forceCoords,
+  forceServerId,
 }: TCreateTicket): Promise<CustomResponse<'ticketCreate'>> => {
   if (!client.user?.id) return { status: 'error', details: { message: 'Something went wrong' } };
 
@@ -117,7 +122,7 @@ export const _createTicket = async ({
     modal.addComponents(row);
 
     await interaction.showModal(modal);
-    return { status: 'success', details: { message: 'Modal opened', data: { inviteLink: null } } };
+    return { status: 'success', details: { message: 'Modal opened', data: { inviteLink: null, ticketId: null } } };
   }
 
   let pairedData: TFindReturn | undefined;
@@ -195,26 +200,38 @@ export const _createTicket = async ({
       })
     ).url;
 
-    ticket = await prisma.ticket.create({
-      data: {
-        authorDiscordId: user.id,
-        channelId: ticketChn.id,
-        inviteUrl,
-        authorSteamId: pairedData?.method === 'EOS' ? pairedData.id : undefined,
-        authorEOSId: pairedData?.method === 'EOS' ? pairedData.id : undefined,
-        ...(userData?.id && {
-          User: {
+    await prisma.$transaction(async (tx) => {
+      const openedTickets = await tx.ticket.count({
+        where: {
+          closedAt: null,
+          authorDiscordId: userId,
+          ticketCategoryId: categoryId,
+        },
+      });
+      if (openedTickets !== userOpenedTickets) {
+        throw new Error('Concurrent task');
+      }
+      ticket = await prisma.ticket.create({
+        data: {
+          authorDiscordId: user.id,
+          channelId: ticketChn.id,
+          inviteUrl,
+          authorSteamId: pairedData?.method === 'EOS' ? pairedData.id : undefined,
+          authorEOSId: pairedData?.method === 'EOS' ? pairedData.id : undefined,
+          ...(userData?.id && {
+            User: {
+              connect: {
+                id: userData.id,
+              },
+            },
+          }),
+          TicketCategory: {
             connect: {
-              id: userData.id,
+              id: categoryId,
             },
           },
-        }),
-        TicketCategory: {
-          connect: {
-            id: categoryId,
-          },
         },
-      },
+      });
     });
     let ticketCount = '1';
     if (format.includes('#index')) {
@@ -229,7 +246,7 @@ export const _createTicket = async ({
         },
       });
       if (getCount) {
-        ticketCount = (getCount._count.tickets + 1).toString();
+        ticketCount = getCount._count.tickets.toString();
       }
     }
     const ticketFormat = format
@@ -242,8 +259,11 @@ export const _createTicket = async ({
 
     if (coordinateInput || mapSelection) {
       if (coordinateInput) {
-        const coordsEmbed = new EmbedBuilder().setColor(colors.blue)
-          .setDescription(`:warning: For this ticket, we need your in-game coordinates.
+        if (forceCoords) {
+          await ticketChn.send({ embeds: [enteredCoordsEmbed(forceCoords)] });
+        } else {
+          const coordsEmbed = new EmbedBuilder().setColor(colors.blue)
+            .setDescription(`:warning: For this ticket, we need your in-game coordinates.
           Please follow the instructions below. 
           :octagonal_sign: :octagonal_sign: **Any other messages will be deleted unless the coordinates are specified.** :octagonal_sign: :octagonal_sign: 
         **1.** Stand at the location you want to copy your ccc-cords from. 
@@ -251,22 +271,26 @@ export const _createTicket = async ({
         **3.** You can now select all and paste your cords (ctrl + a and then ctrl + v)
         `);
 
-        await ticketChn
-          .send({
-            embeds: [coordsEmbed],
-          })
-          .then(async (msg) => {
-            await prisma.ticket.update({
-              where: { id: ticket!.id },
-              data: { coordinatesMessageId: msg.id },
+          await ticketChn
+            .send({
+              embeds: [coordsEmbed],
+            })
+            .then(async (msg) => {
+              await prisma.ticket.update({
+                where: { id: ticket!.id },
+                data: { coordinatesMessageId: msg.id },
+              });
             });
-          });
+        }
       }
       if (mapSelection) {
         const mapEmbed = new EmbedBuilder().setColor(colors.blue).setDescription('**Select your game map**');
         const servers = await prisma.server.findMany();
         if (servers.length <= 0) {
-          return { status: 'success', details: { message: 'Ticket created', data: { inviteLink: inviteUrl } } };
+          return {
+            status: 'success',
+            details: { message: 'Ticket created', data: { inviteLink: inviteUrl, ticketId: ticket.id } },
+          };
         }
         const select = new StringSelectMenuBuilder()
           .setCustomId(`${client.user?.id}|ticket:map-${categoryId}`)
@@ -280,7 +304,7 @@ export const _createTicket = async ({
 
           options.push(
             new StringSelectMenuOptionBuilder()
-              .setLabel(label)
+              .setLabel(label.replace(/_/gi, ' '))
               .setDescription(optionDescription)
               .setValue(server.id.toString()),
           );
@@ -289,9 +313,30 @@ export const _createTicket = async ({
         select.addOptions(...options);
         const row = new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(select);
 
+        const selectedServer = forceServerId ? servers.find((entry) => entry.id === forceServerId) : undefined;
+
+        if (selectedServer && forceServerId) {
+          await ticketChn
+            .send({
+              embeds: [
+                selectedMapEmbed({
+                  customName: selectedServer.customName,
+                  gameType: selectedServer.gameType,
+                  mapName: selectedServer.mapName,
+                }),
+              ],
+            })
+            .then(async (msg) => {
+              await prisma.ticket.update({
+                where: { id: ticket!.id },
+                data: { mapNameSelectedMessageId: msg.id },
+              });
+            });
+        }
+
         await ticketChn
           .send({
-            embeds: [mapEmbed],
+            embeds: [forceServerId && selectedServer ? changeMapEmbed() : mapEmbed],
             components: [row],
           })
           .then(async (msg) => {
@@ -302,8 +347,11 @@ export const _createTicket = async ({
           });
       }
     }
-    return { status: 'success', details: { message: 'Ticket created', data: { inviteLink: inviteUrl } } };
-  } catch (error) {
+    return {
+      status: 'success',
+      details: { message: 'Ticket created', data: { inviteLink: inviteUrl, ticketId: ticket.id } },
+    };
+  } catch (error: any) {
     if (chn?.id) await chn.delete().catch(() => {});
     if (error instanceof DiscordAPIError) {
       return {
@@ -318,12 +366,19 @@ export const _createTicket = async ({
         where: { id: ticket.id },
       });
     }
-    logger({
-      message: 'Ticket Error',
-      type: 'error',
-      data: JSON.stringify(error),
-      file: 'create.ts',
-    });
+    if (error?.message !== 'Concurrent task') {
+      logger({
+        message: 'Ticket Error',
+        type: 'error',
+        data: JSON.stringify(error),
+        file: 'create.ts',
+      });
+    } else {
+      return {
+        status: 'error',
+        details: { message: 'You have reached your ticket limit! Close the previous ticket to open a new one.' },
+      };
+    }
     return { status: 'error', details: { message: 'Something went wrong' } };
   }
 };

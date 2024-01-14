@@ -6,7 +6,9 @@ import {
   shopGetCategories,
   updateQuantity,
 } from '../../../_shared/lib/tebex';
+import { COORDS_REGEX } from '../../../../bot/plugins/tickets/message';
 import { authorizedProcedure, publicProcedure, router } from './trpc';
+import { createTicket } from '../../../../bot/plugins/tickets';
 import { Category, GetBasket } from 'tebex_headless';
 import { adminRouter } from './admin-router';
 import { TRPCError } from '@trpc/server';
@@ -313,6 +315,96 @@ export const appRouter = router({
     }
 
     return categories;
+  }),
+  getTicketCategories: publicProcedure.query(async ({ ctx }) => {
+    const { prisma } = ctx;
+
+    const ticketCategories = await prisma.ticketCategory.findMany({
+      select: {
+        id: true,
+        coordinateInput: true,
+        steamRequired: true,
+        description: true,
+        image: true,
+        limit: true,
+        mapSelection: true,
+        name: true,
+        createConfirmation: true,
+      },
+      orderBy: {
+        position: 'asc',
+      },
+    });
+
+    return ticketCategories;
+  }),
+  createTicket: authorizedProcedure
+    .input(
+      z.object({
+        categoryId: z.string().min(1),
+        coordinateInput: z.optional(z.string().min(1)),
+        mapSelection: z.optional(z.number()),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { user, prisma } = ctx;
+      const { categoryId, coordinateInput, mapSelection } = input;
+
+      const category = await prisma.ticketCategory.findUnique({
+        where: { id: categoryId },
+      });
+
+      if (!category) throw new TRPCError({ code: 'BAD_REQUEST' });
+
+      if (category.coordinateInput) {
+        if (!coordinateInput) throw new TRPCError({ code: 'BAD_REQUEST' });
+        if (!coordinateInput.match(COORDS_REGEX)) throw new TRPCError({ code: 'BAD_REQUEST' });
+        if (category.mapSelection) {
+          if (!mapSelection) throw new TRPCError({ code: 'BAD_REQUEST' });
+          const findServer = await prisma.server.findUnique({
+            where: { id: mapSelection },
+          });
+          if (!findServer) throw new TRPCError({ code: 'BAD_REQUEST' });
+        }
+      }
+
+      if (!user.discordId) throw new TRPCError({ code: 'UNAUTHORIZED' });
+
+      const newTicket = await createTicket({
+        categoryId,
+        guildId:
+          process.env.NODE_ENV === 'production'
+            ? (process.env.PRODUCTION_DISCORD_GUILD_ID as string)
+            : (process.env.DEVELOPMENT_DISCORD_GUILD_ID as string),
+        userId: user.discordId,
+        forceCoords: coordinateInput,
+        forceServerId: mapSelection,
+      });
+
+      if (newTicket.status === 'success') {
+        return {
+          success: true,
+          inviteLink: newTicket.details?.data.inviteLink,
+          ticketId: newTicket.details?.data.ticketId,
+        };
+      } else {
+        return {
+          error: true,
+          message: newTicket.details?.message,
+        };
+      }
+    }),
+  getServers: authorizedProcedure.query(async ({ ctx }) => {
+    const { prisma } = ctx;
+    const servers = await prisma.server.findMany({
+      select: {
+        id: true,
+        mapName: true,
+        customName: true,
+        gameType: true,
+      },
+    });
+    return servers;
   }),
 });
 

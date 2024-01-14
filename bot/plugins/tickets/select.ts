@@ -1,3 +1,4 @@
+import { changeMapEmbed, selectedMapEmbed } from '../../constans/embeds';
 import { EmbedBuilder, StringSelectMenuInteraction } from 'discord.js';
 import { colors, extraSigns } from '../../constans';
 import prisma from '../../lib/prisma';
@@ -32,11 +33,11 @@ export const _ticketSelectMap = async (interaction: StringSelectMenuInteraction)
   const embedId = ticket.mapNameMessageId;
   const selectedMessage = ticket.mapNameSelectedMessageId;
 
-  const mapEmbed = new EmbedBuilder()
-    .setColor(colors.green)
-    .setTimestamp()
-    .setFooter({ text: `${server.customName ? server.customName : ''} ARK: ${server.gameType}` })
-    .setDescription(`:map: **Selected** \`${server.mapName}\` **map** :map:`);
+  const mapEmbed = selectedMapEmbed({
+    customName: server.customName,
+    gameType: server.gameType,
+    mapName: server.mapName,
+  });
 
   let editedId: string | null = null;
 
@@ -60,11 +61,7 @@ export const _ticketSelectMap = async (interaction: StringSelectMenuInteraction)
     const selectMessage = await interaction.channel.messages.fetch(embedId!);
     if (selectMessage.id) {
       await selectMessage.edit({
-        embeds: [
-          new EmbedBuilder()
-            .setColor(colors.green)
-            .setDescription('**Map selected!**\nIf you did it by mistake feel free to change it below.'),
-        ],
+        embeds: [changeMapEmbed()],
       });
     }
   } catch {}

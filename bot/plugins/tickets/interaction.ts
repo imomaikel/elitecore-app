@@ -28,6 +28,7 @@ export const _ticketInteraction = async (interaction: ButtonInteraction | ModalS
         if (!(fixFormat?.includes('yes') && !fixFormat.includes('no'))) {
           await interaction.reply({
             embeds: [errorEmbed('You didn\'t type "yes" in the modal so the ticket creation has been canceled.')],
+            ephemeral: true,
           });
           return;
         } else {
@@ -48,9 +49,18 @@ export const _ticketInteraction = async (interaction: ButtonInteraction | ModalS
           await interaction.editReply({
             embeds: [successEmbed(`**Your ticket is ready!** ${hyperlink('Click', inviteLink)} to open.`)],
           });
+          return;
         }
       } else if (status === 'error') {
-        await interaction.editReply({ embeds: [errorEmbed(message)] });
+        if (interaction.replied || interaction.deferred) {
+          await interaction.editReply({ embeds: [errorEmbed(message)] });
+        } else {
+          await interaction.reply({
+            embeds: [errorEmbed(details?.message ?? 'Something went wrong')],
+            ephemeral: true,
+          });
+        }
+        return;
       }
     }
   } catch (error) {
