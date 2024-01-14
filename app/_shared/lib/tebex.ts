@@ -219,7 +219,13 @@ type TAddProductToBasketResponse =
     }
   | {
       status: 'error';
-      message: 'Unauthorized' | 'Basket does not exist' | 'Basket not authorized' | 'Internal error' | 'Unknown error';
+      message:
+        | 'Unauthorized'
+        | 'Basket does not exist'
+        | 'Basket not authorized'
+        | 'Internal error'
+        | 'Unknown error'
+        | 'Basket not found';
       errorMessage?: string;
     };
 const addProductToBasket = async ({
@@ -246,11 +252,12 @@ const addProductToBasket = async ({
       data: addedProduct,
     };
   } catch (error: any) {
-    console.log(error);
     if (error?.response?.data?.detail) {
       const detail = error.response.data.detail;
       if (detail === 'User must login before adding packages to basket') {
         return { status: 'error', message: 'Basket not authorized' };
+      } else if (detail === 'Basket not found') {
+        return { status: 'error', message: 'Basket not found' };
       } else {
         return { status: 'error', message: 'Unknown error', errorMessage: error.response.data.detail };
       }
@@ -306,7 +313,7 @@ export const addProduct = async ({
       status: 'success',
       data: addedProduct.data as Basket,
     };
-  } else if (addedProduct.message === 'Basket does not exist') {
+  } else if (addedProduct.message === 'Basket does not exist' || addedProduct.message === 'Basket not found') {
     const newBasket = await createBasket({
       basketAuthRedirectUrl: process.env.TEBEX_AFTER_BASKET_AUTH!,
       ipAddress,

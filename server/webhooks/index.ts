@@ -8,7 +8,9 @@ const ALLOWED_IPS = ['::ffff:18.209.80.3', '18.209.80.3', '::ffff:54.87.231.232'
 
 const webhookHandler = async (req: any, res: express.Response) => {
   // Check webhook IP
-  if (!req?.ip || !ALLOWED_IPS.includes(req.ip)) return res.status(401).send('Invalid request');
+  if (!req?.headers || !req.headers['x-forwarded-for'] || !ALLOWED_IPS.includes(req.headers['x-forwarded-for'])) {
+    return res.status(401).send('Invalid request');
+  }
 
   try {
     const webhookRequest = req as TWebhookRequest;
