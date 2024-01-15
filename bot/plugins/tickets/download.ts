@@ -20,5 +20,8 @@ export const _downloadAttachment = async ({ id, ticketLogPath, url, name }: TDow
   if (body === null) return false;
 
   await finished(Readable.fromWeb(body as ReadableStream).pipe(stream));
-  return filePath;
+
+  const publicUrl = filePath.substring(filePath.indexOf('/public') + '/public'.length);
+
+  return publicUrl;
 };

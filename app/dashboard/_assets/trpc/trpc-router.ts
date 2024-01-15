@@ -406,6 +406,38 @@ export const appRouter = router({
     });
     return servers;
   }),
+  getTicketWithLogs: authorizedProcedure.input(z.object({ ticketId: z.string() })).query(async ({ ctx, input }) => {
+    const { prisma, user } = ctx;
+    const { ticketId } = input;
+
+    const isAdmin = user.role === 'ADMIN';
+
+    const ticket = await prisma.ticket.findUnique({
+      where: {
+        id: ticketId,
+        ...(!isAdmin && {
+          authorDiscordId: user.discordId,
+        }),
+      },
+      include: {
+        TicketCategory: {
+          select: {
+            coordinateInput: true,
+            steamRequired: true,
+            mapSelection: true,
+            name: true,
+          },
+        },
+        messages: {
+          include: {
+            attachments: true,
+          },
+        },
+      },
+    });
+
+    return ticket;
+  }),
 });
 
 export type AppRouter = typeof appRouter;

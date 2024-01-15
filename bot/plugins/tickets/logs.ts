@@ -1,3 +1,4 @@
+import logger from '../../scripts/logger';
 import { downloadAttachment } from '.';
 import prisma from '../../lib/prisma';
 import { Message } from 'discord.js';
@@ -11,43 +12,53 @@ type TTicketLog = {
   ticketId: string;
 };
 export const _ticketLog = async ({ message, ticketAuthorId, ticketId }: TTicketLog) => {
-  const content = message.content;
+  try {
+    const content = message.content;
 
-  const createAttachments: { name: string; path: string }[] = [];
+    const createAttachments: { name: string; path: string; contentType: string | null }[] = [];
 
-  if (message.attachments.size >= 1) {
-    const ticketLogPath = path.resolve(LOG_PATH, ticketAuthorId, ticketId);
-    const attachments = message.attachments.map(({ id, name, url }) => ({ id, name, url }));
-    for await (const { id, name, url } of attachments) {
-      const result = await downloadAttachment({ id, ticketLogPath, url, name });
-      if (result === false) continue;
-      createAttachments.push({
-        name,
-        path: result,
-      });
+    if (message.attachments.size >= 1) {
+      const ticketLogPath = path.resolve(LOG_PATH, ticketAuthorId, ticketId);
+      const attachments = message.attachments.map(({ id, name, url, contentType }) => ({ id, name, url, contentType }));
+      for await (const { id, name, url, contentType } of attachments) {
+        const result = await downloadAttachment({ id, ticketLogPath, url, name });
+        if (result === false) continue;
+        createAttachments.push({
+          name,
+          path: result,
+          contentType,
+        });
+      }
     }
-  }
 
-  if (content.length < 1 && createAttachments.length < 1) return;
+    if (content.length < 1 && createAttachments.length < 1) return;
 
-  await prisma.ticket.update({
-    where: { channelId: message.channel.id },
-    data: {
-      messages: {
-        create: {
-          id: message.id,
-          authorAvatar: message.author.displayAvatarURL(),
-          authorName: message.author.username,
-          content: content.length >= 1 ? content : undefined,
-          ...(createAttachments.length >= 1 && {
-            attachments: {
-              createMany: {
-                data: [...createAttachments],
+    await prisma.ticket.update({
+      where: { channelId: message.channel.id },
+      data: {
+        messages: {
+          create: {
+            id: message.id,
+            authorAvatar: message.author.displayAvatarURL(),
+            authorDiscordId: message.author.id,
+            authorName: message.author.username,
+            content: content.length >= 1 ? content : undefined,
+            ...(createAttachments.length >= 1 && {
+              attachments: {
+                createMany: {
+                  data: [...createAttachments],
+                },
               },
-            },
-          }),
+            }),
+          },
         },
       },
-    },
-  });
+    });
+  } catch (error) {
+    logger({
+      message: 'Ticket Log',
+      type: 'error',
+      data: JSON.stringify(error),
+    });
+  }
 };

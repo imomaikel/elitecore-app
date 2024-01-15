@@ -1,8 +1,8 @@
 'use client';
 import { useCurrentUser } from '@/hooks/use-current-user';
+import PageWrapper from '@/components/shared/PageWrapper';
 import { useParams, useRouter } from 'next/navigation';
 import CategoryForm from '../_components/CategoryForm';
-import AdminPageWrapper from '@/admin/PageWrapper';
 import { toast } from 'sonner';
 import { trpc } from '@/trpc';
 
@@ -36,7 +36,7 @@ const AdminTicketsEditCategoryPanel = () => {
   const data = category.data;
 
   return (
-    <AdminPageWrapper title={`Ticket - Editing (${data.name}) category`} showGoBack>
+    <PageWrapper pageName="Admin" title={`Ticket - Editing (${data.name}) category`} showGoBack>
       <p className="text-muted-foreground mb-2">Remember to save your changes at the bottom of the page.</p>
       <CategoryForm
         refetch={refetch}
@@ -62,7 +62,7 @@ const AdminTicketsEditCategoryPanel = () => {
           format: data.format,
         }}
       />
-    </AdminPageWrapper>
+    </PageWrapper>
   );
 };
 

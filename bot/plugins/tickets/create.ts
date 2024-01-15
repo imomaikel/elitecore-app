@@ -215,6 +215,7 @@ export const _createTicket = async ({
         data: {
           authorDiscordId: user.id,
           channelId: ticketChn.id,
+          authorUsername: user.user.username,
           inviteUrl,
           authorSteamId: pairedData?.method === 'EOS' ? pairedData.id : undefined,
           authorEOSId: pairedData?.method === 'EOS' ? pairedData.id : undefined,

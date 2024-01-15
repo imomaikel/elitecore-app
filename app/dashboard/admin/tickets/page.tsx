@@ -1,9 +1,9 @@
 'use client';
 import ActionDialog from '@/components/shared/ActionDialog';
 import { useCurrentUser } from '@/hooks/use-current-user';
+import PageWrapper from '@/components/shared/PageWrapper';
 import { Button } from '@/shared/components/ui/button';
 import CategoryCard from './_components/CategoryCard';
-import AdminPageWrapper from '@/admin/PageWrapper';
 import ChannelPicker from '@/admin/ChannelPicker';
 import { errorToast } from '@/shared/lib/utils';
 import { useRouter } from 'next/navigation';
@@ -46,7 +46,7 @@ const AdminTicketsPage = () => {
   };
 
   return (
-    <AdminPageWrapper title="Tickets">
+    <PageWrapper pageName="Admin" title="Tickets">
       {/* Channel Picker */}
       <ItemInfo
         title="Ticket Channel"
@@ -115,7 +115,7 @@ const AdminTicketsPage = () => {
         title="Confirm deletion"
         proceedLabel="Delete!"
       />
-    </AdminPageWrapper>
+    </PageWrapper>
   );
 };
 

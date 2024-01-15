@@ -258,6 +258,7 @@ model TicketSupport {
 model Ticket {
   id              String @id @default(cuid())
   authorDiscordId String
+  authorUsername  String
   inviteUrl       String @db.TinyText
   channelId       String @unique
 
@@ -288,10 +289,11 @@ model Ticket {
 model TicketMessage {
   id String @id @unique
 
-  content String?
+  content String? @db.LongText
 
-  authorName   String
-  authorAvatar String
+  authorName      String
+  authorAvatar    String
+  authorDiscordId String
 
   attachments TicketAttachment[]
 
@@ -304,10 +306,11 @@ model TicketMessage {
 model TicketAttachment {
   id String @id @default(cuid())
 
-  name String
-  path String
+  name        String
+  path        String
+  contentType String?
 
-  TicketMessage   TicketMessage? @relation(fields: [ticketMessageId], references: [id])
+  TicketMessage   TicketMessage? @relation(fields: [ticketMessageId], references: [id], onDelete: Cascade)
   ticketMessageId String?
 
   createdAt DateTime @default(now())

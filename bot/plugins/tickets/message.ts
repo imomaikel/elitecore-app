@@ -29,6 +29,7 @@ export const _ticketMessage = async (message: Message) => {
 
     const mapPass = mapSelection ? !!mapName ?? false : true;
     if (!mapPass && message.author.id === authorDiscordId) {
+      // TODO
       await message.delete().catch(() => {});
       await message.channel
         .send({

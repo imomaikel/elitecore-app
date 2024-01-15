@@ -1,5 +1,10 @@
 import { z } from 'zod';
 
+const optionalOrMin = z
+  .union([z.string().length(0), z.string().min(2).max(30)])
+  .optional()
+  .transform((e) => (e === '' ? undefined : e));
+
 const TicketCategorySchemaOptional = {
   limit: z.optional(z.coerce.number().min(1).max(254)),
   autoClose: z.optional(z.coerce.number().min(5).max(1440)),
@@ -7,10 +12,10 @@ const TicketCategorySchemaOptional = {
   bannedRoleId: z.optional(z.string()),
   afterCreateDescription: z.optional(z.string()),
   createConfirmation: z.optional(z.string().max(960)),
-  closeCommand: z.optional(z.string().max(16)),
+  closeCommand: optionalOrMin,
   image: z.optional(z.string().max(2048)),
   mentionSupport: z.optional(z.boolean()),
-  format: z.optional(z.string().min(1)),
+  format: optionalOrMin,
   supportRoles: z.optional(
     z.array(
       z.object({
