@@ -6,6 +6,8 @@ import { redirect, useRouter } from 'next/navigation';
 import { IoArrowBackOutline } from 'react-icons/io5';
 import { useTebex } from '@/hooks/use-tebex';
 import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
+
 type TParams = {
   params: {
     categoryId: string;
@@ -14,8 +16,10 @@ type TParams = {
 const CategoryPage = ({ params }: TParams) => {
   const router = useRouter();
   const { categoryId } = params;
-  const { categoryList } = useTebex();
+  const { getCategoryList } = useTebex();
   const [isMounted, setIsMounted] = useState(false);
+
+  const categoryList = getCategoryList();
 
   const numberCategoryId = parseInt(categoryId);
 
@@ -31,6 +35,7 @@ const CategoryPage = ({ params }: TParams) => {
   category?.packages.sort((a, b) => a.base_price - b.base_price);
 
   if (isMounted && !category) {
+    toast.error('The product does not exist or it is disabled in your settings!', { duration: 8_000 });
     redirect('/dashboard');
   }
 

@@ -8,7 +8,7 @@ import { trpc } from '@/trpc';
 import Link from 'next/link';
 
 const ShopTab = () => {
-  const { categoryList, setCategoryList } = useTebex();
+  const { getCategoryList, setCategoryList } = useTebex();
   const [isMounted, setIsMounted] = useState(false);
   const pathname = usePathname();
 
@@ -16,6 +16,8 @@ const ShopTab = () => {
     refetchOnWindowFocus: false,
     retry: false,
   });
+
+  const categoryList = getCategoryList();
 
   useEffect(() => {
     if (!isMounted) setIsMounted(true);

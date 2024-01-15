@@ -18,12 +18,12 @@ import { IoArrowBackOutline } from 'react-icons/io5';
 import { useCurrency } from '@/hooks/use-currency';
 import { useTebex } from '@/hooks/use-tebex';
 import { FaCartPlus } from 'react-icons/fa6';
+import { useSheet } from '@/hooks/use-sheet';
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { toast } from 'sonner';
 import { trpc } from '@/trpc';
 import Link from 'next/link';
-import { useSheet } from '@/hooks/use-sheet';
 
 type TProductPage = {
   params: {
@@ -32,7 +32,7 @@ type TProductPage = {
 };
 const ProductPage = ({ params }: TProductPage) => {
   const [isAuthorizeDialogOpen, setIsAuthorizeDialogOpen] = useState(false);
-  const { categoryList, authUrl, setAuthUrl } = useTebex();
+  const { getCategoryList, authUrl, setAuthUrl } = useTebex();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { addToBasket: clientAddToBasket } = useTebex();
   const [isMounted, setIsMounted] = useState(false);
@@ -43,6 +43,7 @@ const ProductPage = ({ params }: TProductPage) => {
 
   const { productId } = params;
   const numberProductId = parseInt(productId);
+  const categoryList = getCategoryList();
 
   if (isNaN(numberProductId)) {
     redirect('/dashboard');
@@ -58,6 +59,7 @@ const ProductPage = ({ params }: TProductPage) => {
   const product = isMounted && category && category.packages.find((entry) => entry.id === numberProductId);
 
   if (!product && isMounted) {
+    toast.error('The product does not exist or it is disabled in your settings!', { duration: 8_000 });
     redirect('/dashboard');
   }
   const { mutate: addToBasket, isLoading } = trpc.addToBasket.useMutation({

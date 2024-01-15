@@ -19,6 +19,7 @@ import { useTebex } from '@/hooks/use-tebex';
 import SignInConfirm from './SignInConfirm';
 import { useEffect, useState } from 'react';
 import ActionDialog from './ActionDialog';
+import ItemControl from './ItemControl';
 import Image from 'next/image';
 import { toast } from 'sonner';
 import { trpc } from '@/trpc';
@@ -72,7 +73,7 @@ const Navbar = () => {
         title="Disclaimer"
         description={<SignInConfirm />}
       />
-      <div className="w-full h-16 fixed right-0 top-0 z-20 bg-background shadow-sm md:shadow-black/90">
+      <div className="w-full h-16 fixed right-0 top-0 z-20 shadow-sm md:shadow-black/90 bg-background/60 backdrop-blur-lg">
         <nav className="h-full">
           <div className="h-full px-3 lg:px-8 md:px-6 flex justify-between">
             <div className="flex">
@@ -85,8 +86,11 @@ const Navbar = () => {
               {/* Logo */}
               <Link href="/dashboard" className="flex items-center group">
                 <Image src="/logo.png" width={48} height={48} alt="logo" />
-                <div className="font-extrabold text-2xl ml-2 transition-colors group-hover:text-primary">
-                  <span>EliteCore</span>
+                <div className="font-extrabold text-2xl ml-2 relative">
+                  <h1 className="bg-gradient-to-r from-yellow-600 to-red-600 inline-block text-transparent bg-clip-text tracking-wide">
+                    EliteCore
+                  </h1>
+                  <div className="bg-gradient-to-r from-yellow-600 to-red-600 absolute w-1/2 h-full -z-10 inset-0 blur-[50px] rotate-45" />
                 </div>
               </Link>
             </div>
@@ -129,6 +133,7 @@ const Navbar = () => {
                       ))}
                     </SelectContent>
                   </Select>
+                  <ItemControl />
                   <Separator className="my-2" />
                   <div className="flex md:hidden flex-col">
                     <div className="flex justify-between">

@@ -1,5 +1,6 @@
 import MobileSidebar from '@/components/shared/MobileSidebar';
 import ShoppingCart from '@/components/shared/ShoppingCart';
+import SelectGame from '@/components/shared/SelectGame';
 import Sidebar from '@/components/shared/Sidebar';
 import Footer from '@/components/shared/Footer';
 import Navbar from '@/components/shared/Navbar';
@@ -34,6 +35,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </div>
         <Footer />
         <ShoppingCart />
+        <SelectGame />
       </div>
     </TRPCProvider>
   );

@@ -2,11 +2,14 @@
 import ProductBox from '@/components/shared/ProductBox';
 import { useTebex } from '@/hooks/use-tebex';
 import { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
 import { trpc } from '@/trpc';
 
 const ForYou = () => {
   const [isMounted, setIsMounted] = useState(false);
-  const { categoryList } = useTebex();
+  const { getCategoryList, showItemType } = useTebex();
+
+  const categoryList = getCategoryList();
 
   useEffect(() => setIsMounted(true), []);
 
@@ -14,7 +17,7 @@ const ForYou = () => {
   const productIds = categoryList.map((entry) => entry.packages.map((item) => item.id)).flat();
 
   const { data: topPicks, isLoading: isApiLoading } = trpc.getTopPicks.useQuery(
-    { activeProducts: productIds },
+    { activeProducts: productIds, game: showItemType === 'ase' ? 'ase' : showItemType === 'asa' ? 'asa' : 'all' },
     {
       retry: false,
       refetchOnWindowFocus: false,
@@ -30,8 +33,32 @@ const ForYou = () => {
   return (
     <div className="w-full relative">
       <div className="flex space-x-2 items-center mb-2">
-        <h1 className="font-semibold text-2xl md:text-2xl text-primary">For You</h1>
-        <p className="text-muted-foreground text-sm">Click on an image to see the full description</p>
+        <motion.h1
+          initial={{
+            x: 100,
+            opacity: 0,
+          }}
+          whileInView={{
+            x: 0,
+            opacity: 1,
+          }}
+          className="font-semibold text-2xl md:text-2xl text-primary"
+        >
+          For You
+        </motion.h1>
+        <motion.p
+          initial={{
+            x: 100,
+            opacity: 0,
+          }}
+          whileInView={{
+            x: 0,
+            opacity: 1,
+          }}
+          className="text-muted-foreground text-sm"
+        >
+          Click on an image to see the full description
+        </motion.p>
       </div>
       <div
         className="grid grid-cols-1 smb:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 2.5xl:grid-cols-3

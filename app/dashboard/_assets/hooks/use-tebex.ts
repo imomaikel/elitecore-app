@@ -2,9 +2,15 @@ import type { Basket, BasketPackage, Category } from 'tebex_headless';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import { create } from 'zustand';
 
+type TItem = 'ase' | 'asa' | 'all' | 'other' | 'always' | 'none';
+
 type TUseTebex = {
-  categoryList: Category[] | [];
+  categoryList: (Category & { itemType: TItem })[] | [];
   setCategoryList: (categories: Category[] | []) => void;
+  getCategoryList: () => Category[];
+
+  showItemType: TItem;
+  setShowItem: (type: TItem) => void;
 
   basket: Basket;
   setBasket: (basket: Basket) => void;
@@ -27,7 +33,38 @@ export const useTebex = create<TUseTebex>()(
   persist(
     (set, get) => ({
       categoryList: [],
-      setCategoryList: (data) => set(() => ({ categoryList: data })),
+      setCategoryList: (data) => {
+        set(() => ({
+          categoryList: data.map((entry) => {
+            const label = entry.name.toLowerCase();
+            return {
+              ...entry,
+              itemType:
+                label.startsWith('ase+ase') || label.startsWith('ase+asa')
+                  ? 'always'
+                  : label.startsWith('ase')
+                  ? 'ase'
+                  : label.startsWith('asa')
+                  ? 'asa'
+                  : 'other',
+            };
+          }),
+        }));
+      },
+
+      showItemType: 'none',
+      setShowItem: (type) =>
+        set(() => ({
+          showItemType: type,
+        })),
+
+      getCategoryList: () =>
+        get().categoryList.filter(
+          (category) =>
+            category.itemType === get().showItemType ||
+            get().showItemType === 'all' ||
+            (category.itemType === 'always' && get().showItemType !== 'none'),
+        ),
 
       basket: {
         ident: '',

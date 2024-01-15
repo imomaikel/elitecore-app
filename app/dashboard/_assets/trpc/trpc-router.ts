@@ -33,23 +33,35 @@ const getCurrentMonth = () => {
   };
 };
 
+const productFilter = (categoryName: string, game: 'ase' | 'asa' | 'all') => {
+  if (game === 'all') return true;
+  categoryName = categoryName.toLowerCase();
+  if (categoryName.startsWith('ase+asa') || categoryName.startsWith('asa+ase')) return true;
+  if (categoryName.startsWith('ase') && game === 'ase') return true;
+  if (categoryName.startsWith('asa') && game === 'asa') return true;
+  return false;
+};
+
 export const appRouter = router({
   admin: adminRouter,
   getTopPicks: publicProcedure
-    .input(z.object({ activeProducts: z.array(z.number()) }))
+    .input(z.object({ activeProducts: z.array(z.number()), game: z.enum(['ase', 'asa', 'all']) }))
     .query(async ({ ctx, input }) => {
       const { prisma } = ctx;
-      const { activeProducts } = input;
+      const { activeProducts, game } = input;
 
       const productsCount: { productId: number; count: number }[] = [];
 
-      const boughtProducts = await prisma.product.findMany({
-        where: {
-          productId: {
-            in: activeProducts,
+      const boughtProducts = (
+        await prisma.product.findMany({
+          where: {
+            productId: {
+              in: activeProducts,
+            },
           },
-        },
-      });
+        })
+      ).filter(({ categoryName }) => productFilter(categoryName, game));
+
       for (const product of boughtProducts) {
         const isAlready = productsCount.find((entry) => entry.productId === product.productId);
         if (isAlready) {
@@ -66,7 +78,10 @@ export const appRouter = router({
         categories = getCategories;
       }
 
-      const products = categories.map(({ packages }) => packages).flat();
+      const products = categories
+        .filter(({ name }) => productFilter(name, game))
+        .map(({ packages }) => packages)
+        .flat();
 
       const TOP_PICKS_TO_GENERATE = 4;
       let randomPicksToGenerate = 4;

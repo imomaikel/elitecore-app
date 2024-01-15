@@ -35,7 +35,7 @@ const ActionDialog = ({
           <AlertDialogDescription>{description}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogCancel onClick={onOpenChange}>Cancel</AlertDialogCancel>
           <AlertDialogAction onClick={onProceed}>{proceedLabel}</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

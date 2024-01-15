@@ -25,12 +25,14 @@ type TProductBox = {
   gradient?: true;
 };
 const ProductBox = ({ basePrice, description, imageURL, name, productId, gradient }: TProductBox) => {
-  const { addToBasket: clientAddToBasket, categoryList, setAuthUrl, authUrl } = useTebex();
+  const { addToBasket: clientAddToBasket, getCategoryList, setAuthUrl, authUrl } = useTebex();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { onOpen: openShoppingCart } = useSheet();
   const { formatPrice } = useCurrency();
   const { user } = useCurrentUser();
   const router = useRouter();
+
+  const categoryList = getCategoryList();
 
   const { mutate: addToBasket, isLoading } = trpc.addToBasket.useMutation({
     onSuccess: (response) => {
