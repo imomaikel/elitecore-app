@@ -8,7 +8,7 @@ const optionalOrMin = z
 const TicketCategorySchemaOptional = {
   limit: z.optional(z.coerce.number().min(1).max(254)),
   autoClose: z.optional(z.coerce.number().min(5).max(1440)),
-  parentChannelId: z.optional(z.string()),
+  parentChannelId: optionalOrMin,
   bannedRoleId: z.optional(z.string()),
   afterCreateDescription: z.optional(z.string()),
   createConfirmation: z.optional(z.string().max(960)),

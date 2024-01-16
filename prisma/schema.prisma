@@ -261,6 +261,7 @@ model Ticket {
   authorUsername  String
   inviteUrl       String @db.TinyText
   channelId       String @unique
+  categoryName    String
 
   // Optional
   authorSteamId            String? @db.TinyText

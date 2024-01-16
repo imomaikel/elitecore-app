@@ -138,7 +138,7 @@ export const _createTicket = async ({
   try {
     const ticketChn = await guild.channels.create({
       name: 'ticket',
-      parent: parentChannelId ?? undefined,
+      parent: parentChannelId && parentChannelId.length >= 4 ? parentChannelId : undefined,
       permissionOverwrites: [
         {
           id: guild.roles.everyone.id,
@@ -216,6 +216,7 @@ export const _createTicket = async ({
           authorDiscordId: user.id,
           channelId: ticketChn.id,
           authorUsername: user.user.username,
+          categoryName: category.name,
           inviteUrl,
           authorSteamId: pairedData?.method === 'EOS' ? pairedData.id : undefined,
           authorEOSId: pairedData?.method === 'EOS' ? pairedData.id : undefined,

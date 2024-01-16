@@ -453,6 +453,24 @@ export const appRouter = router({
 
     return ticket;
   }),
+  getUserTickets: authorizedProcedure.query(async ({ ctx }) => {
+    const { prisma, user } = ctx;
+
+    if (!user.discordId) throw new TRPCError({ code: 'BAD_REQUEST' });
+
+    const tickets = await prisma.ticket.findMany({
+      where: { authorDiscordId: user.discordId },
+      select: {
+        createdAt: true,
+        closedAt: true,
+        id: true,
+        categoryName: true,
+        authorUsername: true,
+      },
+    });
+
+    return tickets;
+  }),
 });
 
 export type AppRouter = typeof appRouter;

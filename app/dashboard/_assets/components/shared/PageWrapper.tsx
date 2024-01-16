@@ -1,3 +1,4 @@
+'use client';
 import { Separator } from '@/shared/components/ui/separator';
 import { IoArrowBackOutline } from 'react-icons/io5';
 import { useRouter } from 'next/navigation';

@@ -52,3 +52,14 @@
   background-size: 400%;
   animation: 5s progress ease infinite;
 }
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  @apply w-2;
+}
+::-webkit-scrollbar-track {
+  @apply bg-background;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-primary/75 rounded-lg;
+}
