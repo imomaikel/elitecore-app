@@ -1,6 +1,7 @@
 import { TicketCategoryCreateSchema, TicketCategoryEditSchema } from '../../admin/tickets/_assets/validators';
 import { apiAvailableChannels, apiAvailableRoles, apiMutualGuilds } from '../../../../bot/api';
 import { API_BROADCAST_WIDGETS, API_WIDGETS } from '../../../../bot/constans/types';
+import { createTicketCategoryWidget } from '../../../../bot/plugins/tickets';
 import apiUpdateBroadcastChannel from '../../../../bot/api/broadcastUpdate';
 import { apiUpdateWidget } from '../../../../bot/api/widgetUpdate';
 import { adminProcedure, managerProcedure, router } from './trpc';
@@ -85,6 +86,20 @@ export const adminRouter = router({
         widgetName,
       });
 
+      if (widgetName === 'serverStatusNotify') {
+        await createAdminLog({
+          content: 'Updated server status notify widget',
+          guildId: selectedGuildId,
+          userDiscordId,
+        });
+      } else if (widgetName === 'serverStatusWidget') {
+        await createAdminLog({
+          content: 'Updated server status widget',
+          guildId: selectedGuildId,
+          userDiscordId,
+        });
+      }
+
       return action;
     }),
   updateWidget: adminProcedure
@@ -99,6 +114,14 @@ export const adminRouter = router({
         userDiscordId: userDiscordId,
         widgetName,
       });
+
+      if (widgetName === 'ticketWidget') {
+        await createAdminLog({
+          content: 'Updated ticket widget',
+          guildId: selectedGuildId,
+          userDiscordId,
+        });
+      }
 
       return action;
     }),
@@ -184,6 +207,7 @@ export const adminRouter = router({
     } catch {
       return { error: true };
     } finally {
+      await createTicketCategoryWidget(selectedGuildId);
       await createAdminLog({
         content: `Created ticket category "${input.name}"`,
         guildId: selectedGuildId,
@@ -197,7 +221,11 @@ export const adminRouter = router({
     const getCategories = await prisma.guild.findUnique({
       where: { guildId: selectedGuildId },
       select: {
-        ticketCategories: true,
+        ticketCategories: {
+          orderBy: {
+            position: 'asc',
+          },
+        },
         ticketCategoryChannelId: true,
       },
     });
@@ -256,6 +284,7 @@ export const adminRouter = router({
     } catch {
       return { error: true };
     } finally {
+      await createTicketCategoryWidget(selectedGuildId);
       await createAdminLog({
         content: `Deleted ticket "${categoryName}" category`,
         guildId: selectedGuildId,
@@ -326,11 +355,57 @@ export const adminRouter = router({
       } catch {
         return { success: false };
       } finally {
+        await createTicketCategoryWidget(selectedGuildId);
         await createAdminLog({
           content: `Updated ticket "${categoryName}" category`,
           guildId: selectedGuildId,
           userDiscordId,
         });
+      }
+    }),
+  updatePosition: adminProcedure
+    .input(z.object({ categoryId: z.string().min(1), method: z.enum(['INCREMENT', 'DECREMENT']) }))
+    .mutation(async ({ ctx, input }) => {
+      const { prisma, selectedGuildId, userDiscordId } = ctx;
+      const { categoryId, method } = input;
+
+      try {
+        const category = await prisma.ticketCategory.update({
+          where: {
+            Guild: {
+              guildId: selectedGuildId,
+            },
+            id: categoryId,
+            position: {
+              ...(method === 'DECREMENT'
+                ? {
+                    gt: 1,
+                  }
+                : {
+                    lt: 15,
+                  }),
+            },
+          },
+          data: {
+            position: {
+              ...(method === 'DECREMENT'
+                ? {
+                    decrement: 1,
+                  }
+                : {
+                    increment: 1,
+                  }),
+            },
+          },
+        });
+        await createAdminLog({
+          content: `Updated ticket "${category.name}" category position`,
+          guildId: selectedGuildId,
+          userDiscordId,
+        });
+        return { success: true };
+      } catch {
+        return { error: true };
       }
     }),
 });

@@ -72,9 +72,18 @@ export const _createCategoryWidget = async (
     channelOrId: ticketCategoryChannelId,
     messageButtons: [buttonRow],
     messageEmbeds: [createTicketEmbed],
+    editMessageId: guildData.ticketCategoryMessageId ?? undefined,
   });
+
+  if (response.status === 'success') {
+    const msgId = response.details?.data.messageId;
+    if (msgId) {
+      await prisma.guild.update({
+        where: { guildId },
+        data: { ticketCategoryMessageId: msgId },
+      });
+    }
+  }
 
   return response;
 };
-
-// TODO resend on change

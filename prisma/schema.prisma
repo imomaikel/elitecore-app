@@ -178,6 +178,7 @@ model Guild {
   // Tickets
   ticketCategories        TicketCategory[]
   ticketCategoryChannelId String?
+  ticketCategoryMessageId String?
 
   // Commands
   playersCmdChannelId String? @db.TinyText
@@ -277,7 +278,7 @@ model Ticket {
 
   messages TicketMessage[]
 
-  User   User?   @relation(fields: [userId], references: [id]) // TODO: Connect
+  User   User?   @relation(fields: [userId], references: [id])
   userId String?
 
   closedBy String?

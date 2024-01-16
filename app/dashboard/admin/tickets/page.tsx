@@ -28,6 +28,7 @@ const AdminTicketsPage = () => {
     enabled: !!user?.selectedGuildId,
   });
 
+  const { mutate: updatePosition } = trpc.admin.updatePosition.useMutation();
   const { mutate: updateWidgetChannel, isLoading: isWidgetUpdating } = trpc.admin.updateWidget.useMutation();
   const { mutate: deleteTicketCategory, isLoading: isDeleting } = trpc.admin.deleteTicketCategory.useMutation({
     onSuccess: ({ data: categoryName, error, success }) => {
@@ -45,6 +46,41 @@ const AdminTicketsPage = () => {
     setIsOpen(true);
   };
 
+  const onUpdate = (channelId: string) => {
+    updateWidgetChannel(
+      { channelId, widgetName: 'ticketWidget' },
+      {
+        onSuccess: (response) => {
+          if (response?.status === 'error') {
+            toast.error(`Something went wrong! ${response?.details?.message}`);
+          } else {
+            toast.success('Widget sent!');
+          }
+        },
+        onError: () => {
+          toast.error('Something went wrong!');
+        },
+      },
+    );
+  };
+
+  const onPositionChange = (method: 'INCREMENT' | 'DECREMENT', id: string) => {
+    updatePosition(
+      { categoryId: id, method },
+      {
+        onSuccess: ({ error, success }) => {
+          if (success) {
+            toast.success('Updated position!');
+            refetch();
+          } else if (error) {
+            errorToast();
+          }
+        },
+        onError: () => errorToast(),
+      },
+    );
+  };
+
   return (
     <PageWrapper pageName="Admin" title="Tickets">
       {/* Channel Picker */}
@@ -52,43 +88,44 @@ const AdminTicketsPage = () => {
         title="Ticket Channel"
         description="This is the channel where the widget with categories and buttons is located."
       >
-        {user?.selectedGuildId && (
-          <ChannelPicker
-            type="TEXT"
-            selectedValue={data?.channelId ?? undefined}
-            guildId={user.selectedGuildId}
-            isLoading={isWidgetUpdating}
-            onSelect={(channelId) => {
-              if (!channelId) return;
-              updateWidgetChannel(
-                { channelId, widgetName: 'ticketWidget' },
-                {
-                  onSuccess: (response) => {
-                    if (response?.status === 'error') {
-                      toast.error(`Something went wrong! ${response?.details?.message}`);
-                    } else {
-                      toast.success('Widget sent!');
-                    }
-                  },
-                  onError: () => {
-                    toast.error('Something went wrong!');
-                  },
-                },
-              );
-            }}
-          />
-        )}
+        <div className="flex items-center space-x-2">
+          {user?.selectedGuildId && (
+            <ChannelPicker
+              type="TEXT"
+              selectedValue={data?.channelId ?? undefined}
+              guildId={user.selectedGuildId}
+              isLoading={isWidgetUpdating}
+              onSelect={(channelId) => {
+                if (!channelId) return;
+                onUpdate(channelId);
+              }}
+            />
+          )}
+          {data?.channelId && (
+            <Button disabled={isWidgetUpdating} onClick={() => onUpdate(data.channelId!)}>
+              Resend
+            </Button>
+          )}
+        </div>
       </ItemInfo>
 
       {/* Current categories */}
-      <ItemInfo title="Current categories">
+      <ItemInfo title="Current categories" description="Set position of buttons in Discord widget. Range 1-15">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 w-full">
           {isLoading ? (
             'Loading'
           ) : (
             <>
-              {data?.categories?.map(({ id, name }) => (
-                <CategoryCard key={id} onDelete={() => confirmDelete(id)} id={id} name={name} isDeleting={isDeleting} />
+              {data?.categories?.map(({ id, name, position }) => (
+                <CategoryCard
+                  key={id}
+                  onDelete={() => confirmDelete(id)}
+                  id={id}
+                  name={name}
+                  isDeleting={isDeleting}
+                  position={position}
+                  onPositionChange={(method) => onPositionChange(method, id)}
+                />
               ))}
               <div className="bg-white/5 max-w-sm p-4 space-y-2 rounded-lg">
                 <div className="text-xl font-medium w-full truncate">Add a new category</div>
@@ -101,10 +138,11 @@ const AdminTicketsPage = () => {
         </div>
       </ItemInfo>
 
-      {/* TODO */}
       {/* View Tickets */}
-      <div></div>
-      {/* TODO position */}
+      <ItemInfo title="Logs">
+        <p>ok</p>
+      </ItemInfo>
+
       <ActionDialog
         description="Are you sure? This action is irreversible."
         isOpen={isOpen}
