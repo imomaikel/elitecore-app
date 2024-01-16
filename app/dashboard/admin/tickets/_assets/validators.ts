@@ -1,19 +1,19 @@
 import { z } from 'zod';
 
 const optionalOrMin = z
-  .union([z.string().length(0), z.string().min(2).max(30)])
+  .union([z.string().length(0), z.string().min(2).max(2048)])
   .optional()
   .transform((e) => (e === '' ? undefined : e));
 
 const TicketCategorySchemaOptional = {
+  afterCreateDescription: optionalOrMin,
+  createConfirmation: optionalOrMin,
+  bannedRoleId: optionalOrMin,
+  image: optionalOrMin,
   limit: z.optional(z.coerce.number().min(1).max(254)),
   autoClose: z.optional(z.coerce.number().min(5).max(1440)),
   parentChannelId: optionalOrMin,
-  bannedRoleId: z.optional(z.string()),
-  afterCreateDescription: z.optional(z.string()),
-  createConfirmation: z.optional(z.string().max(960)),
   closeCommand: optionalOrMin,
-  image: z.optional(z.string().max(2048)),
   mentionSupport: z.optional(z.boolean()),
   format: optionalOrMin,
   supportRoles: z.optional(

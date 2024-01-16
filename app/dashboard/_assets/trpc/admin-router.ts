@@ -403,9 +403,28 @@ export const adminRouter = router({
           guildId: selectedGuildId,
           userDiscordId,
         });
+        await createTicketCategoryWidget(selectedGuildId);
         return { success: true };
       } catch {
         return { error: true };
       }
     }),
+  getAllTickets: adminProcedure.query(async ({ ctx }) => {
+    const { prisma, selectedGuildId } = ctx;
+
+    const tickets = await prisma.ticket.findMany({
+      where: {
+        guildId: selectedGuildId,
+      },
+      select: {
+        createdAt: true,
+        closedAt: true,
+        id: true,
+        categoryName: true,
+        authorUsername: true,
+      },
+    });
+
+    return tickets;
+  }),
 });

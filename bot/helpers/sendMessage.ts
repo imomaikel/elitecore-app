@@ -87,7 +87,7 @@ export const sendMessage = async ({
         message: 'Unknown error (1)',
         type: 'error',
         file: 'sendMessage',
-        data: JSON.stringify(error),
+        data: error,
       });
     }
   }

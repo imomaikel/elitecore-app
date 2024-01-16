@@ -6,19 +6,19 @@ type TCategoryCard = {
   name: string;
   id: string;
   onDelete: () => void;
-  isDeleting: boolean;
+  isDisabled: boolean;
   position: number;
   onPositionChange: (method: 'INCREMENT' | 'DECREMENT') => void;
 };
-const CategoryCard = ({ id, name, onDelete, isDeleting, position, onPositionChange }: TCategoryCard) => {
+const CategoryCard = ({ id, name, onDelete, isDisabled, position, onPositionChange }: TCategoryCard) => {
   return (
     <div className="bg-white/5 max-w-sm p-4 space-y-2 rounded-lg relative">
       <div className="text-xl font-medium w-full truncate">{name}</div>
       <div className="grid grid-cols-2 gap-x-6">
-        <Button variant="destructive" onClick={onDelete} disabled={isDeleting}>
+        <Button variant="destructive" onClick={onDelete} disabled={isDisabled}>
           Delete
         </Button>
-        <Button asChild disabled={isDeleting}>
+        <Button disabled={isDisabled}>
           <Link href={`/dashboard/admin/tickets/category/${id}`}>Edit</Link>
         </Button>
       </div>
@@ -27,13 +27,13 @@ const CategoryCard = ({ id, name, onDelete, isDeleting, position, onPositionChan
         <span className="w-4 text-center">{position}</span>
         <div
           className="hover:text-primary transition-colors cursor-pointer"
-          onClick={() => onPositionChange('INCREMENT')}
+          onClick={() => !isDisabled && onPositionChange('INCREMENT')}
         >
           <HiMiniPlus className="h-6 w-6" />
         </div>
         <div
           className="hover:text-primary transition-colors cursor-pointer"
-          onClick={() => onPositionChange('DECREMENT')}
+          onClick={() => !isDisabled && onPositionChange('DECREMENT')}
         >
           <HiMiniMinus className="w-6 h-6" />
         </div>

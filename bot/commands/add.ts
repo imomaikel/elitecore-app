@@ -66,7 +66,7 @@ export default command(cmd, async (client, interaction) => {
     logger({
       type: 'error',
       message: 'Command error',
-      data: JSON.stringify(error),
+      data: error,
       file: 'add',
     });
   }

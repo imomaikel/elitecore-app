@@ -67,7 +67,7 @@ export const _ticketInteraction = async (interaction: ButtonInteraction | ModalS
     logger({
       message: 'Ticket Error',
       type: 'error',
-      data: JSON.stringify(error),
+      data: error,
       file: 'tickets/interaction.ts',
     });
   }

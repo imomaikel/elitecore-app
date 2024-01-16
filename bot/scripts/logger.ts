@@ -6,7 +6,7 @@ type TLogger = {
   type: 'error' | 'info';
   message: string;
   file?: string;
-  data?: string;
+  data?: any;
 };
 
 // Create formatted timestamp

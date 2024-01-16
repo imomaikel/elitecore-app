@@ -29,7 +29,7 @@ export default event('channelDelete', async (_, channel) => {
       return;
     }
     await prisma.ticket.update({
-      where: { channelId },
+      where: { channelId, closedBy: null },
       data: {
         closedAt: new Date(),
         closedBy: 'The channel was deleted',

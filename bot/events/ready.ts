@@ -33,7 +33,7 @@ export default event('ready', async (client) => {
       logger({
         message: 'Failed to add guild to the database',
         type: 'error',
-        data: JSON.stringify(error),
+        data: error,
         file: 'ready',
       });
     }

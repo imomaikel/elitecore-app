@@ -215,6 +215,7 @@ export const _createTicket = async ({
         data: {
           authorDiscordId: user.id,
           channelId: ticketChn.id,
+          guildId: guild.id,
           authorUsername: user.user.username,
           categoryName: category.name,
           inviteUrl,
@@ -372,7 +373,7 @@ export const _createTicket = async ({
       logger({
         message: 'Ticket Error',
         type: 'error',
-        data: JSON.stringify(error),
+        data: error,
         file: 'create.ts',
       });
     } else {

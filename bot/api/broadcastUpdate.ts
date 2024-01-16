@@ -102,7 +102,7 @@ const apiUpdateBroadcastChannel = async ({
     logger({
       message: 'Unknown error',
       type: 'error',
-      data: JSON.stringify(error),
+      data: error,
       file: 'updateChannel',
     });
     return {

@@ -58,7 +58,7 @@ export const _ticketLog = async ({ message, ticketAuthorId, ticketId }: TTicketL
     logger({
       message: 'Ticket Log',
       type: 'error',
-      data: JSON.stringify(error),
+      data: error,
     });
   }
 };

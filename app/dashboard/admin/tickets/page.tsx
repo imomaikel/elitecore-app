@@ -4,6 +4,7 @@ import { useCurrentUser } from '@/hooks/use-current-user';
 import PageWrapper from '@/components/shared/PageWrapper';
 import { Button } from '@/shared/components/ui/button';
 import CategoryCard from './_components/CategoryCard';
+import TicketTable from '@/components/TicketTable';
 import ChannelPicker from '@/admin/ChannelPicker';
 import { errorToast } from '@/shared/lib/utils';
 import { useRouter } from 'next/navigation';
@@ -24,11 +25,10 @@ const AdminTicketsPage = () => {
     return;
   }
 
-  const { data, isLoading, refetch } = trpc.admin.getTicketCategories.useQuery(undefined, {
-    enabled: !!user?.selectedGuildId,
-  });
+  const { data, isLoading, refetch } = trpc.admin.getTicketCategories.useQuery();
+  const { data: tickets } = trpc.admin.getAllTickets.useQuery();
 
-  const { mutate: updatePosition } = trpc.admin.updatePosition.useMutation();
+  const { mutate: updatePosition, isLoading: isUpdating } = trpc.admin.updatePosition.useMutation();
   const { mutate: updateWidgetChannel, isLoading: isWidgetUpdating } = trpc.admin.updateWidget.useMutation();
   const { mutate: deleteTicketCategory, isLoading: isDeleting } = trpc.admin.deleteTicketCategory.useMutation({
     onSuccess: ({ data: categoryName, error, success }) => {
@@ -122,7 +122,7 @@ const AdminTicketsPage = () => {
                   onDelete={() => confirmDelete(id)}
                   id={id}
                   name={name}
-                  isDeleting={isDeleting}
+                  isDisabled={isDeleting || isUpdating}
                   position={position}
                   onPositionChange={(method) => onPositionChange(method, id)}
                 />
@@ -140,7 +140,7 @@ const AdminTicketsPage = () => {
 
       {/* View Tickets */}
       <ItemInfo title="Logs">
-        <p>ok</p>
+        <div>{tickets ? <TicketTable data={tickets} extended /> : <p>Loading</p>}</div>
       </ItemInfo>
 
       <ActionDialog

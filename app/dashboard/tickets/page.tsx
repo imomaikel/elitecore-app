@@ -49,7 +49,7 @@ const TicketsPage = () => {
             </TableBody>
           </Table>
         ) : (
-          <TicketTable data={tickets} showAuthor={false} />
+          <TicketTable data={tickets} extended={false} />
         )}
       </div>
     </PageWrapper>

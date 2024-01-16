@@ -20,7 +20,7 @@ export const dataReceived = (action: any, data: any) => {
     logger({
       type: 'error',
       message: 'Could not parse the server data',
-      data: JSON.stringify(error),
+      data: error,
     });
   }
 };
