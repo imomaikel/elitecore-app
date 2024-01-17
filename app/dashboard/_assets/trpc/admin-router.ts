@@ -4,6 +4,7 @@ import { API_BROADCAST_WIDGETS, API_WIDGETS } from '../../../../bot/constans/typ
 import { createTicketCategoryWidget } from '../../../../bot/plugins/tickets';
 import apiUpdateBroadcastChannel from '../../../../bot/api/broadcastUpdate';
 import { apiUpdateWidget } from '../../../../bot/api/widgetUpdate';
+import { apiUpdateRole } from '../../../../bot/api/apiUpdateRole';
 import { adminProcedure, managerProcedure, router } from './trpc';
 import { createAdminLog } from '../../admin/_actions';
 import { TRPCError } from '@trpc/server';
@@ -54,7 +55,7 @@ export const adminRouter = router({
     const roles = await apiAvailableRoles(guildId);
     return roles;
   }),
-  getGuildDbChannels: adminProcedure.query(async ({ ctx }) => {
+  getGuildDbSettings: adminProcedure.query(async ({ ctx }) => {
     const { prisma, userDiscordId, selectedGuildId } = ctx;
 
     const guilds = await apiMutualGuilds(userDiscordId);
@@ -64,10 +65,14 @@ export const adminRouter = router({
       where: { guildId: selectedGuildId },
       select: {
         playersCmdChannelId: true,
+
         serverStatusChannelId: true,
         serverControlChannelId: true,
+        serverControlRoleId: true,
+
         serverControlLogChannelId: true,
         serverStatusNotifyChannelId: true,
+
         ticketCategoryChannelId: true,
       },
     });
@@ -86,21 +91,25 @@ export const adminRouter = router({
         widgetName,
       });
 
-      if (widgetName === 'serverStatusNotify') {
-        await createAdminLog({
-          content: 'Updated server status notify widget',
-          guildId: selectedGuildId,
-          userDiscordId,
-        });
-      } else if (widgetName === 'serverStatusWidget') {
-        await createAdminLog({
-          content: 'Updated server status widget',
-          guildId: selectedGuildId,
-          userDiscordId,
-        });
-      }
-
       return action;
+    }),
+  updateRoleWidget: adminProcedure
+    .input(z.object({ roleId: z.string().min(4), widgetName: z.enum(['serverControlRole']) }))
+    .mutation(async ({ ctx, input }) => {
+      const { selectedGuildId, userDiscordId } = ctx;
+      const { roleId, widgetName } = input;
+
+      const success = await apiUpdateRole({
+        guildId: selectedGuildId,
+        roleId,
+        userDiscordId,
+        widget: widgetName,
+      });
+
+      if (success) {
+        return { success: true };
+      }
+      return { error: true };
     }),
   updateWidget: adminProcedure
     .input(z.object({ widgetName: API_WIDGETS, channelId: z.string() }))

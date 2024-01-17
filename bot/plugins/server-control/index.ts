@@ -1,5 +1,6 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, time } from 'discord.js';
 import { colors, extraSigns, gifs, specialAvatar } from '../../constans';
+import { CustomResponse } from '../../constans/responses';
 import { broadcaster } from '../../helpers/broadcaster';
 import { fetchRequest } from '../../helpers/api';
 import prisma from '../../lib/prisma';
@@ -8,10 +9,10 @@ import { client } from '../../client';
 /**
  * Create an embed with options to control the servers
  */
-export const updateServerControlWidget = async (): Promise<boolean> => {
+export const updateServerControlWidget = async (): Promise<CustomResponse<'broadcaster'>> => {
   // Get the data from the Python socket
   const data = await fetchRequest('getStatuses');
-  if (!data) return false;
+  if (!data) return { status: 'error', details: { message: 'Unknown error' } };
 
   const [storedServers, config] = await Promise.all([prisma.server.findMany(), prisma.config.findFirst()]);
 
@@ -86,11 +87,11 @@ export const updateServerControlWidget = async (): Promise<boolean> => {
   }
 
   // Update the widget at every guild
-  await broadcaster({
+  const action = await broadcaster({
     widget: 'serverControl',
     messageEmbeds: [embed],
     messageButtons: [row],
   });
 
-  return true;
+  return action;
 };

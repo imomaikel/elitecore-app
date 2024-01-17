@@ -29,7 +29,7 @@ const PageWrapper = ({ children, title, showGoBack, pageName }: TPageWrapper) =>
           </div>
         )}
       </div>
-      <Separator className="my-4" />
+      <Separator className="mt-4 mb-2" />
       {children}
     </div>
   );

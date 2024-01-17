@@ -2,6 +2,7 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/shared/components/ui/table';
 import { Skeleton } from '@/shared/components/ui/skeleton';
+import PageWrapper from '@/components/shared/PageWrapper';
 import { Button } from '@/shared/components/ui/button';
 import { Input } from '@/shared/components/ui/input';
 import { FaChevronDown } from 'react-icons/fa6';
@@ -40,9 +41,7 @@ const AdminLogsPage = () => {
   const totalPages = (data?.totalLogsSize && Math.round(data.totalLogsSize / logsPerPage)) ?? 0;
 
   return (
-    <div>
-      <h1 className="mb-4 text-2xl font-bold">Admin - Logs</h1>
-
+    <PageWrapper pageName="Admin" title="Logs">
       <div className="my-4">
         <div className="flex flex-col md:flex-row md:gap-x-2">
           <div className="flex flex-col">
@@ -135,7 +134,7 @@ const AdminLogsPage = () => {
               ))}
         </TableBody>
       </Table>
-    </div>
+    </PageWrapper>
   );
 };
 

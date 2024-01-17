@@ -1,3 +1,4 @@
+import { updateServerControlWidget } from '../plugins/server-control';
 import updateServerStatusWidget from '../plugins/server-status';
 import { TAPI_BROADCAST_WIDGETS } from '../constans/types';
 import { verifyApiRequest } from '../helpers/verifyApi';
@@ -36,8 +37,8 @@ const apiUpdateBroadcastChannel = async ({
     }
 
     if (widgetName === 'serverStatusWidget') {
-      const oldChannel = await prisma.guild.findFirst({
-        where: { guildId: guildId },
+      const oldChannel = await prisma.guild.findUnique({
+        where: { guildId },
         select: { serverStatusChannelId: true },
       });
       await prisma.guild.update({
@@ -91,6 +92,62 @@ const apiUpdateBroadcastChannel = async ({
       return {
         status: 'success',
       };
+    } else if (widgetName === 'serverControlLog') {
+      await prisma.guild.update({
+        where: { guildId },
+        data: { serverControlLogChannelId: channel.id },
+      });
+      await prisma.guild.update({
+        where: { guildId },
+        data: {
+          logs: {
+            create: {
+              content: `Updated server control notification channel to "${channel.name}"`,
+              Author: {
+                connect: {
+                  discordId: userDiscordId,
+                },
+              },
+            },
+          },
+        },
+      });
+      return {
+        status: 'success',
+      };
+    } else if (widgetName === 'serverControlWidget') {
+      const oldChannel = await prisma.guild.findUnique({
+        where: { guildId },
+        select: { serverControlChannelId: true },
+      });
+      await prisma.guild.update({
+        where: { guildId },
+        data: { serverControlChannelId: channel.id },
+      });
+      const action = await updateServerControlWidget();
+      if (action.status === 'error') {
+        await prisma.guild.update({
+          where: { guildId },
+          data: { serverControlChannelId: oldChannel?.serverControlChannelId },
+        });
+      } else {
+        await prisma.guild.update({
+          where: { guildId },
+          data: {
+            logs: {
+              create: {
+                content: `Updated server control widget channel to "${channel.name}"`,
+                Author: {
+                  connect: {
+                    discordId: userDiscordId,
+                  },
+                },
+              },
+            },
+          },
+        });
+      }
+      return action;
     }
     return {
       status: 'error',

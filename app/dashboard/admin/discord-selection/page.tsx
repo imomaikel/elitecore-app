@@ -1,8 +1,10 @@
 'use client';
+import PageWrapper from '@/components/shared/PageWrapper';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import GuildPicker from '../_components/GuildPicker';
 import { errorToast } from '@/shared/lib/utils';
 import Loader from '@/components/shared/Loader';
+import ItemWrapper from '@/admin/ItemWrapper';
 import { toast } from 'sonner';
 import { trpc } from '@/trpc';
 
@@ -32,17 +34,15 @@ const AdminDiscordSelectionPage = () => {
   const isLoading = isUpdating || sessionStatus === 'loading';
 
   return (
-    <>
-      <h1 className="mb-4 text-2xl font-bold">Admin - Discord Selection</h1>
-      <div className="flex flex-col">
-        <h3 className="font-semibold mb-2">Select a Discord Server that you want to control</h3>
+    <PageWrapper pageName="Admin" title="Discord Selection">
+      <ItemWrapper title="Select a Discord Server that you want to control">
         {isLoading ? (
           <Loader />
         ) : (
           <GuildPicker onSelect={onSelect} selectedValue={user?.selectedGuildId ?? undefined} />
         )}
-      </div>
-    </>
+      </ItemWrapper>
+    </PageWrapper>
   );
 };
 

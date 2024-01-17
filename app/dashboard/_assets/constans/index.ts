@@ -1,12 +1,11 @@
+import { MdLibraryBooks, MdMiscellaneousServices } from 'react-icons/md';
 import { FaPeopleRoof, FaDiscord } from 'react-icons/fa6';
 import { HiOutlineStatusOnline } from 'react-icons/hi';
 import { IoTicketOutline } from 'react-icons/io5';
 import { TbDeviceRemote } from 'react-icons/tb';
-import { MdLibraryBooks } from 'react-icons/md';
 import { GiPointySword } from 'react-icons/gi';
 import { RiAdminFill } from 'react-icons/ri';
 import { FaBook } from 'react-icons/fa6';
-import { BsGlobe } from 'react-icons/bs';
 export const unknownAvatar = '/logo.png';
 import { IoAdd } from 'react-icons/io5';
 import { IconType } from 'react-icons';
@@ -46,9 +45,9 @@ export const panelTabs: TPanelTabs = [
         path: '/dashboard/admin/server-status',
       },
       {
-        tabName: 'Website',
-        Icon: BsGlobe,
-        path: '/dashboard/admin/website',
+        tabName: 'Miscellaneous',
+        Icon: MdMiscellaneousServices,
+        path: '/dashboard/admin/misc',
       },
       {
         tabName: 'Logs',
