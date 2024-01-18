@@ -45,3 +45,9 @@ export const TicketCategoryEditSchema = z.object({
   ...TicketCategorySchemaOptional,
 });
 export type TTicketCategoryEditSchema = z.infer<typeof TicketCategoryEditSchema>;
+
+export const UpdateDelaySchema = z.object({
+  serverStatusUpdateDelay: z.optional(z.number().min(3)),
+  serverControlUpdateDelay: z.optional(z.number().min(3)),
+});
+export type TUpdateDelaySchema = z.infer<typeof UpdateDelaySchema>;

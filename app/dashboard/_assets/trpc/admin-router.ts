@@ -1,8 +1,13 @@
-import { TicketCategoryCreateSchema, TicketCategoryEditSchema } from '../../admin/tickets/_assets/validators';
+import {
+  TicketCategoryCreateSchema,
+  TicketCategoryEditSchema,
+  UpdateDelaySchema,
+} from '../../admin/tickets/_assets/validators';
 import { apiAvailableChannels, apiAvailableRoles, apiMutualGuilds } from '../../../../bot/api';
 import { API_BROADCAST_WIDGETS, API_WIDGETS } from '../../../../bot/constans/types';
 import { createTicketCategoryWidget } from '../../../../bot/plugins/tickets';
 import apiUpdateBroadcastChannel from '../../../../bot/api/broadcastUpdate';
+import { apiWipeSchemas } from '../../../../bot/api/apiWipeSchemas';
 import { apiUpdateWidget } from '../../../../bot/api/widgetUpdate';
 import { apiUpdateRole } from '../../../../bot/api/apiUpdateRole';
 import { adminProcedure, managerProcedure, router } from './trpc';
@@ -435,5 +440,100 @@ export const adminRouter = router({
     });
 
     return tickets;
+  }),
+  getAuthorizedUsers: adminProcedure.query(async ({ ctx }) => {
+    const { prisma } = ctx;
+
+    const users = await prisma.user.findMany({
+      where: {
+        role: {
+          in: ['ADMIN', 'MANAGER'],
+        },
+      },
+      select: {
+        avatar: true,
+        name: true,
+        role: true,
+        id: true,
+      },
+    });
+
+    return users;
+  }),
+  getConfig: adminProcedure.query(async ({ ctx }) => {
+    const { prisma } = ctx;
+
+    const config = await prisma.config.findFirst({
+      select: {
+        serverStatusUpdateDelay: true,
+        serverControlUpdateDelay: true,
+        monthlyPaymentGoal: true,
+        lastWipe: true,
+      },
+    });
+
+    return config;
+  }),
+  setMonthlyGoal: adminProcedure
+    .input(
+      z.object({
+        monthlyPaymentGoal: z.number().min(1),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { prisma, userDiscordId, selectedGuildId } = ctx;
+      const { monthlyPaymentGoal } = input;
+
+      try {
+        await prisma.config.updateMany({
+          data: {
+            monthlyPaymentGoal,
+          },
+        });
+        return { success: true };
+      } catch {
+        return { error: true };
+      } finally {
+        await createAdminLog({
+          content: `Set monthly goal to "${monthlyPaymentGoal}"`,
+          guildId: selectedGuildId,
+          userDiscordId,
+        });
+      }
+    }),
+  updateDelays: adminProcedure.input(UpdateDelaySchema).mutation(async ({ ctx, input }) => {
+    const { prisma, selectedGuildId, userDiscordId } = ctx;
+
+    try {
+      await prisma.config.updateMany({
+        data: { ...input },
+      });
+
+      return { success: true };
+    } catch {
+      return { error: true };
+    } finally {
+      await createAdminLog({
+        content: 'Updated widgets delay',
+        guildId: selectedGuildId,
+        userDiscordId,
+      });
+    }
+  }),
+  wipeSchema: adminProcedure.mutation(async ({ ctx }) => {
+    const { selectedGuildId, userDiscordId } = ctx;
+
+    const actionStatus = await apiWipeSchemas();
+
+    if (actionStatus) {
+      await createAdminLog({
+        content: 'Deleted database schemas',
+        guildId: selectedGuildId,
+        userDiscordId,
+      });
+      return { success: true };
+    } else {
+      return { error: true };
+    }
   }),
 });

@@ -8,8 +8,9 @@ type TPageWrapper = {
   children: React.ReactNode;
   pageName: string;
   showGoBack?: boolean;
+  className?: string;
 };
-const PageWrapper = ({ children, title, showGoBack, pageName }: TPageWrapper) => {
+const PageWrapper = ({ children, title, showGoBack, pageName, className }: TPageWrapper) => {
   const router = useRouter();
 
   return (
@@ -30,7 +31,7 @@ const PageWrapper = ({ children, title, showGoBack, pageName }: TPageWrapper) =>
         )}
       </div>
       <Separator className="mt-4 mb-2" />
-      {children}
+      <div className={className}>{children}</div>
     </div>
   );
 };

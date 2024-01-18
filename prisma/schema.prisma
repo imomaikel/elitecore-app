@@ -22,6 +22,7 @@ model Config {
   serverControlUpdateDelay Int      @default(3) @db.TinyInt
   currenciesLastUpdated    DateTime @default(now())
   monthlyPaymentGoal       Int      @default(50)
+  lastWipe                 DateTime @default(now())
 }
 
 model Server {

@@ -4,7 +4,7 @@ import { cn } from '@/shared/lib/utils';
 type TItemWrapper = {
   children: React.ReactNode;
   title: string;
-  description?: string;
+  description?: string | React.ReactNode;
   className?: string;
 };
 const ItemWrapper = ({ children, title, description, className }: TItemWrapper) => {

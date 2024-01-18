@@ -141,3 +141,16 @@ export const LOCALE_CODES = [
     locale: 'en-US',
   },
 ];
+
+export const schemaList = [
+  'webapp.player',
+  'arkshop',
+  'arkshopasax1000',
+  'gog_stats_ark',
+  'tribes.wtribes_events',
+  'tribes.wtribes_log',
+  'tribes.wtribes_playerdata',
+  'tribes.wtribes_playerids',
+  'tribes.wtribes_tribedata',
+  'tribes.wtribes_tribelog_webhooks',
+];
