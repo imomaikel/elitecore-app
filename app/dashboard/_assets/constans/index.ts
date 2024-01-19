@@ -4,6 +4,7 @@ import { HiOutlineStatusOnline } from 'react-icons/hi';
 import { IoTicketOutline } from 'react-icons/io5';
 import { TbDeviceRemote } from 'react-icons/tb';
 import { GiPointySword } from 'react-icons/gi';
+import { FaInfoCircle } from 'react-icons/fa';
 import { RiAdminFill } from 'react-icons/ri';
 import { FaBook } from 'react-icons/fa6';
 export const unknownAvatar = '/logo.png';
@@ -76,6 +77,11 @@ export const panelTabs: TPanelTabs = [
     categoryName: 'Tribe',
     Icon: FaPeopleRoof,
     tabs: [
+      {
+        tabName: 'Info',
+        Icon: FaInfoCircle,
+        path: '/dashboard/tribe',
+      },
       {
         tabName: 'Logs',
         Icon: FaBook,

@@ -1,5 +1,11 @@
-import { MYSQL_EOS_QUERY, MYSQL_STEAM_QUERY } from '../constans/types';
+import {
+  MYSQL_EOS_QUERY,
+  MYSQL_STEAM_QUERY,
+  MYSQL_TRIBE_LOGS_QUERY,
+  MYSQL_TRIBE_MEMBER_QUERY,
+} from '../constans/types';
 import { schemaList } from '../../app/dashboard/_assets/constans';
+import { playTimeToText } from '../utils/misc';
 import { getEnv } from '../utils/env';
 import mysql from 'mysql';
 
@@ -15,6 +21,10 @@ const db = async (query: string) => {
 
     const result = await new Promise((resolve, reject) => {
       connection.query(query, (err, res) => {
+        if (err) {
+          console.log(err);
+          reject(null);
+        }
         if (res[0]) return resolve(res);
         return reject();
       });
@@ -43,4 +53,66 @@ export const deleteSchema = async (schemaName: string) => {
 
   await db(`DROP ${mode} ${schemaName};`);
   return true;
+};
+
+export const getLogs = async () => {
+  const query = await db(`
+  SELECT 
+  tribes.wtribes_tribedata.TribeName AS tribeName,
+  tribes.wtribes_events.TribeName AS content,
+  tribes.wtribes_events.TribeID AS tribeId,
+  tribes.wtribes_events.ID AS logId,
+    timestamp
+  FROM
+    tribes.wtribes_events
+  INNER JOIN
+    tribes.wtribes_tribedata
+  ON 
+    tribes.wtribes_tribedata.TribeID = tribes.wtribes_events.TribeID
+      AND
+        tribes.wtribes_events.EventType = 1012
+      AND
+        tribes.wtribes_events.fetched = FALSE;`);
+  return typeof query === 'object' ? (query as MYSQL_TRIBE_LOGS_QUERY[]) : null;
+};
+
+export const disableLogs = async (logIds: number[]) => {
+  const idsArray = `(${logIds.join(',')})`;
+  await db(`UPDATE tribes.wtribes_events SET fetched = 1 WHERE ID IN ${idsArray};`);
+};
+
+export const getTribeData = async (steamId: string) => {
+  const query = await db(`SELECT *, s.tribe_id
+  FROM gog_stats_ark.personal_stats n
+  LEFT JOIN gog_stats_ark.tribe_stats s ON s.pk = n.tribe_id
+  LEFT JOIN gog_stats_ark.personal_stats d ON s.pk = d.tribe_id
+  WHERE n.steam_id = '${steamId}';`);
+
+  const data = typeof query === 'object' ? (query as MYSQL_TRIBE_MEMBER_QUERY[]) : null;
+  if (!data) return null;
+
+  const members = data.map((player) => ({
+    steamId: player.steam_id,
+    lastLogin: new Date(player.last_login * 1000),
+    playerName: player.player_name,
+    playTimeText: playTimeToText(player.play_time),
+    playTime: player.play_time,
+    isOnline: !!player.online_status,
+    deaths: player.deaths,
+    kills: player.players_kills,
+    wildDinosKills: player.wild_dinos_kills,
+    tamedDinosDeaths: player.tamed_dinos_deaths,
+    tamedDinosKills: player.tamed_dinos_kills,
+  }));
+
+  const response = {
+    user: members[0],
+    members: members.slice(1),
+    tribe: {
+      tribeId: data[0].tribe_id,
+      tribeName: data[0].tribe_name,
+    },
+  };
+
+  return response;
 };

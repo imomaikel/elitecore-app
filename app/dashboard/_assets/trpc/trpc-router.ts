@@ -9,6 +9,7 @@ import {
 import { COORDS_REGEX } from '../../../../bot/plugins/tickets/message';
 import { authorizedProcedure, publicProcedure, router } from './trpc';
 import { createTicket } from '../../../../bot/plugins/tickets';
+import { getTribe } from '../../../../bot/plugins/tribe';
 import { Category, GetBasket } from 'tebex_headless';
 import { adminRouter } from './admin-router';
 import { TRPCError } from '@trpc/server';
@@ -470,6 +471,19 @@ export const appRouter = router({
     });
 
     return tickets;
+  }),
+  getTribe: authorizedProcedure.query(async ({ ctx }) => {
+    const { user } = ctx;
+
+    if (!user) throw new TRPCError({ code: 'UNAUTHORIZED' });
+
+    const steamId = user?.steamId;
+    if (!steamId) return { error: true, message: 'Steam is not paired' };
+
+    const data = await getTribe(steamId);
+    if (!data) return { error: true, message: 'Could not find a tribe' };
+
+    return { success: true, data };
   }),
 });
 

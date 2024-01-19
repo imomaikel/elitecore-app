@@ -4,7 +4,7 @@ import { IoArrowBackOutline } from 'react-icons/io5';
 import { useRouter } from 'next/navigation';
 
 type TPageWrapper = {
-  title: string;
+  title: string | React.ReactNode;
   children: React.ReactNode;
   pageName: string;
   showGoBack?: boolean;
@@ -16,7 +16,7 @@ const PageWrapper = ({ children, title, showGoBack, pageName, className }: TPage
   return (
     <div className="flex flex-col">
       <div className="flex items-center flex-col lg:flex-row">
-        <h1 className="text-2xl font-bold">
+        <h1 className="text-2xl font-bold flex">
           {pageName} - {title}
         </h1>
         {showGoBack && (

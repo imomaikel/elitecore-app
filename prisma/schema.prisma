@@ -319,3 +319,41 @@ model TicketAttachment {
 
   createdAt DateTime @default(now())
 }
+
+// Tribe models
+enum LogType {
+  Your_structure_destroyed @map("Your structure destroyed")
+  You_destroyed_structure  @map("You destroyed structure")
+  Logged_out               @map("Logged out")
+  Logged_in                @map("Logged in")
+  Dino_deaths              @map("Dino deaths")
+  Tribe_management         @map("Tribe management")
+  Auto_destroyed           @map("Auto destroyed")
+  Deaths
+  Kills
+  Groups
+  Demolished
+  Claimed
+  Downloaded
+  Transferred
+  Soul
+  Froze
+  Starved
+  Uploaded
+  Tamed
+  Neutered
+  Trapped
+  Other
+}
+
+model TribeLog {
+  id Int @id @default(autoincrement())
+
+  tribeId        Int
+  tribeName      String
+  content        String
+  possiblePoints Boolean
+  logType        LogType
+
+  timestamp DateTime
+}

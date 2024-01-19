@@ -19,3 +19,35 @@ export type MYSQL_EOS_QUERY = {
 export type MYSQL_STEAM_QUERY = {
   steamid: string;
 };
+
+export type MYSQL_TRIBE_LOGS_QUERY = {
+  tribeName: string;
+  content: string;
+  tribeId: number;
+  logId: number;
+  timestamp: Date;
+};
+
+export type MYSQL_TRIBE_MEMBER_QUERY = {
+  pk: number;
+  steam_id: string;
+  player_id: number;
+  player_name: string;
+  tribe_id: number;
+  tribe_rank: string;
+  last_login: number;
+  play_time: number;
+  online_status: number;
+  deaths: number;
+  players_kills: number;
+  wild_dinos_kills: number;
+  tamed_dinos_kills: number;
+  CustomTableName: number;
+  CustomTableName02: number;
+  CustomTableName03: number;
+  need_handling: number;
+  server_id: string;
+  tribe_name: string;
+  players_deaths: number;
+  tamed_dinos_deaths: number;
+};
