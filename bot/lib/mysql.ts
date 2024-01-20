@@ -25,7 +25,7 @@ const db = async (query: string) => {
           console.log(err);
           reject(null);
         }
-        if (res[0]) return resolve(res);
+        if (res && res[0]) return resolve(res);
         return reject();
       });
     }).catch(() => null);

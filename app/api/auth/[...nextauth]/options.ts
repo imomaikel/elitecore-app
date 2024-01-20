@@ -31,7 +31,8 @@ const authOptions: NextAuthOptions = {
         });
       }
       if (getUserData?.steamId) {
-        session.user.steamId = getUserData.steamId;
+        session.user.steamId =
+          process.env.NODE_ENV === 'production' ? getUserData.steamId : process.env.DEVELOPMENT_STEAM_ID;
       }
       if (session.user.image?.includes('http') && getUserData?.avatar !== session.user.image) {
         await prisma.user.update({

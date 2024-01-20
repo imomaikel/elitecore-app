@@ -1,6 +1,6 @@
+import { cn, importantNotification } from '@/shared/lib/utils';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { usePathname } from 'next/navigation';
-import { cn } from '@/shared/lib/utils';
 import { panelTabs } from '@/constans';
 import Link from 'next/link';
 
@@ -26,7 +26,10 @@ const PanelTab = () => {
               let active = pathname.startsWith(tab.path);
               if (pathname.startsWith('/dashboard/tickets')) {
                 active = pathname === tab.path;
+              } else if (pathname.startsWith('/dashboard/tribe')) {
+                active = pathname === tab.path;
               }
+              const notify = importantNotification(tab.path);
 
               return (
                 <Link href={tab.path} key={`${tab.tabName}${tabIndex}`}>
@@ -40,6 +43,7 @@ after:opacity-0 after:hover:opacity-100 after:transition-opacity`,
                       active && 'bg-muted',
                     )}
                   >
+                    <div className="absolute text-xs text-destructive">{notify}</div>
                     <div className="group-hover:text-primary transition-colors">
                       {<tab.Icon className="w-6 h-6 mr-3" />}
                     </div>

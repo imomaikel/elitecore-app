@@ -485,6 +485,31 @@ export const appRouter = router({
 
     return { success: true, data };
   }),
+  getTribeLogs: authorizedProcedure.query(async ({ ctx }) => {
+    const { user, prisma } = ctx;
+
+    if (!user) throw new TRPCError({ code: 'UNAUTHORIZED' });
+
+    const steamId = user.steamId;
+    if (!steamId) return { error: true, message: 'Steam is not paired' };
+
+    const data = await getTribe(steamId);
+    if (!data) return { error: true, message: 'Could not find a tribe' };
+
+    const logs = await prisma.tribeLog.findMany({
+      where: { tribeId: data.tribe.tribeId },
+      select: {
+        content: true,
+        timestamp: true,
+        logType: true,
+      },
+      orderBy: {
+        timestamp: 'desc',
+      },
+    });
+
+    return { success: true, message: logs };
+  }),
 });
 
 export type AppRouter = typeof appRouter;

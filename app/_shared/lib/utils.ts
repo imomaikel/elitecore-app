@@ -41,3 +41,10 @@ export const relativeDate = (date: Date, baseDate?: Date) => {
   });
   return relative;
 };
+
+export const importantNotification = (pathname: string) => {
+  if (pathname.startsWith('/dashboard/tribe')) {
+    return 'This feature is currently exclusive to ARK: Evolved';
+  }
+  return null;
+};

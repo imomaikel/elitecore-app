@@ -5,6 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/shared/components/ui/avat
 import { useMobileSidebar } from '@/hooks/use-mobile-sidebar';
 import { Separator } from '@/shared/components/ui/separator';
 import { Skeleton } from '@/shared/components/ui/skeleton';
+import { importantNotification } from '@/shared/lib/utils';
 import { useCurrencyStorage } from '@/hooks/use-currency';
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { MdOutlineShoppingCart } from 'react-icons/md';
@@ -14,6 +15,7 @@ import { signIn, signOut } from 'next-auth/react';
 import { GiHamburgerMenu } from 'react-icons/gi';
 import { FiChevronsDown } from 'react-icons/fi';
 import { FaUserAltSlash } from 'react-icons/fa';
+import { usePathname } from 'next/navigation';
 import { useSheet } from '@/hooks/use-sheet';
 import { useTebex } from '@/hooks/use-tebex';
 import SignInConfirm from './SignInConfirm';
@@ -31,8 +33,9 @@ const Navbar = () => {
   const { onOpen: openMobileSidebar } = useMobileSidebar();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
-  const { onOpen: openShoppingCart } = useSheet();
   const { user, sessionStatus } = useCurrentUser();
+  const { onOpen: openShoppingCart } = useSheet();
+  const pathname = usePathname();
   const { basket } = useTebex();
 
   const { mutate: refreshCurrencies } = trpc.getCurrencies.useMutation({
@@ -41,6 +44,8 @@ const Navbar = () => {
       setLastUpdated(new Date());
     },
   });
+
+  const notify = importantNotification(pathname);
 
   useEffect(() => {
     let requestNewCurrencies = false;
@@ -94,6 +99,7 @@ const Navbar = () => {
                 </div>
               </Link>
             </div>
+            <div className="h-full items-center text-destructive hidden md:flex">{notify}</div>
             {/* Profile and cart */}
             <div className="flex items-center">
               <Popover>
