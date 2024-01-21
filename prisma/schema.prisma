@@ -357,3 +357,15 @@ model TribeLog {
 
   timestamp DateTime
 }
+
+model TribeLogBackup {
+  id Int @id
+
+  tribeId        Int
+  tribeName      String
+  content        String
+  possiblePoints Boolean
+  logType        LogType
+
+  timestamp DateTime
+}

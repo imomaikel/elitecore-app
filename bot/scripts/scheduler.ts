@@ -2,6 +2,7 @@ import { updateServerControlWidget } from '../plugins/server-control';
 import updateServerStatusWidget from '../plugins/server-status';
 import { ticketCleaner } from '../plugins/tickets';
 import { fetchLogs } from '../plugins/tribe';
+import { checkForNewWipe } from './wipe';
 import { getEnv } from '../utils/env';
 import prisma from '../lib/prisma';
 
@@ -23,6 +24,10 @@ const scheduler = () => {
   setInterval(() => {
     fetchLogs();
   }, 1000 * 60 * 5);
+
+  setInterval(() => {
+    checkForNewWipe();
+  }, 1000 * 60 * 3);
 
   setInterval(async () => {
     const config = await prisma.config.findFirst();

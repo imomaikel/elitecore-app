@@ -1,10 +1,3 @@
-import { DataTablePagination } from '@/shared/components/data-table-pagination';
-import { Button } from '@/shared/components/ui/button';
-import { Label } from '@/shared/components/ui/label';
-import { Switch } from '@/shared/components/ui/switch';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/shared/components/ui/table';
-import { relativeDate } from '@/shared/lib/utils';
-import { LogType } from '@prisma/client';
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -14,6 +7,13 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from '@tanstack/react-table';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/shared/components/ui/table';
+import { DataTablePagination } from '@/shared/components/data-table-pagination';
+import { Switch } from '@/shared/components/ui/switch';
+import { Button } from '@/shared/components/ui/button';
+import { Label } from '@/shared/components/ui/label';
+import { relativeDate } from '@/shared/lib/utils';
+import { LogType } from '@prisma/client';
 import { useState } from 'react';
 
 type TOptionArray = Array<keyof typeof LogType>;

@@ -116,3 +116,11 @@ export const getTribeData = async (steamId: string) => {
 
   return response;
 };
+
+export const getTableCreateTime = async () => {
+  const query = await db(
+    'SELECT CREATE_TIME as createTime FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = "tribes" AND TABLE_NAME = "wtribes_log";',
+  );
+  const data = typeof query === 'object' ? (query as { createTime: Date }[]) : null;
+  return data;
+};

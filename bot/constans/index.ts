@@ -6,7 +6,8 @@ export type TEnvVars =
   | 'NEXT_PUBLIC_SERVER_URL'
   | 'DATABASE_USER'
   | 'DATABASE_PASSWORD'
-  | 'DATABASE_HOST';
+  | 'DATABASE_HOST'
+  | 'DATABASE_SCHEMA';
 
 // https://flatuicolors.com/
 export const colors = {
