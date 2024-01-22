@@ -135,6 +135,12 @@ export const adminRouter = router({
           guildId: selectedGuildId,
           userDiscordId,
         });
+      } else if (widgetName === 'countdownWidget') {
+        await createAdminLog({
+          content: 'Updated countdown widget',
+          guildId: selectedGuildId,
+          userDiscordId,
+        });
       }
 
       return action;
@@ -536,4 +542,100 @@ export const adminRouter = router({
       return { error: true };
     }
   }),
+  getCountdownData: adminProcedure.query(async ({ ctx }) => {
+    const { prisma, selectedGuildId } = ctx;
+
+    const data = await prisma.guild.findUnique({
+      where: { guildId: selectedGuildId },
+      select: {
+        countdownChannelId: true,
+        countdownDescription: true,
+        countdownHeader: true,
+        countdownLastDate: true,
+        countdownNextDate: true,
+        countdownRestartInMinutes: true,
+      },
+    });
+
+    return data;
+  }),
+  setCountdownRestart: adminProcedure
+    .input(z.object({ minutes: z.number().min(2).max(44640) }))
+    .mutation(async ({ ctx, input }) => {
+      const { prisma, selectedGuildId, userDiscordId } = ctx;
+      const { minutes } = input;
+
+      try {
+        await prisma.guild.update({
+          where: { guildId: selectedGuildId },
+          data: {
+            countdownRestartInMinutes: minutes,
+          },
+        });
+        return { success: true };
+      } catch {
+        return { error: true };
+      } finally {
+        await createAdminLog({
+          content: 'Updated countdown auto-restart',
+          guildId: selectedGuildId,
+          userDiscordId,
+        });
+      }
+    }),
+  setCountdownDate: adminProcedure
+    .input(z.object({ nextDate: z.date(), lastDate: z.date() }))
+    .mutation(async ({ ctx, input }) => {
+      const { prisma, selectedGuildId, userDiscordId } = ctx;
+      const { lastDate, nextDate } = input;
+
+      try {
+        await prisma.guild.update({
+          where: { guildId: selectedGuildId },
+          data: {
+            countdownLastDate: lastDate,
+            countdownNextDate: nextDate,
+          },
+        });
+        return { success: true };
+      } catch {
+        return { error: true };
+      } finally {
+        await createAdminLog({
+          content: 'Updated countdown date',
+          guildId: selectedGuildId,
+          userDiscordId,
+        });
+      }
+    }),
+  setCountdownFormat: adminProcedure
+    .input(
+      z.object({
+        header: z.string().max(32),
+        description: z.string().max(2000),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { prisma, selectedGuildId, userDiscordId } = ctx;
+      const { description, header } = input;
+
+      try {
+        await prisma.guild.update({
+          where: { guildId: selectedGuildId },
+          data: {
+            countdownDescription: description,
+            countdownHeader: header,
+          },
+        });
+        return { success: true };
+      } catch {
+        return { error: true };
+      } finally {
+        await createAdminLog({
+          content: 'Updated countdown format',
+          guildId: selectedGuildId,
+          userDiscordId,
+        });
+      }
+    }),
 });

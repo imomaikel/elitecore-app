@@ -2,6 +2,7 @@ import { MdLibraryBooks, MdMiscellaneousServices } from 'react-icons/md';
 import { FaPeopleRoof, FaDiscord } from 'react-icons/fa6';
 import { HiOutlineStatusOnline } from 'react-icons/hi';
 import { IoTicketOutline } from 'react-icons/io5';
+import { LuCalendarClock } from 'react-icons/lu';
 import { TbDeviceRemote } from 'react-icons/tb';
 import { GiPointySword } from 'react-icons/gi';
 import { FaInfoCircle } from 'react-icons/fa';
@@ -44,6 +45,11 @@ export const panelTabs: TPanelTabs = [
         tabName: 'Server Status',
         Icon: HiOutlineStatusOnline,
         path: '/dashboard/admin/server-status',
+      },
+      {
+        tabName: 'Countdown',
+        Icon: LuCalendarClock,
+        path: '/dashboard/admin/countdown ',
       },
       {
         tabName: 'Miscellaneous',

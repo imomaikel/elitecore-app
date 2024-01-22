@@ -8,7 +8,7 @@ export const API_BROADCAST_WIDGETS = z.enum([
 ]);
 export type TAPI_BROADCAST_WIDGETS = z.infer<typeof API_BROADCAST_WIDGETS>;
 
-export const API_WIDGETS = z.enum(['ticketWidget']);
+export const API_WIDGETS = z.enum(['ticketWidget', 'countdownWidget']);
 export type TAPI_WIDGETS = z.infer<typeof API_WIDGETS>;
 
 export type MYSQL_EOS_QUERY = {

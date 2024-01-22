@@ -29,5 +29,13 @@ export const apiUpdateWidget = async ({ channelId, guildId, userDiscordId, widge
       },
     });
     return await createTicketCategoryWidget(guildId);
+  } else if (widgetName === 'countdownWidget') {
+    await prisma.guild.update({
+      where: { guildId },
+      data: {
+        countdownChannelId: channel.id,
+      },
+    });
+    // TODO
   }
 };

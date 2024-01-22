@@ -42,9 +42,22 @@ export const relativeDate = (date: Date, baseDate?: Date) => {
   return relative;
 };
 
-export const importantNotification = (pathname: string) => {
+export const importantNotification = (pathname: string, short?: boolean) => {
   if (pathname.startsWith('/dashboard/tribe')) {
-    return 'This feature is currently exclusive to ARK: Evolved';
+    return short ? 'Only ARK: Evolved' : 'This feature is currently exclusive to ARK: Evolved';
   }
   return null;
+};
+
+const DAY = 1440,
+  HOUR = 60;
+export const extractMinutes = (minutes: number) => {
+  const days = Math.floor(minutes / DAY);
+  const hours = Math.floor((minutes - days * DAY) / HOUR);
+  const _minutes = Math.floor(minutes - days * DAY - hours * HOUR);
+  return {
+    days,
+    hours,
+    minutes: _minutes,
+  };
 };

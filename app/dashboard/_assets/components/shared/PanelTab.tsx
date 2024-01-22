@@ -29,7 +29,7 @@ const PanelTab = () => {
               } else if (pathname.startsWith('/dashboard/tribe')) {
                 active = pathname === tab.path;
               }
-              const notify = importantNotification(tab.path);
+              const notify = importantNotification(tab.path, true);
 
               return (
                 <Link href={tab.path} key={`${tab.tabName}${tabIndex}`}>
@@ -43,7 +43,7 @@ after:opacity-0 after:hover:opacity-100 after:transition-opacity`,
                       active && 'bg-muted',
                     )}
                   >
-                    <div className="absolute text-xs text-destructive">{notify}</div>
+                    <div className="absolute text-xs text-destructive top-0 right-2">{notify}</div>
                     <div className="group-hover:text-primary transition-colors">
                       {<tab.Icon className="w-6 h-6 mr-3" />}
                     </div>

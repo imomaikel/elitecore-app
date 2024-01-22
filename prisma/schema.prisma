@@ -166,12 +166,19 @@ model Guild {
   guildName String @db.TinyText
 
   // Widgets
-  serverStatusChannelId        String? @db.TinyText
-  serverStatusChannelMessageId String? @db.TinyText
-  serverStatusNotifyChannelId  String? @db.TinyText
-  serverControlChannelId       String? @db.TinyText
-  serverControlMessageId       String? @db.TinyText
-  serverControlLogChannelId    String? @db.TinyText
+  serverStatusChannelId        String?   @db.TinyText
+  serverStatusChannelMessageId String?   @db.TinyText
+  serverStatusNotifyChannelId  String?   @db.TinyText
+  serverControlChannelId       String?   @db.TinyText
+  serverControlMessageId       String?   @db.TinyText
+  serverControlLogChannelId    String?   @db.TinyText
+  countdownLastDate            DateTime?
+  countdownNextDate            DateTime?
+  countdownRestartInMinutes    Int       @default(20160)
+  countdownChannelId           String?   @db.TinyText
+  countdownMessageId           String?   @db.TinyText
+  countdownHeader              String    @default("Next wipe countdown")
+  countdownDescription         String    @default(":hourglass: The **last** wipe was <old/R>\n:calendar_spiral: The **next** wipe is on <new/F>\n:timer: That will be <new/R>")
 
   // Roles
   serverControlRoleId String? @db.TinyText
