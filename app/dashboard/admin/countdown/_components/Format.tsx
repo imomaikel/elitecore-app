@@ -44,7 +44,27 @@ const Format = ({ description, header }: TFormat) => {
   };
 
   return (
-    <ItemWrapper title="Widget format">
+    <ItemWrapper
+      title="Widget format"
+      description={
+        <pre>
+          {`Formatting:
+    Emojis allowed
+    Use <old/TYPE> or <new/TYPE> to format the date
+    Examples: <new/R> <new/F> <old/f>
+  Format TYPES:
+    t: Example: 09:01
+    T: Example: 09:01:00
+    d: Example:	28/11/2018
+    D: Example:	28 November 2018
+    f: Example:	28 November 2018 09:01
+    F: Example: Wednesday, 28 November 2018 09:01
+    R: Example: 3 years ago / in a day
+    `}
+        </pre>
+      }
+      className="max-w-md"
+    >
       <Label htmlFor="header">Header</Label>
       <Input
         id="header"
@@ -63,7 +83,7 @@ const Format = ({ description, header }: TFormat) => {
         disabled={isLoading}
       />
 
-      <ActionButton className="max-w-sm w-full mt-2" onClick={onUpdate} disabled={isLoading}>
+      <ActionButton className="max-w-sm w-full mt-4" onClick={onUpdate} disabled={isLoading}>
         Update
       </ActionButton>
     </ItemWrapper>

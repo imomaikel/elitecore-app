@@ -1,7 +1,7 @@
+import type { ActionRowBuilder, ButtonBuilder, Channel, EmbedBuilder } from 'discord.js';
 import { CustomResponse } from '../constans/responses';
 import logger from '../scripts/logger';
 import { client } from '../client';
-import type { ActionRowBuilder, ButtonBuilder, Channel, EmbedBuilder } from 'discord.js';
 
 // Send message props
 type TSendMessage = {

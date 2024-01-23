@@ -77,7 +77,7 @@ const Restart = ({ rawMinutes }: TRestart) => {
         type="number"
         disabled={isLoading}
       />
-      <ActionButton className="max-w-sm w-full mt-2" onClick={onUpdate} disabled={isLoading}>
+      <ActionButton className="max-w-sm w-full mt-4" onClick={onUpdate} disabled={isLoading}>
         Update
       </ActionButton>
     </ItemWrapper>

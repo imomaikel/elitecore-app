@@ -7,6 +7,7 @@ import { apiAvailableChannels, apiAvailableRoles, apiMutualGuilds } from '../../
 import { API_BROADCAST_WIDGETS, API_WIDGETS } from '../../../../bot/constans/types';
 import { createTicketCategoryWidget } from '../../../../bot/plugins/tickets';
 import apiUpdateBroadcastChannel from '../../../../bot/api/broadcastUpdate';
+import { countdownWidget } from '../../../../bot/plugins/countdown';
 import { apiWipeSchemas } from '../../../../bot/api/apiWipeSchemas';
 import { apiUpdateWidget } from '../../../../bot/api/widgetUpdate';
 import { apiUpdateRole } from '../../../../bot/api/apiUpdateRole';
@@ -606,6 +607,7 @@ export const adminRouter = router({
           guildId: selectedGuildId,
           userDiscordId,
         });
+        await countdownWidget(selectedGuildId);
       }
     }),
   setCountdownFormat: adminProcedure
@@ -636,6 +638,7 @@ export const adminRouter = router({
           guildId: selectedGuildId,
           userDiscordId,
         });
+        await countdownWidget(selectedGuildId);
       }
     }),
 });

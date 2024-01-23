@@ -1,5 +1,6 @@
 import { createTicketCategoryWidget } from '../plugins/tickets';
 import { verifyApiRequest } from '../helpers/verifyApi';
+import { countdownWidget } from '../plugins/countdown';
 import { TAPI_WIDGETS } from '../constans/types';
 import prisma from '../lib/prisma';
 
@@ -36,6 +37,7 @@ export const apiUpdateWidget = async ({ channelId, guildId, userDiscordId, widge
         countdownChannelId: channel.id,
       },
     });
-    // TODO
+
+    return await countdownWidget(guildId);
   }
 };

@@ -38,11 +38,11 @@ const DatePicker = ({ lastDate, nextDate }: TDatePicker) => {
   };
 
   return (
-    <>
+    <div>
       <ItemWrapper title="The last countdown date">
         <input
           type="datetime-local"
-          value={widgetLastDate}
+          value={widgetLastDate.slice(0, 16)}
           onChange={(e) => setWidgetLastDate(e.target.value)}
           disabled={isLoading}
         />
@@ -50,15 +50,15 @@ const DatePicker = ({ lastDate, nextDate }: TDatePicker) => {
       <ItemWrapper title="The next countdown date">
         <input
           type="datetime-local"
-          value={widgetNextDate}
+          value={widgetNextDate.slice(0, 16)}
           onChange={(e) => setWidgetNextDate(e.target.value)}
           disabled={isLoading}
         />
       </ItemWrapper>
-      <ActionButton className="max-w-sm w-full mt-2" disabled={isLoading} onClick={onUpdate}>
+      <ActionButton className="max-w-sm w-full mt-4" disabled={isLoading} onClick={onUpdate}>
         Update
       </ActionButton>
-    </>
+    </div>
   );
 };
 
