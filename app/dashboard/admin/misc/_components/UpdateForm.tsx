@@ -12,13 +12,15 @@ import { trpc } from '@/trpc';
 type TUpdateForm = {
   serverStatusUpdateDelay: number | undefined;
   serverControlUpdateDelay: number | undefined;
+  countdownUpdateDelay: number | undefined;
 };
-const UpdateForm = ({ serverControlUpdateDelay, serverStatusUpdateDelay }: TUpdateForm) => {
+const UpdateForm = ({ serverControlUpdateDelay, serverStatusUpdateDelay, countdownUpdateDelay }: TUpdateForm) => {
   const form = useForm<TUpdateDelaySchema>({
     resolver: zodResolver(UpdateDelaySchema),
     defaultValues: {
       serverControlUpdateDelay: serverControlUpdateDelay ?? 3,
       serverStatusUpdateDelay: serverStatusUpdateDelay ?? 3,
+      countdownUpdateDelay: countdownUpdateDelay ?? 3,
     },
   });
 
@@ -76,6 +78,25 @@ const UpdateForm = ({ serverControlUpdateDelay, serverStatusUpdateDelay }: TUpda
             </FormItem>
           )}
         />
+        <FormField
+          control={form.control}
+          name="countdownUpdateDelay"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Countdown Delay</FormLabel>
+              <FormControl>
+                <Input
+                  type="number"
+                  {...field}
+                  onChange={(e) => form.setValue(field.name, parseInt(e.target.value))}
+                  disabled={isLoading}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         <Button type="submit" className="w-full" disabled={isLoading}>
           Update
         </Button>

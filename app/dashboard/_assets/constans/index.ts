@@ -4,7 +4,6 @@ import { HiOutlineStatusOnline } from 'react-icons/hi';
 import { IoTicketOutline } from 'react-icons/io5';
 import { LuCalendarClock } from 'react-icons/lu';
 import { TbDeviceRemote } from 'react-icons/tb';
-import { GiPointySword } from 'react-icons/gi';
 import { FaInfoCircle } from 'react-icons/fa';
 import { RiAdminFill } from 'react-icons/ri';
 import { FaBook } from 'react-icons/fa6';
@@ -93,11 +92,12 @@ export const panelTabs: TPanelTabs = [
         Icon: FaBook,
         path: '/dashboard/tribe/logs',
       },
-      {
-        tabName: 'Raids',
-        Icon: GiPointySword,
-        path: '/dashboard/tribe/raids',
-      },
+      // TODO
+      // {
+      //   tabName: 'Raids',
+      //   Icon: GiPointySword,
+      //   path: '/dashboard/tribe/raids',
+      // },
     ],
   },
 ];

@@ -475,6 +475,7 @@ export const adminRouter = router({
         serverStatusUpdateDelay: true,
         serverControlUpdateDelay: true,
         monthlyPaymentGoal: true,
+        countdownUpdateDelay: true,
         lastWipe: true,
       },
     });

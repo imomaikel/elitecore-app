@@ -103,7 +103,7 @@ const columns: ColumnDef<TTicket>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem asChild>
               <Link href={`/dashboard/tickets/${original.id}`}>Open ticket</Link>
             </DropdownMenuItem>
           </DropdownMenuContent>

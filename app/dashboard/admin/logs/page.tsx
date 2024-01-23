@@ -56,7 +56,13 @@ const AdminLogsPage = () => {
         <div className="flex space-x-4">
           <div>
             <div className="mb-2">Logs per page</div>
-            <Select value={logsPerPage.toString()} onValueChange={(e) => setLogsPerPage(parseInt(e))}>
+            <Select
+              value={logsPerPage.toString()}
+              onValueChange={(e) => {
+                setLogsPerPage(parseInt(e));
+                setCurrentPage(1);
+              }}
+            >
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="10" />
               </SelectTrigger>
