@@ -3,6 +3,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { HiStatusOnline, HiStatusOffline } from 'react-icons/hi';
 import { Skeleton } from '@/shared/components/ui/skeleton';
 import PageWrapper from '@/components/shared/PageWrapper';
+import NoData from '@/components/shared/NoData';
 import { ImSpinner9 } from 'react-icons/im';
 import Chart from './_components/Chart';
 import { trpc } from '@/trpc';
@@ -12,8 +13,9 @@ const TribeLogsPage = () => {
 
   if (isLoading) return <TribeLogsPage.Skeleton />;
 
-  // TODO
-  if (!data?.success) return <p>No tribe</p>;
+  if (!data?.success) {
+    return <NoData />;
+  }
 
   const { members, tribe, user: userInGame } = data.data;
 

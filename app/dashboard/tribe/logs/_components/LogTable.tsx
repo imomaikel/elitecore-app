@@ -1,10 +1,12 @@
 import {
   ColumnDef,
   ColumnFiltersState,
+  SortingState,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
+  getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/shared/components/ui/table';
@@ -13,6 +15,7 @@ import { Switch } from '@/shared/components/ui/switch';
 import { Button } from '@/shared/components/ui/button';
 import { Label } from '@/shared/components/ui/label';
 import { relativeDate } from '@/shared/lib/utils';
+import { LuArrowUpDown } from 'react-icons/lu';
 import { LogType } from '@prisma/client';
 import { useState } from 'react';
 
@@ -27,7 +30,14 @@ const columns: ColumnDef<TLog>[] = [
   },
   {
     accessorKey: 'timestamp',
-    header: 'Date',
+    header: ({ column }) => {
+      return (
+        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+          Date
+          <LuArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
     cell: ({ row }) => {
       const getDate: Date = row.getValue('timestamp');
       const formatDate = relativeDate(getDate);
@@ -52,9 +62,10 @@ const LogTable = ({ logs }: { logs: TLog[] }) => {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([
     {
       id: 'logType',
-      value: [],
+      value: [...OPTIONS],
     },
   ]);
+  const [sorting, setSorting] = useState<SortingState>([]);
 
   const table = useReactTable({
     data: logs,
@@ -63,10 +74,13 @@ const LogTable = ({ logs }: { logs: TLog[] }) => {
     getPaginationRowModel: getPaginationRowModel(),
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
+    onSortingChange: setSorting,
+    getSortedRowModel: getSortedRowModel(),
     state: {
       columnVisibility: {
         logType: false,
       },
+      sorting,
       columnFilters,
     },
   });
