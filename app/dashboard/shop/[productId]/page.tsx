@@ -114,7 +114,7 @@ const ProductPage = ({ params }: TProductPage) => {
     return (
       <>
         <ActionDialog
-          onOpenChange={() => setIsAuthorizeDialogOpen(!isDialogOpen)}
+          onOpenChange={() => setIsAuthorizeDialogOpen(!isAuthorizeDialogOpen)}
           onProceed={() => router.push(authUrl)}
           isOpen={isAuthorizeDialogOpen}
           title="Authentication needed!"

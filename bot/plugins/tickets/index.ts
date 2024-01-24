@@ -1,4 +1,5 @@
 import { _createCategoryWidget } from './categoryWidget';
+import { _cleanTicketAttachments } from './filesystem';
 import { _ticketInteraction } from './interaction';
 import { _downloadAttachment } from './download';
 import { _ticketSelectMap } from './select';
@@ -10,6 +11,7 @@ import { _ticketLog } from './logs';
 
 export {
   _createCategoryWidget as createTicketCategoryWidget,
+  _cleanTicketAttachments as cleanTicketAttachments,
   _downloadAttachment as downloadAttachment,
   _ticketInteraction as ticketInteraction,
   _ticketSelectMap as ticketSelectMap,

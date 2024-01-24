@@ -54,6 +54,7 @@ const AdminMiscPage = () => {
                 serverControlUpdateDelay={config?.serverControlUpdateDelay}
                 serverStatusUpdateDelay={config?.serverStatusUpdateDelay}
                 countdownUpdateDelay={config?.countdownUpdateDelay}
+                autoCleanTicketFilesDays={config?.autoCleanTicketFilesDays}
               />
             )}
           </ItemWrapper>

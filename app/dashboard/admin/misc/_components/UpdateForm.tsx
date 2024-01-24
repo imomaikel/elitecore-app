@@ -13,14 +13,21 @@ type TUpdateForm = {
   serverStatusUpdateDelay: number | undefined;
   serverControlUpdateDelay: number | undefined;
   countdownUpdateDelay: number | undefined;
+  autoCleanTicketFilesDays: number | undefined;
 };
-const UpdateForm = ({ serverControlUpdateDelay, serverStatusUpdateDelay, countdownUpdateDelay }: TUpdateForm) => {
+const UpdateForm = ({
+  serverControlUpdateDelay,
+  serverStatusUpdateDelay,
+  countdownUpdateDelay,
+  autoCleanTicketFilesDays,
+}: TUpdateForm) => {
   const form = useForm<TUpdateDelaySchema>({
     resolver: zodResolver(UpdateDelaySchema),
     defaultValues: {
       serverControlUpdateDelay: serverControlUpdateDelay ?? 3,
       serverStatusUpdateDelay: serverStatusUpdateDelay ?? 3,
       countdownUpdateDelay: countdownUpdateDelay ?? 3,
+      autoCleanTicketFilesDays: autoCleanTicketFilesDays ?? 21,
     },
   });
 
@@ -95,8 +102,25 @@ const UpdateForm = ({ serverControlUpdateDelay, serverStatusUpdateDelay, countdo
               <FormMessage />
             </FormItem>
           )}
+        />{' '}
+        <FormField
+          control={form.control}
+          name="autoCleanTicketFilesDays"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Auto delete ticket attachments older than X days.</FormLabel>
+              <FormControl>
+                <Input
+                  type="number"
+                  {...field}
+                  onChange={(e) => form.setValue(field.name, parseInt(e.target.value))}
+                  disabled={isLoading}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
         />
-
         <Button type="submit" className="w-full" disabled={isLoading}>
           Update
         </Button>

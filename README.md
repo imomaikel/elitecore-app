@@ -45,6 +45,7 @@ The bot was built using module [discord.js](https://discord.js.org/)
 - [ ] Website ticket logs (+ transcript download)
 - [x] Require authentication with the provider (Steam)
 - [x] Command that allows to add more people to the ticket
+- [x] Auto-delete attachments after X days to save disk space
 - [x] Limit ticket creation per user
 - [x] Creation confirmation
 - [x] Auto close empty tickets

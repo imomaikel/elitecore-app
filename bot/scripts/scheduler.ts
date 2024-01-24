@@ -1,7 +1,7 @@
+import { cleanTicketAttachments, ticketCleaner } from '../plugins/tickets';
 import { updateServerControlWidget } from '../plugins/server-control';
 import updateServerStatusWidget from '../plugins/server-status';
 import { updateCountdown } from '../plugins/countdown';
-import { ticketCleaner } from '../plugins/tickets';
 import { fetchLogs } from '../plugins/tribe';
 import { checkForNewWipe } from './wipe';
 import { getEnv } from '../utils/env';
@@ -33,6 +33,10 @@ const scheduler = () => {
   setInterval(() => {
     updateCountdown();
   }, 1000 * 60 * 5);
+
+  setInterval(() => {
+    cleanTicketAttachments();
+  }, 1000 * 60 * 60 * 6);
 
   setInterval(async () => {
     const config = await prisma.config.findFirst();

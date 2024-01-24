@@ -50,5 +50,6 @@ export const UpdateDelaySchema = z.object({
   serverStatusUpdateDelay: z.optional(z.number().min(3)),
   serverControlUpdateDelay: z.optional(z.number().min(3)),
   countdownUpdateDelay: z.optional(z.number().min(3)),
+  autoCleanTicketFilesDays: z.optional(z.number().min(1)),
 });
 export type TUpdateDelaySchema = z.infer<typeof UpdateDelaySchema>;
