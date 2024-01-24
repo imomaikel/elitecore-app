@@ -7,6 +7,7 @@ import fs from 'fs';
 
 const PUBLIC_URL = getEnv('NEXT_PUBLIC_SERVER_URL');
 const saveFile = promisify(fs.writeFile);
+const mkdir = promisify(fs.mkdir);
 
 export const _createTicketTranscript = async (authorDiscordId: string, ticketId: string): Promise<false | string> => {
   const [config, ticketData] = await Promise.all([
@@ -78,13 +79,16 @@ export const _createTicketTranscript = async (authorDiscordId: string, ticketId:
   messages.push('');
   messages.push(`Transcript created at: ${new Date().toISOString()}`);
 
-  const filePath = path.resolve(ATTACHMENTS_PATH, authorDiscordId, ticketId, 'transcript.txt');
+  const directoryPath = path.resolve(ATTACHMENTS_PATH, authorDiscordId, ticketId);
+  const filePath = path.resolve(directoryPath, 'transcript.txt');
 
   try {
+    await mkdir(directoryPath).catch(() => {});
     await saveFile(filePath, messages.join('\n'), 'utf-8');
     const url = filePath.substring(filePath.indexOf('/attachments'));
     return url;
-  } catch {
+  } catch (error) {
+    console.log(error);
     return false;
   }
 };

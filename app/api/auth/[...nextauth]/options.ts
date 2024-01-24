@@ -40,6 +40,8 @@ const authOptions: NextAuthOptions = {
           data: { avatar: session.user.image },
         });
       }
+
+      session.user.lastViewedTicketId = getUserData?.lastViewedTicketId ?? null;
       session.user.basketIdent =
         getUserData?.basketIdent && getUserData.basketIdent?.length >= 5 ? getUserData?.basketIdent : null;
       session.user.currency === getUserData?.currency ?? 'EUR';

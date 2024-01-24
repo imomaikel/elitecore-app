@@ -60,21 +60,22 @@ enum UserRole {
 }
 
 model User {
-  id                String    @id @default(cuid())
-  discordId         String?   @unique
-  steamId           String?   @unique
-  eosId             String?
-  avatar            String?
-  name              String?
-  email             String?   @unique
-  emailVerified     DateTime?
-  image             String?
-  accounts          Account[]
-  role              UserRole  @default(USER)
-  selectedDiscordId String?
-  basketIdent       String?
-  basketAuthUrl     String?
-  currency          String?
+  id                 String    @id @default(cuid())
+  discordId          String?   @unique
+  steamId            String?   @unique
+  eosId              String?
+  avatar             String?
+  name               String?
+  email              String?   @unique
+  emailVerified      DateTime?
+  image              String?
+  accounts           Account[]
+  role               UserRole  @default(USER)
+  selectedDiscordId  String?
+  basketIdent        String?
+  basketAuthUrl      String?
+  currency           String?
+  lastViewedTicketId String?
 
   adminLogs AdminLog[]
   payments  Payment[]

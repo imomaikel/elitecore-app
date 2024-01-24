@@ -1,4 +1,5 @@
 import { DefaultErrorData } from '@trpc/server/dist/error/formatter';
+import { TicketAttachment, TicketMessage } from '@prisma/client';
 import { type ClassValue, clsx } from 'clsx';
 import { formatRelative } from 'date-fns';
 import { twMerge } from 'tailwind-merge';
@@ -60,4 +61,8 @@ export const extractMinutes = (minutes: number) => {
     hours,
     minutes: _minutes,
   };
+};
+
+export type TSocketNewMessage = TicketMessage & {
+  attachments: TicketAttachment[];
 };

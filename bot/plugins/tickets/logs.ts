@@ -1,3 +1,4 @@
+import { socketNewMessage } from '../../../server/socket';
 import logger from '../../scripts/logger';
 import { downloadAttachment } from '.';
 import prisma from '../../lib/prisma';
@@ -33,27 +34,34 @@ export const _ticketLog = async ({ message, ticketAuthorId, ticketId }: TTicketL
 
     if (content.length < 1 && createAttachments.length < 1) return;
 
-    await prisma.ticket.update({
-      where: { channelId: message.channel.id },
+    const newMessage = await prisma.ticketMessage.create({
       data: {
-        messages: {
-          create: {
-            id: message.id,
-            authorAvatar: message.author.displayAvatarURL(),
-            authorDiscordId: message.author.id,
-            authorName: message.author.username,
-            content: content.length >= 1 ? content : undefined,
-            ...(createAttachments.length >= 1 && {
-              attachments: {
-                createMany: {
-                  data: [...createAttachments],
-                },
-              },
-            }),
+        id: message.id,
+        authorAvatar: message.author.displayAvatarURL(),
+        authorDiscordId: message.author.id,
+        authorName: message.author.username,
+        content: content.length >= 1 ? content : undefined,
+        ...(createAttachments.length >= 1 && {
+          attachments: {
+            createMany: {
+              data: [...createAttachments],
+            },
+          },
+        }),
+        Ticket: {
+          connect: {
+            channelId: message.channel.id,
           },
         },
       },
+      include: {
+        attachments: true,
+      },
     });
+
+    if (newMessage.ticketId) {
+      socketNewMessage(newMessage, newMessage.ticketId);
+    }
   } catch (error) {
     logger({
       message: 'Ticket Log',

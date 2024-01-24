@@ -4,14 +4,19 @@ import { getPort, nextApp, nextRequestHandler } from '../app/next';
 import { dataReceived } from '../bot/helpers/api';
 import buildNextApp from 'next/dist/build';
 import webhookHandler from './webhooks';
+import { socketSetup } from './socket';
 import { IncomingMessage } from 'http';
 import bodyParser from 'body-parser';
+import { createServer } from 'http';
+import { Server } from 'socket.io';
 import express from 'express';
 import path from 'path';
 
 // Create express server
 const app = express();
 const PORT = getPort();
+const server = createServer(app);
+export const io = new Server(server, { path: '/api/socket' });
 const createContext = async ({ req, res }: CreateExpressContextOptions) => ({ req, res });
 export type ExpressContext = Awaited<ReturnType<typeof createContext>>;
 export type TWebhookRequest = IncomingMessage & { rawBody: Buffer };
@@ -58,6 +63,9 @@ export type TWebhookRequest = IncomingMessage & { rawBody: Buffer };
     } catch {}
   });
 
+  // Socket
+  socketSetup();
+
   // Listen for webhooks
   app.use(
     '/api/webhooks',
@@ -81,7 +89,7 @@ export type TWebhookRequest = IncomingMessage & { rawBody: Buffer };
     }
   });
   nextApp.prepare().then(() => {
-    app.listen(PORT, async () => {
+    server.listen(PORT, async () => {
       console.log(`Next.js started. ${process.env.NEXT_PUBLIC_SERVER_URL}`);
     });
   });

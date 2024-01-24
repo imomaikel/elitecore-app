@@ -452,6 +452,15 @@ export const appRouter = router({
       },
     });
 
+    if (ticket) {
+      await prisma.user.update({
+        where: { discordId: user.discordId },
+        data: {
+          lastViewedTicketId: ticket.id,
+        },
+      });
+    }
+
     return ticket;
   }),
   getUserTickets: authorizedProcedure.query(async ({ ctx }) => {
