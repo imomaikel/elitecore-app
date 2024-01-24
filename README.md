@@ -42,7 +42,7 @@ The bot was built using module [discord.js](https://discord.js.org/)
 - [x] Multiple ticket categories with custom settings
 - [x] Custom user input verified by RegEX to prevent spam and unwanted tickets
 - [x] A custom select menu allows the user to select related server
-- [ ] Website ticket logs (+ transcript download)
+- [x] Website ticket logs (+ transcript download)
 - [x] Require authentication with the provider (Steam)
 - [x] Command that allows to add more people to the ticket
 - [x] Auto-delete attachments after X days to save disk space

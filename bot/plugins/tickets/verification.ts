@@ -7,7 +7,6 @@ export type TFindReturn = {
 };
 
 export const findPairedAccount = async (userDiscordId: string): Promise<TFindReturn | boolean> => {
-  userDiscordId = '321345707917443072';
   const userData = await prisma.user.findUnique({
     where: { discordId: userDiscordId },
   });

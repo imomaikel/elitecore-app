@@ -1,6 +1,7 @@
 'use client';
 import { errorToast, relativeDate } from '@/shared/lib/utils';
 import { Separator } from '@/shared/components/ui/separator';
+import ActionButton from '@/components/shared/ActionButton';
 import { Skeleton } from '@/shared/components/ui/skeleton';
 import PageWrapper from '@/components/shared/PageWrapper';
 import { useParams, useRouter } from 'next/navigation';
@@ -23,6 +24,26 @@ const TicketPage = () => {
       refetchOnWindowFocus: false,
     },
   );
+
+  const { mutate: getTranscript, isLoading: transcriptLoading } = trpc.getTranscript.useMutation();
+  const onTranscript = () => {
+    if (!ticket) {
+      return errorToast();
+    }
+    getTranscript(
+      {
+        authorId: ticket?.authorDiscordId,
+        ticketId: ticket?.id,
+      },
+      {
+        onSuccess: ({ url }) => {
+          if (!url) return errorToast();
+          router.push(url);
+        },
+        onError: () => errorToast(),
+      },
+    );
+  };
 
   if (isLoading) return <TicketPage.Skeleton />;
   if (!ticket?.id) {
@@ -73,8 +94,9 @@ const TicketPage = () => {
           )}
           {/* TODO */}
           {!ticket.closedAt && <Button variant="secondary">Close the ticket</Button>}
-          {/* TODO */}
-          <Button variant="secondary">Download transcript</Button>
+          <ActionButton variant="secondary" disabled={transcriptLoading} onClick={onTranscript}>
+            Download transcript
+          </ActionButton>
         </div>
         <div className="mb-6 flex items-center justify-center flex-col">
           <Separator className="mt-4" />

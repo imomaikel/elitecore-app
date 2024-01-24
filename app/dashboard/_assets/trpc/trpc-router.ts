@@ -8,7 +8,7 @@ import {
 } from '../../../_shared/lib/tebex';
 import { COORDS_REGEX } from '../../../../bot/plugins/tickets/message';
 import { authorizedProcedure, publicProcedure, router } from './trpc';
-import { createTicket } from '../../../../bot/plugins/tickets';
+import { createTicket, createTicketTranscript } from '../../../../bot/plugins/tickets';
 import { getTribe } from '../../../../bot/plugins/tribe';
 import { Category, GetBasket } from 'tebex_headless';
 import { adminRouter } from './admin-router';
@@ -510,6 +510,15 @@ export const appRouter = router({
 
     return { success: true, message: logs };
   }),
+  getTranscript: authorizedProcedure
+    .input(z.object({ ticketId: z.string().min(1), authorId: z.string().min(1) }))
+    .mutation(async ({ input }) => {
+      const { authorId, ticketId } = input;
+
+      const getTranscript = await createTicketTranscript(authorId, ticketId);
+
+      return { url: getTranscript };
+    }),
 });
 
 export type AppRouter = typeof appRouter;
