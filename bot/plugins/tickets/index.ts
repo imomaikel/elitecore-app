@@ -1,4 +1,5 @@
 import { _createCategoryWidget } from './categoryWidget';
+import { _closeTicket, _apiCloseTicket } from './close';
 import { _cleanTicketAttachments } from './filesystem';
 import { _createTicketTranscript } from './transcript';
 import { _ticketInteraction } from './interaction';
@@ -7,7 +8,6 @@ import { _ticketSelectMap } from './select';
 import { _ticketMessage } from './message';
 import { _ticketCleaner } from './cleaner';
 import { _createTicket } from './create';
-import { _closeTicket } from './close';
 import { _ticketLog } from './logs';
 
 export {
@@ -17,6 +17,7 @@ export {
   _downloadAttachment as downloadAttachment,
   _ticketInteraction as ticketInteraction,
   _ticketSelectMap as ticketSelectMap,
+  _apiCloseTicket as apiCloseTicket,
   _ticketMessage as ticketMessage,
   _ticketCleaner as ticketCleaner,
   _createTicket as createTicket,

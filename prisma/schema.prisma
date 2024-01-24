@@ -310,7 +310,7 @@ model TicketMessage {
 
   attachments TicketAttachment[]
 
-  Ticket   Ticket? @relation(fields: [ticketId], references: [id])
+  Ticket   Ticket? @relation(fields: [ticketId], references: [id], onDelete: Cascade)
   ticketId String?
 
   createdAt DateTime @default(now())

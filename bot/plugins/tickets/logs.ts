@@ -4,7 +4,7 @@ import prisma from '../../lib/prisma';
 import { Message } from 'discord.js';
 import path from 'path';
 
-const LOG_PATH = path.resolve(process.cwd(), 'public', 'attachments');
+const LOG_PATH = path.resolve(process.cwd(), 'attachments');
 
 type TTicketLog = {
   message: Message;

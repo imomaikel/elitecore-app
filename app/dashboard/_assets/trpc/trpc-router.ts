@@ -6,9 +6,9 @@ import {
   shopGetCategories,
   updateQuantity,
 } from '../../../_shared/lib/tebex';
+import { apiCloseTicket, createTicket, createTicketTranscript } from '../../../../bot/plugins/tickets';
 import { COORDS_REGEX } from '../../../../bot/plugins/tickets/message';
 import { authorizedProcedure, publicProcedure, router } from './trpc';
-import { createTicket, createTicketTranscript } from '../../../../bot/plugins/tickets';
 import { getTribe } from '../../../../bot/plugins/tribe';
 import { Category, GetBasket } from 'tebex_headless';
 import { adminRouter } from './admin-router';
@@ -519,6 +519,16 @@ export const appRouter = router({
 
       return { url: getTranscript };
     }),
+  closeTicket: authorizedProcedure.input(z.object({ ticketId: z.string().min(1) })).mutation(async ({ ctx, input }) => {
+    const { user } = ctx;
+    const { ticketId } = input;
+
+    if (!user.discordId) throw new TRPCError({ code: 'UNAUTHORIZED' });
+
+    const closeStatus = await apiCloseTicket(user.discordId, ticketId);
+
+    return { closed: closeStatus };
+  }),
 });
 
 export type AppRouter = typeof appRouter;

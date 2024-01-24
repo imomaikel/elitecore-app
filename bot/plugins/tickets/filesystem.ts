@@ -1,10 +1,10 @@
+import { ATTACHMENTS_PATH } from '../../constans';
 import logger from '../../scripts/logger';
 import prisma from '../../lib/prisma';
 import { promisify } from 'util';
 import path from 'path';
 import fs from 'fs';
 
-const ATTACHMENTS_PATH = path.resolve(process.cwd(), 'public', 'attachments');
 const unlinkDirectory = promisify(fs.rm);
 
 export const _cleanTicketAttachments = async () => {

@@ -80,3 +80,49 @@ export const _closeTicket = async ({ closedBy, channelId, autoClose }: TCloseTic
     });
   } catch {}
 };
+
+export const _apiCloseTicket = async (closedByDiscordId: string, ticketId: string) => {
+  const ticket = await prisma.ticket.findUnique({
+    where: { id: ticketId },
+    include: {
+      TicketCategory: {
+        select: {
+          supportRoles: true,
+        },
+      },
+    },
+  });
+
+  if (!ticket || !ticket.TicketCategory) return false;
+
+  const allowedRoles = ticket.TicketCategory.supportRoles.map((role) => role.roleId);
+
+  const guild = client.guilds.cache.get(ticket.guildId);
+  if (!guild) return false;
+
+  try {
+    const member = await guild.members.fetch(closedByDiscordId);
+
+    let canClose = false;
+
+    if (member.roles.cache.some((role) => allowedRoles.includes(role.id))) {
+      canClose = true;
+    }
+    if (closedByDiscordId === ticket.authorDiscordId) {
+      canClose = true;
+    }
+    if (member.permissions.has('Administrator')) {
+      canClose = true;
+    }
+    if (!canClose) return false;
+
+    await _closeTicket({
+      channelId: ticket.channelId,
+      closedBy: member.user.username,
+    });
+
+    return true;
+  } catch {
+    return false;
+  }
+};

@@ -86,7 +86,7 @@ const TicketCard = ({
                   {coordinateInput && (
                     <li className="flex text-sm items-center">
                       <MdKeyboardDoubleArrowRight />
-                      In-game coordinates associated with your ticket
+                      In-game coordinates related to your ticket
                     </li>
                   )}
                   {mapSelection && (

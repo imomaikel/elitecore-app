@@ -1,20 +1,22 @@
 'use client';
+import { useParams, usePathname, useRouter } from 'next/navigation';
 import { errorToast, relativeDate } from '@/shared/lib/utils';
 import { Separator } from '@/shared/components/ui/separator';
 import ActionButton from '@/components/shared/ActionButton';
 import { Skeleton } from '@/shared/components/ui/skeleton';
 import PageWrapper from '@/components/shared/PageWrapper';
-import { useParams, useRouter } from 'next/navigation';
 import { Button } from '@/shared/components/ui/button';
 import { FaExternalLinkAlt } from 'react-icons/fa';
 import Message from './_components/Message';
 import Scroll from './_components/Scroll';
 import Info from './_components/Info';
+import { toast } from 'sonner';
 import { trpc } from '@/trpc';
 import Link from 'next/link';
 
 const TicketPage = () => {
   const { ticketId } = useParams<{ ticketId: string }>();
+  const pathname = usePathname();
   const router = useRouter();
 
   const { data: ticket, isLoading } = trpc.getTicketWithLogs.useQuery(
@@ -39,6 +41,31 @@ const TicketPage = () => {
         onSuccess: ({ url }) => {
           if (!url) return errorToast();
           router.push(url);
+        },
+        onError: () => errorToast(),
+      },
+    );
+  };
+
+  const { mutate: closeTicket, isLoading: isClosing } = trpc.closeTicket.useMutation();
+  const onClose = () => {
+    if (!ticket) return errorToast();
+    closeTicket(
+      {
+        ticketId: ticket.id,
+      },
+      {
+        onSuccess: ({ closed }) => {
+          if (closed) {
+            toast.success('Ticket closed!');
+            if (pathname.includes('admin')) {
+              router.replace('/dashboard/admin/tickets');
+            } else {
+              router.replace('/dashboard/tickets');
+            }
+          } else {
+            errorToast();
+          }
         },
         onError: () => errorToast(),
       },
@@ -92,8 +119,11 @@ const TicketPage = () => {
               </Link>
             </Button>
           )}
-          {/* TODO */}
-          {!ticket.closedAt && <Button variant="secondary">Close the ticket</Button>}
+          {!ticket.closedAt && (
+            <ActionButton variant="secondary" onClick={onClose} disabled={isClosing}>
+              Close the ticket
+            </ActionButton>
+          )}
           <ActionButton variant="secondary" disabled={transcriptLoading} onClick={onTranscript}>
             Download transcript
           </ActionButton>

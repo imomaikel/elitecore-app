@@ -1,3 +1,4 @@
+import { ATTACHMENTS_PATH } from '../../constans';
 import { getEnv } from '../../utils/env';
 import prisma from '../../lib/prisma';
 import { promisify } from 'util';
@@ -5,7 +6,6 @@ import path from 'path';
 import fs from 'fs';
 
 const PUBLIC_URL = getEnv('NEXT_PUBLIC_SERVER_URL');
-const ATTACHMENTS_PATH = path.resolve(process.cwd(), 'public', 'attachments');
 const saveFile = promisify(fs.writeFile);
 
 export const _createTicketTranscript = async (authorDiscordId: string, ticketId: string): Promise<false | string> => {
@@ -19,6 +19,7 @@ export const _createTicketTranscript = async (authorDiscordId: string, ticketId:
       select: {
         authorUsername: true,
         createdAt: true,
+        closedAt: true,
         categoryName: true,
         coordinates: true,
         mapName: true,
@@ -38,6 +39,11 @@ export const _createTicketTranscript = async (authorDiscordId: string, ticketId:
 
   if (!config || !ticketData) return false;
   const { authorUsername, categoryName, createdAt, _count, coordinates, mapName } = ticketData;
+
+  if (ticketData.closedAt) {
+    const daysToMs = config.autoCleanTicketFilesDays * 24 * 60 * 60_000;
+    if (ticketData.closedAt.getTime() + daysToMs < new Date().getTime()) return false;
+  }
 
   const messages: string[] = [
     `Author: ${authorUsername}`,
@@ -76,7 +82,7 @@ export const _createTicketTranscript = async (authorDiscordId: string, ticketId:
 
   try {
     await saveFile(filePath, messages.join('\n'), 'utf-8');
-    const url = filePath.substring(filePath.indexOf('/public') + '/public'.length);
+    const url = filePath.substring(filePath.indexOf('/attachments'));
     return url;
   } catch {
     return false;

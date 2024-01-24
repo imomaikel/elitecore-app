@@ -1,3 +1,5 @@
+import path from 'path';
+
 export type TEnvVars =
   | 'DISCORD_DEVELOPMENT_BOT_TOKEN'
   | 'DISCORD_PRODUCTION_BOT_TOKEN'
@@ -45,3 +47,5 @@ export const avatars = {
   pinkAvatar: 'https://i.imgur.com/vNeP6Y7.png',
 };
 export const randomAvatar = () => Object.values(avatars)[Math.floor(Math.random() * Object.keys(avatars).length)];
+
+export const ATTACHMENTS_PATH = path.resolve(process.cwd(), 'attachments');

@@ -7,6 +7,7 @@ import webhookHandler from './webhooks';
 import { IncomingMessage } from 'http';
 import bodyParser from 'body-parser';
 import express from 'express';
+import path from 'path';
 
 // Create express server
 const app = express();
@@ -68,8 +69,17 @@ export type TWebhookRequest = IncomingMessage & { rawBody: Buffer };
     webhookHandler,
   );
 
+  // Ticket attachments
+  app.use('/attachments', express.static(path.resolve(process.cwd(), 'attachments')));
+
   // Start the app
-  app.use((req, res) => nextRequestHandler(req, res));
+  app.use((req, res) => {
+    if (req.path === '/attachments/') {
+      res.redirect('/dashboard');
+    } else {
+      nextRequestHandler(req, res);
+    }
+  });
   nextApp.prepare().then(() => {
     app.listen(PORT, async () => {
       console.log(`Next.js started. ${process.env.NEXT_PUBLIC_SERVER_URL}`);
