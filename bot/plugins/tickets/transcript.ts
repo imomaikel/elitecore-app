@@ -87,8 +87,7 @@ export const _createTicketTranscript = async (authorDiscordId: string, ticketId:
     await saveFile(filePath, messages.join('\n'), 'utf-8');
     const url = filePath.substring(filePath.indexOf('/attachments'));
     return url;
-  } catch (error) {
-    console.log(error);
+  } catch {
     return false;
   }
 };

@@ -284,6 +284,10 @@ model Ticket {
   coordinates              String? @db.TinyText
   coordinatesMessageId     String? @db.TinyText
 
+  // Webhook
+  webhookId    String @db.TinyText
+  webhookToken String @db.TinyText
+
   TicketCategory   TicketCategory? @relation(fields: [ticketCategoryId], references: [id])
   ticketCategoryId String?
 

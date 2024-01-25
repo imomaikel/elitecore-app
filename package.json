@@ -11,7 +11,7 @@
     "build:server": "tsc --project tsconfig.server.json",
     "build:next": "cross-env NEXT_BUILD=true node dist/server/index.js",
     "build": "cross-env NODE_ENV=production npm run build:server && npm run build:next",
-    "dev:bot": "cross-env NODE_ENV=development nodemon --exec ts-node bot/client.ts",
+    "dev:bot": "cross-env NODE_ENV=development BOT_ONLY=true nodemon --exec ts-node bot/client.ts",
     "dev": "cross-env NODE_ENV=development nodemon",
     "start": "cross-env NODE_ENV=production node dist/server/index.js",
     "production": "pip install -r requirements.txt && npm install && npx prisma generate && npm run build && npm run start"

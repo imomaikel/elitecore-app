@@ -83,10 +83,12 @@ const Message = ({ data, lastAuthorId }: TMessage) => {
             </div>
           </div>
           {attachments.length >= 1 && (
-            <div className="w-full pl-[72px] hover:bg-gray-50/5 rounded-sm relative group">
-              <div className="absolute left-0 w-[72px] justify-center items-start mt-1 h-full text-xs text-muted-foreground hidden group-hover:flex">
-                {format(createdAt, 'HH:mm')}
-              </div>
+            <div className={cn('w-full pl-[72px] hover:bg-gray-50/5 rounded-sm relative group', showDetails && 'pl-0')}>
+              {!showDetails && (
+                <div className="absolute left-0 w-[72px] justify-center items-start mt-1 h-full text-xs text-muted-foreground hidden group-hover:flex">
+                  {format(createdAt, 'HH:mm')}
+                </div>
+              )}
               <div className="grid grid-cols-3 gap-2 w-fit items-center">
                 {attachments.map((attachment) => {
                   if (attachment.contentType?.startsWith('image/')) {

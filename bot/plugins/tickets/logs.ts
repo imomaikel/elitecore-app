@@ -1,4 +1,3 @@
-import { socketNewMessage } from '../../../server/socket';
 import logger from '../../scripts/logger';
 import { downloadAttachment } from '.';
 import prisma from '../../lib/prisma';
@@ -60,7 +59,9 @@ export const _ticketLog = async ({ message, ticketAuthorId, ticketId }: TTicketL
     });
 
     if (newMessage.ticketId) {
-      socketNewMessage(newMessage, newMessage.ticketId);
+      if (!process.env.BOT_ONLY) {
+        (await import('../../../server/socket')).socketNewMessage(newMessage, newMessage.ticketId);
+      }
     }
   } catch (error) {
     logger({

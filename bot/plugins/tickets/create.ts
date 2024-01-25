@@ -15,6 +15,7 @@ import {
 import { changeMapEmbed, enteredCoordsEmbed, selectedMapEmbed } from '../../constans/embeds';
 import { TFindReturn, findPairedAccount } from './verification';
 import { CustomResponse } from '../../constans/responses';
+import { createWebhook } from '../../scripts/webhook';
 import { colors, extraSigns } from '../../constans';
 import logger from '../../scripts/logger';
 import { Ticket } from '@prisma/client';
@@ -156,6 +157,9 @@ export const _createTicket = async ({
     });
     chn = ticketChn;
 
+    const webhook = await createWebhook(ticketChn.id);
+    if (!webhook) throw new Error('Could not create a webhook');
+
     if (supportRoles.length >= 1) {
       for (const role of supportRoles) {
         await ticketChn.permissionOverwrites.edit(role.roleId, { ViewChannel: true });
@@ -219,6 +223,8 @@ export const _createTicket = async ({
           authorUsername: user.user.username,
           categoryName: category.name,
           inviteUrl,
+          webhookId: webhook.id,
+          webhookToken: webhook.token,
           authorSteamId: pairedData?.method === 'EOS' ? pairedData.id : undefined,
           authorEOSId: pairedData?.method === 'EOS' ? pairedData.id : undefined,
           ...(userData?.id && {
