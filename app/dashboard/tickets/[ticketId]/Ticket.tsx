@@ -7,6 +7,7 @@ import ActionButton from '@/components/shared/ActionButton';
 import { Skeleton } from '@/shared/components/ui/skeleton';
 import PageWrapper from '@/components/shared/PageWrapper';
 import { Button } from '@/shared/components/ui/button';
+import SendMessage from './_components/SendMessage';
 import { FaExternalLinkAlt } from 'react-icons/fa';
 import Messages from './_components/Messages';
 import Message from './_components/Message';
@@ -150,6 +151,7 @@ const TicketPage = () => {
             setMessages((prev) => [...prev, { ...newMessage, createdAt: new Date(newMessage.createdAt) }]);
           }}
         />
+        {!ticket.closedAt && <SendMessage ticketId={ticket.id} />}
         <div className="mb-4 flex items-center justify-center flex-col">
           <Separator className="mt-6" />
           <div className="mt-2 text-xl font-semibold">This is the end of the ticket</div>
@@ -187,27 +189,27 @@ TicketPage.Skeleton = function ShowSkeleton() {
           <Skeleton className="h-7 w-[300px] mt-2" />
         </div>
         <div className="flex flex-col">
-          <Message.DetailedSkeleton />
-          <Message.OnlyTextSkeleton />
-          <Message.OnlyTextSkeleton />
-          <Message.OnlyTextSkeleton />
+          <Message.DetailedSkeleton width={58} />
+          <Message.OnlyTextSkeleton width={53} />
+          <Message.OnlyTextSkeleton width={85} />
+          <Message.OnlyTextSkeleton width={63} />
 
-          <Message.DetailedSkeleton />
-          <Message.OnlyTextSkeleton />
+          <Message.DetailedSkeleton width={56} />
+          <Message.OnlyTextSkeleton width={80} />
 
-          <Message.DetailedSkeleton />
-          <Message.OnlyTextSkeleton />
-          <Message.OnlyTextSkeleton />
-          <Message.OnlyTextSkeleton />
+          <Message.DetailedSkeleton width={26} />
+          <Message.OnlyTextSkeleton width={32} />
+          <Message.OnlyTextSkeleton width={75} />
+          <Message.OnlyTextSkeleton width={65} />
 
-          <Message.DetailedSkeleton />
-          <Message.OnlyTextSkeleton />
+          <Message.DetailedSkeleton width={53} />
+          <Message.OnlyTextSkeleton width={70} />
 
-          <Message.DetailedSkeleton />
-          <Message.OnlyTextSkeleton />
+          <Message.DetailedSkeleton width={81} />
+          <Message.OnlyTextSkeleton width={67} />
 
-          <Message.DetailedSkeleton />
-          <Message.OnlyTextSkeleton />
+          <Message.DetailedSkeleton width={83} />
+          <Message.OnlyTextSkeleton width={80} />
         </div>
         <div className="mb-4 flex items-center justify-center flex-col">
           <Separator className="mt-6" />

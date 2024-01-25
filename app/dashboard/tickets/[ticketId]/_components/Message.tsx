@@ -118,22 +118,21 @@ const Message = ({ data, lastAuthorId }: TMessage) => {
     </div>
   );
 };
-Message.OnlyTextSkeleton = function ShowSkeleton() {
-  const randomWidth = Math.floor(Math.random() * 90) + 25;
+
+Message.OnlyTextSkeleton = function ShowSkeleton({ width }: { width: number }) {
   return (
     <div className="flex mt-2 rounded-sm">
       <div className="w-full">
         <div>
           <div className="w-full font-light rounded-sm relative ml-[72px]">
-            <Skeleton className="h-6" style={{ width: `${randomWidth}%` }} />
+            <Skeleton className="h-6" style={{ width: `${width}%` }} />
           </div>
         </div>
       </div>
     </div>
   );
 };
-Message.DetailedSkeleton = function ShowSkeleton() {
-  const randomWidth = Math.floor(Math.random() * 90) + 25;
+Message.DetailedSkeleton = function ShowSkeleton({ width }: { width: number }) {
   return (
     <div className="flex mt-2 rounded-sm">
       <div className="flex items-center justify-center w-[72px]">
@@ -146,7 +145,7 @@ Message.DetailedSkeleton = function ShowSkeleton() {
         </div>
         <div>
           <div className="w-full font-light rounded-sm relative">
-            <Skeleton className="h-5 mt-1" style={{ width: `${randomWidth}%` }} />
+            <Skeleton className="h-5 mt-1" style={{ width: `${width}%` }} />
           </div>
         </div>
       </div>
