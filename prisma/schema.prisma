@@ -183,6 +183,9 @@ model Guild {
   countdownHeader              String    @default("Next wipe countdown")
   countdownDescription         String    @default(":hourglass: The **last** wipe was <old/R>\n:calendar_spiral: The **next** wipe is on <new/F>\n:timer: That will be <new/R>")
 
+  // Stats data
+  StatsData StatsData?
+
   // Roles
   serverControlRoleId String? @db.TinyText
 
@@ -200,6 +203,52 @@ model Guild {
   updatedAt DateTime   @updatedAt
 
   @@unique([guildId])
+}
+
+model StatsData {
+  id String @id @default(cuid())
+
+  categoryLabel     String  @default("Game Stats")
+  categoryChannelId String? @db.TinyText
+
+  playtimeLabel       String  @default("top-playtime")
+  playtimeChannelId   String? @db.TinyText
+  playtimePlayerMsgId String? @db.TinyText
+  playtimeUpdateMsgId String? @db.TinyText
+  playtimeTribeMsgId  String? @db.TinyText
+
+  killersLabel       String  @default("top-killers")
+  killersChannelId   String? @db.TinyText
+  killersPlayerMsgId String? @db.TinyText
+  killersUpdateMsgId String? @db.TinyText
+  killersTribeMsgId  String? @db.TinyText
+
+  deathsLabel       String  @default("top-deaths")
+  deathsChannelId   String? @db.TinyText
+  deathsPlayerMsgId String? @db.TinyText
+  deathsUpdateMsgId String? @db.TinyText
+  deathsTribeMsgId  String? @db.TinyText
+
+  kdrLabel       String  @default("top-kdr")
+  kdrChannelId   String? @db.TinyText
+  kdrPlayerMsgId String? @db.TinyText
+  kdrUpdateMsgId String? @db.TinyText
+  kdrTribeMsgId  String? @db.TinyText
+
+  wildKillsLabel       String  @default("top-wild-kills")
+  wildKillsChannelId   String? @db.TinyText
+  wildKillsPlayerMsgId String? @db.TinyText
+  wildKillsUpdateMsgId String? @db.TinyText
+  wildKillsTribeMsgId  String? @db.TinyText
+
+  tamedKillsLabel       String  @default("top-tamed-kills")
+  tamedKillsChannelId   String? @db.TinyText
+  tamedKillsPlayerMsgId String? @db.TinyText
+  tamedKillsUpdateMsgId String? @db.TinyText
+  tamedKillsTribeMsgId  String? @db.TinyText
+
+  Guild   Guild  @relation(fields: [guildId], references: [guildId])
+  guildId String @unique
 }
 
 model AdminLog {
