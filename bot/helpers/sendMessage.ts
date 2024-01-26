@@ -1,4 +1,4 @@
-import type { ActionRowBuilder, ButtonBuilder, Channel, EmbedBuilder } from 'discord.js';
+import type { ActionRowBuilder, AttachmentBuilder, ButtonBuilder, Channel, EmbedBuilder } from 'discord.js';
 import { CustomResponse } from '../constans/responses';
 import logger from '../scripts/logger';
 import { client } from '../client';
@@ -10,6 +10,7 @@ type TSendMessage = {
   messageContent?: string;
   messageEmbeds?: EmbedBuilder[];
   messageButtons?: ActionRowBuilder<ButtonBuilder>[];
+  attachments?: AttachmentBuilder[];
 };
 
 /**
@@ -21,6 +22,7 @@ export const sendMessage = async ({
   messageEmbeds,
   editMessageId,
   messageButtons,
+  attachments,
 }: TSendMessage): Promise<CustomResponse<'sendMessage'>> => {
   const channel = typeof channelOrId === 'string' ? client.channels.cache.get(channelOrId) : channelOrId;
 
@@ -53,6 +55,7 @@ export const sendMessage = async ({
         content: messageContent,
         embeds: messageEmbeds,
         components: messageButtons,
+        files: attachments,
       });
     } else {
       // Send a new message
@@ -60,6 +63,7 @@ export const sendMessage = async ({
         content: messageContent,
         embeds: messageEmbeds,
         components: messageButtons,
+        files: attachments,
       });
       newMessageId = newMessage.id;
     }

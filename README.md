@@ -38,6 +38,7 @@ The application is being rewritten. Update soon.
 
 The bot was built using module [discord.js](https://discord.js.org/)
 
+- Image generation of in-game leader board using [node-html-to-image](https://www.npmjs.com/package/node-html-to-image/v/4.0.0) and [handlebars](https://handlebarsjs.com/)
 - A custom widget that shows each server's status with player count and an option to join it
 - Realtime Discord notifications when server status changes
 - A custom widget that allows you to start, stop, or restart any server if you have permission

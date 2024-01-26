@@ -1,5 +1,5 @@
 import { EmbedBuilder } from 'discord.js';
-import { colors } from '.';
+import { colors, extraSigns } from '.';
 
 export const errorEmbed = (description: string, toUsername?: string) => {
   const embed = new EmbedBuilder()
@@ -37,4 +37,10 @@ export const changeMapEmbed = () => {
   return new EmbedBuilder()
     .setColor(colors.green)
     .setDescription('**Map selected!**\nIf you did it by mistake feel free to change it below.');
+};
+
+export const statsUpdateEmbed = () => {
+  return new EmbedBuilder()
+    .setColor(colors.purple)
+    .setFooter({ text: `${extraSigns.zap} Auto update every 30 minutes` });
 };
