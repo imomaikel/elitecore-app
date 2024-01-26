@@ -35,11 +35,11 @@ const ItemControl = () => {
   return (
     <div className="flex flex-col space-y-3 mt-3">
       <div className="flex flex-col space-y-1">
-        <Label htmlFor="ase">Show ARK: Evolved Items</Label>
+        <Label htmlFor="ase">Show ARK: Evolved Items (ASE)</Label>
         <Switch id="ase" checked={isAse} onCheckedChange={() => onItemsChange('ase')} />
       </div>
       <div className="flex flex-col space-y-1">
-        <Label htmlFor="asa">Show ARK: Ascended Items</Label>
+        <Label htmlFor="asa">Show ARK: Ascended Items (ASA)</Label>
         <Switch id="asa" checked={isAsa} onCheckedChange={() => onItemsChange('asa')} />
       </div>
     </div>

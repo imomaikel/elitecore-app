@@ -21,7 +21,7 @@ type TUseTebex = {
   authRedirectUrl: string;
   setAuthRedirectUrl: (path: string) => void;
 
-  updatePrice: () => void;
+  _updatePrice: () => void;
 
   applyGiftCard: (code: string) => void;
   removeGiftCard: (code: string) => void;
@@ -63,7 +63,8 @@ export const useTebex = create<TUseTebex>()(
           (category) =>
             category.itemType === get().showItemType ||
             get().showItemType === 'all' ||
-            (category.itemType === 'always' && get().showItemType !== 'none'),
+            (category.itemType === 'always' && get().showItemType !== 'none') ||
+            category.itemType === 'other',
         ),
 
       basket: {
@@ -90,7 +91,7 @@ export const useTebex = create<TUseTebex>()(
       },
       setBasket: (data) => set(() => ({ basket: data })),
 
-      updatePrice: () => {
+      _updatePrice: () => {
         const itemsInBasket = get().basket?.packages.map((item) => {
           const productData = get()
             .categoryList.find((category) => category.packages.find((entry) => entry.id === item.id))

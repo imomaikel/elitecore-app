@@ -4,8 +4,11 @@ import { Alert, AlertDescription, AlertTitle } from '@/shared/components/ui/aler
 import { useCurrentUser } from '@/hooks/use-current-user';
 import { Button } from '@/shared/components/ui/button';
 import { useCurrency } from '@/hooks/use-currency';
+import { FaExternalLinkAlt } from 'react-icons/fa';
+import GiftCardApplied from './GiftCardApplied';
 import { FaDollarSign } from 'react-icons/fa6';
 import { useTebex } from '@/hooks/use-tebex';
+import { usePrice } from '@/hooks/use-price';
 import { useSheet } from '@/hooks/use-sheet';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -21,12 +24,13 @@ const WEBSTORE_IDENTIFIER = process.env.NEXT_PUBLIC_TEBEX_WEBSTORE_IDENTIFIER;
 const BASE_URL = process.env.NEXT_PUBLIC_TEBEX_BASE_URL;
 
 const ShoppingCart = () => {
-  const { categoryList, setBasket, basket, updatePrice } = useTebex();
+  const { categoryList, setBasket, basket } = useTebex();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isDataReady, setIsDataReady] = useState(false);
   const { sessionStatus, user } = useCurrentUser();
   const { isOpen, onOpenChange } = useSheet();
   const { formatPrice } = useCurrency();
+  const { updatePrice } = usePrice();
   const router = useRouter();
 
   useEffect(() => {
@@ -48,7 +52,7 @@ const ShoppingCart = () => {
   useEffect(() => {
     updatePrice();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen, basket?.packages]);
+  }, [isOpen]);
 
   if (!isDataReady) return;
 
@@ -99,7 +103,10 @@ const ShoppingCart = () => {
                   <div className="space-x-4 z-10 relative">
                     {sessionStatus === 'authenticated' && user ? (
                       <Button asChild>
-                        <Link href={`https://checkout.tebex.io/checkout/${user.basketIdent}`}>CHECKOUT</Link>
+                        <Link href={`https://checkout.tebex.io/checkout/${user.basketIdent}`}>
+                          {' '}
+                          CHECKOUT <FaExternalLinkAlt className="h-4 w-4 ml-2" />
+                        </Link>
                       </Button>
                     ) : (
                       <Button onClick={() => setIsDialogOpen(true)}>Login to proceed</Button>
@@ -130,6 +137,7 @@ const ShoppingCart = () => {
                       <div className="h-[1px] flex-1 bg-primary/40 mx-4"></div>
                       <span>{formatPrice(basket.total_price)}</span>
                     </div>
+                    {basket.giftcards.length >= 1 && <GiftCardApplied className="my-4" />}
                     <Alert className="my-2 z-10 relative">
                       <div className="bg-gradient-to-r from-red-500 to-red-800 w-[75%] h-[50%] left-[50%] -translate-x-[50%]  blur-[150px] absolute top-0 opacity-75 z-0" />
                       <FaDollarSign className="h-4 w-4" />

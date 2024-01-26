@@ -1,4 +1,5 @@
 'use client';
+import GiftCardApplied from '@/components/shared/GiftCardApplied';
 import { Separator } from '@/shared/components/ui/separator';
 import ActionButton from '@/components/shared/ActionButton';
 import ControlCartItem from './_components/ControlCartItem';
@@ -8,7 +9,9 @@ import { Button } from '@/shared/components/ui/button';
 import { Input } from '@/shared/components/ui/input';
 import { Label } from '@/shared/components/ui/label';
 import { useCurrency } from '@/hooks/use-currency';
+import { FaExternalLinkAlt } from 'react-icons/fa';
 import { useTebex } from '@/hooks/use-tebex';
+import { usePrice } from '@/hooks/use-price';
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { toast } from 'sonner';
@@ -20,6 +23,7 @@ const CartPage = () => {
   const [giftCard, setGiftCard] = useState('');
   const { basket, categoryList, applyGiftCard: clientApplyGiftCard, removeGiftCard: clientRemoveGiftCard } = useTebex();
   const { formatPrice } = useCurrency();
+  const { updatePrice } = usePrice();
   const { user } = useCurrentUser();
 
   useEffect(() => setIsMounted(true), []);
@@ -29,6 +33,7 @@ const CartPage = () => {
       if (data.status === 'success') {
         toast.success(data.message);
         clientApplyGiftCard(data.giftCard);
+        updatePrice(true);
       } else {
         toast.error(`Something went wrong! ${data.message}`);
       }
@@ -42,6 +47,7 @@ const CartPage = () => {
       if (data.status === 'success') {
         toast.success(data.message);
         clientRemoveGiftCard(data.giftCard);
+        updatePrice();
       } else {
         toast.error(`Something went wrong! ${data.message}`);
       }
@@ -132,7 +138,9 @@ const CartPage = () => {
         <div className="relative z-10 flex items-center space-x-6">
           <h1 className="text-4xl tracking-wide font-bold">Your Cart</h1>
           <Button asChild>
-            <Link href={`https://checkout.tebex.io/checkout/${user?.basketIdent}`}>CHECKOUT</Link>
+            <Link href={`https://checkout.tebex.io/checkout/${user?.basketIdent}`}>
+              CHECKOUT <FaExternalLinkAlt className="h-4 w-4 ml-2" />
+            </Link>
           </Button>
         </div>
         <div className="relative z-10">
@@ -160,6 +168,7 @@ const CartPage = () => {
             </div>
           </div>
         </div>
+        {basket.giftcards.length >= 1 && <GiftCardApplied />}
         <Separator />
         {/* Coupons */}
         <div className="relative z-10">
@@ -220,6 +229,14 @@ const CartPage = () => {
               );
             })}
           </div>
+        </div>
+        {/* Second checkout */}
+        <div className="!mt-16">
+          <Button asChild className="max-w-md w-full">
+            <Link href={`https://checkout.tebex.io/checkout/${user?.basketIdent}`}>
+              CHECKOUT <FaExternalLinkAlt className="h-4 w-4 ml-2" />
+            </Link>
+          </Button>
         </div>
         <div className="bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 absolute w-[110px] h-[250px] rotate-45 -top-12 left-8 z-0 blur-[200px]" />
       </div>

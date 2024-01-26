@@ -19,6 +19,7 @@ const DashboardPage = () => {
               x: 0,
               opacity: 1,
             }}
+            viewport={{ once: true }}
             className="text-2xl md:text-4xl font-bold mb-2 text-primary z-10 relative whitespace-nowrap"
           >
             Welcome to the EliteCore
@@ -35,6 +36,7 @@ const DashboardPage = () => {
             transition={{
               type: 'tween',
             }}
+            viewport={{ once: true }}
             className="max-w-[480px] whitespace-break-spaces text-justify z-10 relative"
           >
             EliteCore is a x1000 cluster with a friendly and healthy community. In order to get you started and ready

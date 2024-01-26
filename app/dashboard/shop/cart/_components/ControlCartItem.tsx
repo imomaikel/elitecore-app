@@ -7,6 +7,7 @@ import { Input } from '@/shared/components/ui/input';
 import { Label } from '@/shared/components/ui/label';
 import { useCurrency } from '@/hooks/use-currency';
 import { useTebex } from '@/hooks/use-tebex';
+import { usePrice } from '@/hooks/use-price';
 import { useState } from 'react';
 import Image from 'next/image';
 import { toast } from 'sonner';
@@ -19,10 +20,11 @@ type TControlCartItem = {
   productData: Package;
 };
 const ControlCartItem = ({ basketItem, category, productData }: TControlCartItem) => {
-  const { removeFromBasket: clientRemoveFromBasket, setBasket, updatePrice, addToBasket } = useTebex();
+  const { removeFromBasket: clientRemoveFromBasket, setBasket, addToBasket } = useTebex();
   const [quantity, setQuantity] = useState(basketItem.in_basket.quantity);
   const { formatPrice } = useCurrency();
   const { user } = useCurrentUser();
+  const { updatePrice } = usePrice();
 
   const { mutate: removeFromBasket, isLoading: isRemoveLoading } = trpc.removeFromBasket.useMutation({
     onSuccess: (data) => {

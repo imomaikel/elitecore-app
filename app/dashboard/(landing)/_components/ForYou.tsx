@@ -42,6 +42,7 @@ const ForYou = () => {
             x: 0,
             opacity: 1,
           }}
+          viewport={{ once: true }}
           className="font-semibold text-2xl md:text-2xl text-primary"
         >
           For You
@@ -55,6 +56,7 @@ const ForYou = () => {
             x: 0,
             opacity: 1,
           }}
+          viewport={{ once: true }}
           className="text-muted-foreground text-sm"
         >
           Click on an image to see the full description
