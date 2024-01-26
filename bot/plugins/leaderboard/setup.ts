@@ -1,12 +1,12 @@
-import { StatsData } from '@prisma/client';
 import { ChannelType, PermissionFlagsBits } from 'discord.js';
+import { LeaderboardData } from '@prisma/client';
 import prisma from '../../lib/prisma';
 import { client } from '../../client';
 import { channelsSchema } from '.';
 
-type TStatsDataField = Exclude<keyof StatsData, 'id' | 'guildId'>;
+type TLeaderboardDataField = Exclude<keyof LeaderboardData, 'id' | 'guildId'>;
 
-export const _setupStats = async (guildId: string): Promise<boolean> => {
+export const _setupLeaderboard = async (guildId: string): Promise<boolean> => {
   if (!client.user) return false;
   const guild = client.guilds.cache.get(guildId);
   if (!guild?.id) return false;
@@ -14,28 +14,28 @@ export const _setupStats = async (guildId: string): Promise<boolean> => {
   const guildData = await prisma.guild.findUnique({
     where: { guildId },
     include: {
-      StatsData: true,
+      LeaderboardData: true,
     },
   });
 
   if (!guildData) return false;
-  if (!guildData.StatsData?.id) {
+  if (!guildData.LeaderboardData?.id) {
     await prisma.guild.update({
       where: { guildId },
       data: {
-        StatsData: {
+        LeaderboardData: {
           create: {},
         },
       },
     });
-    return _setupStats(guildId);
+    return _setupLeaderboard(guildId);
   }
 
-  const dbStats = guildData.StatsData;
+  const dbLeaderboard = guildData.LeaderboardData;
 
   // Delete old channels
   for await (const schema of channelsSchema) {
-    const channelId = dbStats[schema.channelId];
+    const channelId = dbLeaderboard[schema.channelId];
     if (!channelId) continue;
     await client.channels.cache
       .get(channelId)
@@ -44,7 +44,7 @@ export const _setupStats = async (guildId: string): Promise<boolean> => {
   }
 
   // Create new
-  const channelsToUpdate: Array<Partial<Record<TStatsDataField, string>>> = [];
+  const channelsToUpdate: Array<Partial<Record<TLeaderboardDataField, string>>> = [];
   let categoryId: string | undefined = undefined;
   let error = false;
   for await (const schema of channelsSchema) {
@@ -53,7 +53,7 @@ export const _setupStats = async (guildId: string): Promise<boolean> => {
       .create({
         type: schema.type === 'CATEGORY' ? ChannelType.GuildCategory : ChannelType.GuildText,
         parent: categoryId ?? undefined,
-        name: dbStats[schema.label]!,
+        name: dbLeaderboard[schema.label]!,
         permissionOverwrites: [
           {
             id: guild.roles.everyone,
@@ -66,7 +66,7 @@ export const _setupStats = async (guildId: string): Promise<boolean> => {
         ],
       })
       .then(async (channel) => {
-        dbStats[schema.channelId] = channel.id;
+        dbLeaderboard[schema.channelId] = channel.id;
         channelsToUpdate.push({
           [schema.channelId]: channel.id,
         });
@@ -84,7 +84,7 @@ export const _setupStats = async (guildId: string): Promise<boolean> => {
   // Update ids
   if (channelsToUpdate.length >= 1) {
     const toUpdate = channelsToUpdate.reduce((a, b) => Object.assign(a, b), {});
-    await prisma.statsData.update({
+    await prisma.leaderboardData.update({
       where: { guildId },
       data: toUpdate,
     });

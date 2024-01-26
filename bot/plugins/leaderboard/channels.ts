@@ -1,20 +1,20 @@
-import { StatsData } from '@prisma/client';
+import { LeaderboardData } from '@prisma/client';
 import { TImages } from './images';
 
-type TStatsDataFields = keyof StatsData;
+type TLeaderboardFields = keyof LeaderboardData;
 
 type TCategoryChannel = {
   type: 'CATEGORY';
-  label: TStatsDataFields;
-  channelId: TStatsDataFields;
+  label: TLeaderboardFields;
+  channelId: TLeaderboardFields;
 };
 type TTextChannel = {
   type: 'TEXT';
-  label: TStatsDataFields;
-  channelId: TStatsDataFields;
-  playerMessageId: TStatsDataFields;
-  updateMessageId: TStatsDataFields;
-  tribeMessageId: TStatsDataFields;
+  label: TLeaderboardFields;
+  channelId: TLeaderboardFields;
+  playerMessageId: TLeaderboardFields;
+  updateMessageId: TLeaderboardFields;
+  tribeMessageId: TLeaderboardFields;
   playersImage: TImages;
   tribesImage: TImages;
 };

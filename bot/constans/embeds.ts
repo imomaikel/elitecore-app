@@ -39,7 +39,7 @@ export const changeMapEmbed = () => {
     .setDescription('**Map selected!**\nIf you did it by mistake feel free to change it below.');
 };
 
-export const statsUpdateEmbed = () => {
+export const leaderboardUpdateEmbed = () => {
   return new EmbedBuilder()
     .setColor(colors.purple)
     .setFooter({ text: `${extraSigns.zap} Auto update every 30 minutes` });

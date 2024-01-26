@@ -184,7 +184,7 @@ model Guild {
   countdownDescription         String    @default(":hourglass: The **last** wipe was <old/R>\n:calendar_spiral: The **next** wipe is on <new/F>\n:timer: That will be <new/R>")
 
   // Stats data
-  StatsData StatsData?
+  LeaderboardData LeaderboardData?
 
   // Roles
   serverControlRoleId String? @db.TinyText
@@ -205,7 +205,7 @@ model Guild {
   @@unique([guildId])
 }
 
-model StatsData {
+model LeaderboardData {
   id String @id @default(cuid())
 
   categoryLabel     String  @default("Game Stats")

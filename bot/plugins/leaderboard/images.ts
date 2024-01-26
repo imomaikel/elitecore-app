@@ -4,10 +4,10 @@ import createImage from 'node-html-to-image';
 import logger from '../../scripts/logger';
 import { resolve } from 'path';
 
-const GENERATE_PATH = resolve(process.cwd(), 'bot', 'plugins', 'stats', 'images', 'generated');
-const STATIC_IMAGES_PATH = resolve(process.cwd(), 'bot', 'plugins', 'stats', 'images', 'static');
+const GENERATE_PATH = resolve(process.cwd(), 'bot', 'plugins', 'leaderboard', 'images', 'generated');
+const STATIC_IMAGES_PATH = resolve(process.cwd(), 'bot', 'plugins', 'leaderboard', 'images', 'static');
 
-const HTML_SCHEMA = readFileSync(resolve(process.cwd(), 'bot', 'plugins', 'stats', 'schema.html'));
+const HTML_SCHEMA = readFileSync(resolve(process.cwd(), 'bot', 'plugins', 'leaderboard', 'schema.html'));
 const PLAYERS_IMAGE = readFileSync(resolve(STATIC_IMAGES_PATH, 'player.txt'), 'utf-8');
 const BG_IMAGE = readFileSync(resolve(STATIC_IMAGES_PATH, 'background.txt'), 'utf-8');
 const TRIBES_IMAGE = readFileSync(resolve(STATIC_IMAGES_PATH, 'tribe.txt'), 'utf-8');

@@ -1,7 +1,7 @@
 import { getPlayersData, getTribesData } from '../../lib/mysql';
-import { createImages, updateStats } from '.';
+import { createImages, updateLeaderboard } from '.';
 
-export const _createStats = async () => {
+export const _createLeaderboard = async () => {
   const players = await getPlayersData();
   const tribes = await getTribesData();
 
@@ -39,5 +39,5 @@ export const _createStats = async () => {
 
   if (!imagesCreated) return null;
 
-  return await updateStats();
+  return await updateLeaderboard();
 };
