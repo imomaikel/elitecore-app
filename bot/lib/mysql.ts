@@ -1,6 +1,8 @@
 import {
   MYSQL_EOS_QUERY,
+  MYSQL_PLAYERS_DATA,
   MYSQL_STEAM_QUERY,
+  MYSQL_TRIBES_DATA,
   MYSQL_TRIBE_LOGS_QUERY,
   MYSQL_TRIBE_MEMBER_QUERY,
 } from '../constans/types';
@@ -119,8 +121,31 @@ export const getTribeData = async (steamId: string) => {
 
 export const getTableCreateTime = async () => {
   const query = await db(
-    'SELECT CREATE_TIME as createTime FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = "tribes" AND TABLE_NAME = "wtribes_log";',
+    'SELECT CREATE_TIME AS createTime FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = "tribes" AND TABLE_NAME = "wtribes_log";',
   );
   const data = typeof query === 'object' ? (query as { createTime: Date }[]) : null;
+  return data;
+};
+
+export const getPlayersData = async () => {
+  const query = await db(
+    `SELECT 
+    pk, steam_id AS steamId, player_id AS playerId,
+    player_name AS playerName, tribe_id AS tribeId,
+    play_time AS playTime, online_status AS onlineStatus,
+    players_kills AS playersKills, deaths, tamed_dinos_kills AS tamedDinosKills,
+     wild_dinos_kills AS wildDinosKills FROM gog_stats_ark.personal_stats;`,
+  );
+  const data = typeof query === 'object' ? (query as MYSQL_PLAYERS_DATA[]) : null;
+  return data;
+};
+export const getTribesData = async () => {
+  const query = await db(
+    `SELECT pk, tribe_id AS tribeId, tribe_name AS tribeName,
+     players_kills AS playersKills, players_deaths AS playersDeaths,
+     wild_dinos_kills AS wildDinosKills, tamed_dinos_kills AS tamedDinosKills
+     FROM gog_stats_ark.tribe_stats;`,
+  );
+  const data = typeof query === 'object' ? (query as MYSQL_TRIBES_DATA[]) : null;
   return data;
 };

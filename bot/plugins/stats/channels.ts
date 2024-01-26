@@ -1,4 +1,5 @@
 import { StatsData } from '@prisma/client';
+import { TImages } from './images';
 
 type TStatsDataFields = keyof StatsData;
 
@@ -14,6 +15,8 @@ type TTextChannel = {
   playerMessageId: TStatsDataFields;
   updateMessageId: TStatsDataFields;
   tribeMessageId: TStatsDataFields;
+  playersImage: TImages;
+  tribesImage: TImages;
 };
 type TChannels = TCategoryChannel | TTextChannel;
 export const _channelsSchema: TChannels[] = [
@@ -29,6 +32,8 @@ export const _channelsSchema: TChannels[] = [
     updateMessageId: 'playtimeUpdateMsgId',
     playerMessageId: 'playtimePlayerMsgId',
     tribeMessageId: 'playtimeTribeMsgId',
+    playersImage: 'playersPlaytime.jpg',
+    tribesImage: 'tribesPlaytime.jpg',
   },
   {
     type: 'TEXT',
@@ -37,6 +42,8 @@ export const _channelsSchema: TChannels[] = [
     updateMessageId: 'killersUpdateMsgId',
     playerMessageId: 'killersPlayerMsgId',
     tribeMessageId: 'killersTribeMsgId',
+    playersImage: 'playersKills.jpg',
+    tribesImage: 'tribesKills.jpg',
   },
   {
     type: 'TEXT',
@@ -45,6 +52,8 @@ export const _channelsSchema: TChannels[] = [
     updateMessageId: 'deathsUpdateMsgId',
     playerMessageId: 'deathsPlayerMsgId',
     tribeMessageId: 'deathsTribeMsgId',
+    playersImage: 'playersDeaths.jpg',
+    tribesImage: 'tribesDeaths.jpg',
   },
   {
     type: 'TEXT',
@@ -53,6 +62,8 @@ export const _channelsSchema: TChannels[] = [
     updateMessageId: 'kdrUpdateMsgId',
     playerMessageId: 'kdrPlayerMsgId',
     tribeMessageId: 'kdrTribeMsgId',
+    playersImage: 'playersKDR.jpg',
+    tribesImage: 'tribesKDR.jpg',
   },
   {
     type: 'TEXT',
@@ -61,6 +72,8 @@ export const _channelsSchema: TChannels[] = [
     updateMessageId: 'wildKillsUpdateMsgId',
     playerMessageId: 'wildKillsPlayerMsgId',
     tribeMessageId: 'wildKillsTribeMsgId',
+    playersImage: 'playersWildDinosKills.jpg',
+    tribesImage: 'tribesWildDinosKills.jpg',
   },
   {
     type: 'TEXT',
@@ -69,5 +82,7 @@ export const _channelsSchema: TChannels[] = [
     updateMessageId: 'tamedKillsUpdateMsgId',
     playerMessageId: 'tamedKillsPlayerMsgId',
     tribeMessageId: 'tamedKillsTribeMsgId',
+    playersImage: 'playersTamedDinosKills.jpg',
+    tribesImage: 'tribesTamedDinosKills.jpg',
   },
 ];

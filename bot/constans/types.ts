@@ -51,3 +51,29 @@ export type MYSQL_TRIBE_MEMBER_QUERY = {
   players_deaths: number;
   tamed_dinos_deaths: number;
 };
+
+export type MYSQL_PLAYERS_DATA = {
+  pk: number;
+  steamId: string;
+  playerId: number;
+  playerName: string;
+  tribeId: number;
+  playTime: number;
+  onlineStatus: number;
+  playersKills: number;
+  deaths: number;
+  tamedDinosKills: number;
+  wildDinosKills: number;
+  kdr?: number;
+};
+export type MYSQL_TRIBES_DATA = {
+  pk: number;
+  tribeId: number;
+  tribeName: string;
+  playersKills: number;
+  playersDeaths: number;
+  wildDinosKills: number;
+  tamedDinosKills: number;
+  kdr?: number;
+  playTime?: number;
+};

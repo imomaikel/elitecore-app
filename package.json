@@ -55,6 +55,7 @@
     "net": "^1.0.2",
     "next": "14.0.4",
     "next-auth": "4.24.5",
+    "node-html-to-image": "^4.0.0",
     "rcon-client": "^4.2.4",
     "react": "^18",
     "react-dom": "^18",

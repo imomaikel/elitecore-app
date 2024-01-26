@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Stats</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Roboto';
+        color: white;
+      }
+      body,
+      #bg img {
+        width: 1920px;
+        height: 1080px;
+      }
+      #bg {
+        position: relative;
+      }
+      #blur {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        background-color: rgba(0, 0, 0, 0.45);
+        backdrop-filter: blur(8px);
+      }
+      #wrapper {
+        position: absolute;
+        top: 0;
+        width: 100%;
+        height: 100%;
+      }
+      #content {
+        height: 100%;
+        width: 100%;
+        position: relative;
+        padding: 32px;
+        display: flex;
+        flex-direction: column;
+      }
+      #header {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .separator {
+        margin: 16px 0;
+        height: 1px;
+      }
+      #data {
+        height: 100%;
+        width: 90%;
+        margin: 0 auto;
+        position: relative;
+      }
+      #title {
+        position: absolute;
+        right: 0;
+        top: -64px;
+        font-weight: 700;
+        font-size: 36px;
+      }
+      #stats {
+        height: 100%;
+        display: grid;
+        grid-template-rows: 10;
+        gap: 24px;
+      }
+      .entry {
+        background: rgba(0, 0, 0, 0.5);
+        border-radius: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        display: flex;
+        padding: 0 16px;
+        height: 100%;
+        align-items: center;
+        position: relative;
+      }
+      .position {
+        font-size: 48px;
+        width: 20%;
+      }
+      .position::before {
+        content: '# ';
+      }
+      .name {
+        text-align: center;
+        font-size: 40px;
+        width: 60%;
+      }
+      .score {
+        width: 20%;
+        font-size: 32px;
+        text-align: right;
+      }
+      #stats :first-child .position {
+        color: gold;
+        font-size: 52px;
+      }
+      #crown {
+        position: absolute;
+        rotate: -45deg;
+        bottom: 12px;
+        left: -82px;
+      }
+    </style>
+  </head>
+  <body>
+    <div>
+      <div id="bg">
+        <img src="{{BG_IMAGE}}" />
+        <div id="blur"></div>
+      </div>
+      <div id="wrapper">
+        <div id="content">
+          <div id="header">
+            <img src="{{headerImage}}" />
+          </div>
+          <div class="separator"></div>
+          <div id="data">
+            <div id="title">{{title}}</div>
+            <div id="stats">
+              {{#each rows}}
+              <div class="entry">
+                {{#unless @index}}
+                <div id="crown">
+                  <img src="{{../CROWN_IMAGE}}" />
+                </div>
+                {{/unless}}
+                <div class="position">{{increment @index}}</div>
+                <div class="name">{{name}}</div>
+                <div class="score">{{score}}</div>
+              </div>
+              {{/each}}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
