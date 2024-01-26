@@ -3,11 +3,11 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/shared/components/ui/
 import { FaCartPlus, FaCircleInfo } from 'react-icons/fa6';
 import { Skeleton } from '@/shared/components/ui/skeleton';
 import { useCurrentUser } from '@/hooks/use-current-user';
+import { usePathname, useRouter } from 'next/navigation';
 import { useCurrency } from '@/hooks/use-currency';
 import { useSheet } from '@/hooks/use-sheet';
 import { useTebex } from '@/hooks/use-tebex';
 import { ImSpinner9 } from 'react-icons/im';
-import { useRouter } from 'next/navigation';
 import ActionDialog from './ActionDialog';
 import { cn } from '@/shared/lib/utils';
 import { useState } from 'react';
@@ -30,6 +30,7 @@ const ProductBox = ({ basePrice, description, imageURL, name, productId, gradien
   const { onOpen: openShoppingCart } = useSheet();
   const { formatPrice } = useCurrency();
   const { user } = useCurrentUser();
+  const pathname = usePathname();
   const router = useRouter();
 
   const categoryList = getCategoryList();
@@ -61,7 +62,7 @@ const ProductBox = ({ basePrice, description, imageURL, name, productId, gradien
 
   const onAdd = () => {
     if (user?.id) {
-      if (!isLoading) addToBasket({ productId });
+      if (!isLoading) addToBasket({ productId, pathname });
     } else {
       const product = categoryList
         .filter((category) => category.packages)

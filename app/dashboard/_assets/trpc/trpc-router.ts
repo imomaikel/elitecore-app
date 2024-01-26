@@ -282,33 +282,36 @@ export const appRouter = router({
 
     return response;
   }),
-  addToBasket: authorizedProcedure.input(z.object({ productId: z.number() })).mutation(async ({ ctx, input }) => {
-    const { req, user, prisma } = ctx;
-    const { productId } = input;
-
-    if (!user) throw new TRPCError({ code: 'BAD_REQUEST' });
-
-    const response = await addProduct({
-      ipAddress: req.ip,
-      productId: productId,
-      user,
-    });
-
-    if (response.status === 'success' && !user.steamId && user.basketIdent) {
-      const getBasket = await GetBasket(user.basketIdent);
-      await prisma.user.update({
-        where: { discordId: user.discordId },
-        data: { steamId: getBasket.username_id },
-      });
-    }
-
-    return response;
-  }),
-  addAsGift: authorizedProcedure
-    .input(z.object({ productId: z.number(), giftForUserId: z.string() }))
+  addToBasket: authorizedProcedure
+    .input(z.object({ productId: z.number(), pathname: z.string().min(1) }))
     .mutation(async ({ ctx, input }) => {
       const { req, user, prisma } = ctx;
-      const { productId, giftForUserId } = input;
+      const { productId, pathname } = input;
+
+      if (!user) throw new TRPCError({ code: 'BAD_REQUEST' });
+
+      const response = await addProduct({
+        ipAddress: req.ip,
+        productId: productId,
+        user,
+        pathname,
+      });
+
+      if (response.status === 'success' && !user.steamId && user.basketIdent) {
+        const getBasket = await GetBasket(user.basketIdent);
+        await prisma.user.update({
+          where: { discordId: user.discordId },
+          data: { steamId: getBasket.username_id },
+        });
+      }
+
+      return response;
+    }),
+  addAsGift: authorizedProcedure
+    .input(z.object({ productId: z.number(), giftForUserId: z.string(), pathname: z.string().min(1) }))
+    .mutation(async ({ ctx, input }) => {
+      const { req, user, prisma } = ctx;
+      const { productId, giftForUserId, pathname } = input;
 
       if (!user) throw new TRPCError({ code: 'BAD_REQUEST' });
       const response = await addProduct({
@@ -316,6 +319,7 @@ export const appRouter = router({
         productId: productId,
         user,
         giftForUserId,
+        pathname,
       });
 
       if (response.status === 'success' && !user.steamId && user.basketIdent) {

@@ -7,12 +7,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/shared/components/ui/dialog';
+import { redirect, usePathname, useRouter } from 'next/navigation';
 import { Separator } from '@/shared/components/ui/separator';
 import ActionButton from '@/components/shared/ActionButton';
 import ActionDialog from '@/components/shared/ActionDialog';
 import { Skeleton } from '@/shared/components/ui/skeleton';
 import { Button } from '@/shared/components/ui/button';
-import { redirect, useRouter } from 'next/navigation';
 import { Input } from '@/shared/components/ui/input';
 import { IoArrowBackOutline } from 'react-icons/io5';
 import { useCurrency } from '@/hooks/use-currency';
@@ -39,6 +39,7 @@ const ProductPage = ({ params }: TProductPage) => {
   const { onOpen: openShoppingCart } = useSheet();
   const [steamId, setSteamId] = useState('');
   const { formatPrice } = useCurrency();
+  const pathname = usePathname();
   const router = useRouter();
 
   const { productId } = params;
@@ -149,7 +150,7 @@ const ProductPage = ({ params }: TProductPage) => {
                 <div className="flex flex-col">
                   <Button
                     className="font-medium text-lg uppercase"
-                    onClick={() => addToBasket({ productId: product.id })}
+                    onClick={() => addToBasket({ productId: product.id, pathname })}
                     disabled={isLoading}
                   >
                     <FaCartPlus className="h-6 w-6 mr-2" /> Add to cart
@@ -189,7 +190,7 @@ const ProductPage = ({ params }: TProductPage) => {
                 Cancel
               </Button>
               <ActionButton
-                onClick={() => addAsGift({ productId: product.id, giftForUserId: steamId })}
+                onClick={() => addAsGift({ productId: product.id, giftForUserId: steamId, pathname })}
                 disabled={isGiftLoading}
               >
                 Add as a Gift

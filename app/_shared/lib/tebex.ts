@@ -1,6 +1,4 @@
 'use server';
-import { NextAuthUser } from '../../../next-auth';
-import prisma from './prisma';
 import {
   CreateBasket,
   SetWebstoreIdentifier,
@@ -17,6 +15,8 @@ import {
   Remove,
   GiftPackage,
 } from 'tebex_headless';
+import { NextAuthUser } from '../../../next-auth';
+import prisma from './prisma';
 
 export const shopGetCategories = async (): Promise<Category[] | []> => {
   SetWebstoreIdentifier(process.env.NEXT_PUBLIC_TEBEX_WEBSTORE_IDENTIFIER!);
@@ -42,14 +42,10 @@ export const shopGetCategory = async (categoryId: number): Promise<Category | nu
 
 type TCreateBasket = {
   userId: string;
-  paymentSuccessPath: string;
-  paymentCancelPath: string;
   ipAddress: string;
   basketAuthRedirectUrl: string;
 };
 const createBasket = async ({
-  paymentSuccessPath,
-  paymentCancelPath,
   ipAddress,
   userId,
   basketAuthRedirectUrl,
@@ -60,9 +56,18 @@ const createBasket = async ({
   try {
     SetWebstoreIdentifier(process.env.NEXT_PUBLIC_TEBEX_WEBSTORE_IDENTIFIER!);
     SetPrivateKey(process.env.TEBEX_WEBSTORE_PRIVATE_KEY!);
-    const newBasket = await CreateBasket(paymentSuccessPath, paymentCancelPath, undefined, true, ipAddress);
+    const newBasket = await CreateBasket(
+      `${process.env.TEBEX_AFTER_PAYMENT_SUCCESS}`,
+      `${process.env.TEBEX_AFTER_PAYMENT_CANCEL}`,
+      undefined,
+      true,
+      ipAddress,
+    );
 
-    const basketAuthUrl = await GetBasketAuthUrl(newBasket.ident, basketAuthRedirectUrl);
+    const basketAuthUrl = await GetBasketAuthUrl(
+      newBasket.ident,
+      `${process.env.NEXT_PUBLIC_SERVER_URL}${basketAuthRedirectUrl}`,
+    );
 
     if (!basketAuthUrl || !basketAuthUrl[0]) {
       return {
@@ -273,6 +278,7 @@ type TAddProduct = {
   user: NextAuthUser;
   productId: number;
   giftForUserId?: string;
+  pathname: string;
 };
 type TAddProductResponse =
   | {
@@ -294,6 +300,7 @@ export const addProduct = async ({
   user,
   productId,
   giftForUserId,
+  pathname,
 }: TAddProduct): Promise<TAddProductResponse> => {
   if (!ipAddress || !user.id) {
     return {
@@ -315,10 +322,8 @@ export const addProduct = async ({
     };
   } else if (addedProduct.message === 'Basket does not exist' || addedProduct.message === 'Basket not found') {
     const newBasket = await createBasket({
-      basketAuthRedirectUrl: process.env.TEBEX_AFTER_BASKET_AUTH!,
+      basketAuthRedirectUrl: pathname,
       ipAddress,
-      paymentCancelPath: process.env.TEBEX_AFTER_PAYMENT_CANCEL!,
-      paymentSuccessPath: process.env.TEBEX_AFTER_PAYMENT_SUCCESS!,
       userId: user.id,
     });
     if (newBasket.status === 'error') {

@@ -4,10 +4,11 @@ import { importantNotification } from '@/shared/lib/utils';
 import { GiHamburgerMenu } from 'react-icons/gi';
 import { usePathname } from 'next/navigation';
 import SignInConfirm from './SignInConfirm';
+import { Suspense, useState } from 'react';
 import ActionDialog from './ActionDialog';
 import UserSettings from './UserSettings';
 import { signIn } from 'next-auth/react';
-import { useState } from 'react';
+import BasketAuth from './BasketAuth';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -21,6 +22,9 @@ const Navbar = () => {
 
   return (
     <>
+      <Suspense>
+        <BasketAuth />
+      </Suspense>
       <ActionDialog
         onOpenChange={() => setIsDialogOpen(!isDialogOpen)}
         onProceed={() => signIn('discord')}
