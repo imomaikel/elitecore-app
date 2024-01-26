@@ -1,4 +1,5 @@
 import { MYSQL_PLAYERS_DATA, MYSQL_TRIBES_DATA } from '../../constans/types';
+import { playTimeToText } from '../../utils/misc';
 import { readFileSync, mkdirSync } from 'fs';
 import createImage from 'node-html-to-image';
 import logger from '../../scripts/logger';
@@ -54,7 +55,7 @@ export const _createImages = async ({ players, tribes }: TCreateImages): Promise
           rows: players
             .sort((a, b) => b.playTime - a.playTime)
             .slice(0, BOARD_SIZE)
-            .map((entry) => ({ name: entry.playerName, score: entry.playTime })),
+            .map((entry) => ({ name: entry.playerName, score: playTimeToText(entry.playTime) })),
         },
         {
           // Tribes playtime
@@ -66,7 +67,7 @@ export const _createImages = async ({ players, tribes }: TCreateImages): Promise
           rows: tribes
             .sort((a, b) => b.playTime! - a.playTime!)
             .slice(0, BOARD_SIZE)
-            .map((entry) => ({ name: entry.tribeName, score: entry.playTime })),
+            .map((entry) => ({ name: entry.tribeName, score: playTimeToText(entry.playTime!) })),
         },
         {
           // Players players kills

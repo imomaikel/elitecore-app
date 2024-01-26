@@ -4,6 +4,7 @@ import {
   UpdateDelaySchema,
 } from '../../admin/tickets/_assets/validators';
 import { apiAvailableChannels, apiAvailableRoles, apiMutualGuilds } from '../../../../bot/api';
+import { setupLeaderboard, updateLeaderboard } from '../../../../bot/plugins/leaderboard';
 import { API_BROADCAST_WIDGETS, API_WIDGETS } from '../../../../bot/constans/types';
 import { createTicketCategoryWidget } from '../../../../bot/plugins/tickets';
 import apiUpdateBroadcastChannel from '../../../../bot/api/broadcastUpdate';
@@ -643,4 +644,21 @@ export const adminRouter = router({
         await countdownWidget(selectedGuildId);
       }
     }),
+  setupLeaderboard: adminProcedure.mutation(async ({ ctx }) => {
+    const { selectedGuildId, userDiscordId } = ctx;
+
+    const createdLeaderboard = await setupLeaderboard(selectedGuildId);
+    if (createdLeaderboard) {
+      const updatedLeaderboard = await updateLeaderboard(selectedGuildId);
+      return { created: true, sent: updatedLeaderboard };
+    }
+
+    await createAdminLog({
+      content: 'Created leaderboard widget',
+      guildId: selectedGuildId,
+      userDiscordId,
+    });
+
+    return { created: createdLeaderboard, sent: false };
+  }),
 });

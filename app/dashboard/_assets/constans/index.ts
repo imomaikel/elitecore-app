@@ -1,6 +1,7 @@
 import { MdLibraryBooks, MdMiscellaneousServices } from 'react-icons/md';
 import { FaPeopleRoof, FaDiscord } from 'react-icons/fa6';
 import { HiOutlineStatusOnline } from 'react-icons/hi';
+import { MdOutlineLeaderboard } from 'react-icons/md';
 import { IoTicketOutline } from 'react-icons/io5';
 import { LuCalendarClock } from 'react-icons/lu';
 import { TbDeviceRemote } from 'react-icons/tb';
@@ -49,6 +50,11 @@ export const panelTabs: TPanelTabs = [
         tabName: 'Countdown',
         Icon: LuCalendarClock,
         path: '/dashboard/admin/countdown ',
+      },
+      {
+        tabName: 'Leader Board',
+        Icon: MdOutlineLeaderboard,
+        path: '/dashboard/admin/leaderboard',
       },
       {
         tabName: 'Miscellaneous',

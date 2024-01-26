@@ -1,11 +1,11 @@
 import { getPlayersData, getTribesData } from '../../lib/mysql';
 import { createImages, updateLeaderboard } from '.';
 
-export const _createLeaderboard = async () => {
+export const _createLeaderboard = async (firstTime?: boolean): Promise<boolean> => {
   const players = await getPlayersData();
   const tribes = await getTribesData();
 
-  if (!players || !tribes) return;
+  if (!players || !tribes) return false;
 
   // Calculate each player kdr and add playtime to tribe
   for (const player of players) {
@@ -37,7 +37,8 @@ export const _createLeaderboard = async () => {
 
   const imagesCreated = await createImages({ players, tribes });
 
-  if (!imagesCreated) return null;
+  if (!imagesCreated) return false;
+  if (firstTime) return true;
 
   return await updateLeaderboard();
 };

@@ -90,5 +90,5 @@ export const _setupLeaderboard = async (guildId: string): Promise<boolean> => {
     });
   }
 
-  return false;
+  return true;
 };

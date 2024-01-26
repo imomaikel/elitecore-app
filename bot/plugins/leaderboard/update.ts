@@ -1,15 +1,22 @@
 import { leaderboardUpdateEmbed } from '../../constans/embeds';
 import { sendMessage } from '../../helpers/sendMessage';
+import { channelsSchema, createLeaderboard } from '.';
 import { AttachmentBuilder, time } from 'discord.js';
 import { client } from '../../client';
 import prisma from '../../lib/prisma';
-import { channelsSchema } from '.';
+import { readdirSync } from 'fs';
 import { resolve } from 'path';
 
 const IMAGES_PATH = resolve(process.cwd(), 'bot', 'plugins', 'leaderboard', 'images', 'generated');
 
-export const _updateLeaderboard = async (): Promise<boolean> => {
+export const _updateLeaderboard = async (onlyOneGuildId?: string): Promise<boolean> => {
   if (!client) return false;
+
+  const files = readdirSync(IMAGES_PATH).length;
+  if (files <= 0) {
+    const createdLeaderboard = await createLeaderboard();
+    if (!createdLeaderboard) return false;
+  }
 
   const guilds = await prisma.guild.findMany({
     where: {
@@ -25,6 +32,7 @@ export const _updateLeaderboard = async (): Promise<boolean> => {
   });
 
   for await (const guild of guilds) {
+    if (onlyOneGuildId && onlyOneGuildId !== guild.guildId) continue;
     const leaderboardData = guild.LeaderboardData;
     if (!leaderboardData) continue;
 

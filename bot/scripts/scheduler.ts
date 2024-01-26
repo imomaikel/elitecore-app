@@ -1,7 +1,7 @@
 import { cleanTicketAttachments, ticketCleaner } from '../plugins/tickets';
 import { updateServerControlWidget } from '../plugins/server-control';
 import updateServerStatusWidget from '../plugins/server-status';
-import { updateLeaderboard } from '../plugins/leaderboard';
+import { createLeaderboard } from '../plugins/leaderboard';
 import { updateCountdown } from '../plugins/countdown';
 import { fetchLogs } from '../plugins/tribe';
 import { checkForNewWipe } from './wipe';
@@ -40,7 +40,7 @@ const scheduler = () => {
   }, 1000 * 60 * 60 * 6);
 
   setInterval(() => {
-    updateLeaderboard();
+    createLeaderboard();
   }, 1000 * 60 * 30);
 
   setInterval(async () => {
