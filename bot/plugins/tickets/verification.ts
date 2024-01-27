@@ -6,13 +6,14 @@ export type TFindReturn = {
   id: string;
 };
 
-export const findPairedAccount = async (userDiscordId: string): Promise<TFindReturn | boolean> => {
+export const findPairedAccount = async (userDiscordId: string): Promise<TFindReturn[] | boolean> => {
+  const returnData: TFindReturn[] = [];
   const userData = await prisma.user.findUnique({
     where: { discordId: userDiscordId },
   });
 
   if (userData?.steamId && userData.steamId.length >= 10) {
-    return { method: 'STEAM', id: userData.steamId };
+    returnData.push({ method: 'STEAM', id: userData.steamId });
   }
 
   const getEOS = await findEOS(userDiscordId);
@@ -24,7 +25,7 @@ export const findPairedAccount = async (userDiscordId: string): Promise<TFindRet
         data: { eosId },
       });
     }
-    return { method: 'EOS', id: eosId };
+    returnData.push({ method: 'EOS', id: eosId });
   }
 
   const getSteamId = await findSteam(userDiscordId);
@@ -36,8 +37,10 @@ export const findPairedAccount = async (userDiscordId: string): Promise<TFindRet
         data: { steamId },
       });
     }
-    return { method: 'STEAM', id: steamId };
+    returnData.push({ method: 'STEAM', id: steamId });
   }
+
+  if (returnData.length >= 1) return returnData;
 
   return false;
 };

@@ -11,6 +11,7 @@ import {
   TextChannel,
   TextInputBuilder,
   TextInputStyle,
+  hyperlink,
 } from 'discord.js';
 import { changeMapEmbed, enteredCoordsEmbed, selectedMapEmbed } from '../../constans/embeds';
 import { TFindReturn, findPairedAccount } from './verification';
@@ -18,6 +19,7 @@ import { CustomResponse } from '../../constans/responses';
 import { createWebhook } from '../../scripts/webhook';
 import { colors, extraSigns } from '../../constans';
 import logger from '../../scripts/logger';
+import { getEnv } from '../../utils/env';
 import { Ticket } from '@prisma/client';
 import { client } from '../../client';
 import prisma from '../../lib/prisma';
@@ -41,7 +43,7 @@ export const _createTicket = async ({
   if (!client.user?.id) return { status: 'error', details: { message: 'Something went wrong' } };
 
   const [user, guildData, userData] = await Promise.all([
-    client.guilds.cache.get(guildId)?.members.fetch(userId),
+    client.guilds.cache.get(guildId)?.members.fetch({ user: userId, force: true }),
     prisma.guild.findUnique({
       where: { guildId },
       include: {
@@ -126,7 +128,7 @@ export const _createTicket = async ({
     return { status: 'success', details: { message: 'Modal opened', data: { inviteLink: null, ticketId: null } } };
   }
 
-  let pairedData: TFindReturn | undefined;
+  let pairedData: TFindReturn[] | undefined;
   if (steamRequired) {
     const pairedAccount = await findPairedAccount(user.id);
     if (typeof pairedAccount === 'boolean') {
@@ -204,6 +206,8 @@ export const _createTicket = async ({
       })
     ).url;
 
+    const steamId = pairedData?.find((entry) => entry.method === 'STEAM')?.id ?? undefined;
+    const eosID = pairedData?.find((entry) => entry.method === 'EOS')?.id ?? undefined;
     await prisma.$transaction(async (tx) => {
       const openedTickets = await tx.ticket.count({
         where: {
@@ -225,8 +229,8 @@ export const _createTicket = async ({
           inviteUrl,
           webhookId: webhook.id,
           webhookToken: webhook.token,
-          authorSteamId: pairedData?.method === 'EOS' ? pairedData.id : undefined,
-          authorEOSId: pairedData?.method === 'EOS' ? pairedData.id : undefined,
+          authorSteamId: steamId,
+          authorEOSId: eosID,
           ...(userData?.id && {
             User: {
               connect: {
@@ -266,10 +270,34 @@ export const _createTicket = async ({
 
     if (!ticket) return { status: 'error', details: { message: 'Something went wrong' } };
 
+    let infoDescription = `View the ticket online ${hyperlink(
+      'here',
+      `${getEnv('NEXT_PUBLIC_SERVER_URL')}/dashboard/tickets/${ticket.id}`,
+    )}`;
+    if (steamRequired) {
+      if (steamId) {
+        infoDescription += `\nSteam ID: \`${steamId}\``;
+      }
+      if (eosID) {
+        infoDescription += `\nEOS ID: \`${eosID}\``;
+      }
+    }
+    const infoEmbed = new EmbedBuilder()
+      .setColor(colors.purple)
+      .setAuthor({ name: 'Information' })
+      .setDescription(infoDescription);
+    await ticketChn.send({ embeds: [infoEmbed] });
+
     if (coordinateInput || mapSelection) {
       if (coordinateInput) {
         if (forceCoords) {
           await ticketChn.send({ embeds: [enteredCoordsEmbed(forceCoords)] });
+          await prisma.ticket.update({
+            where: { channelId: ticketChn.id },
+            data: {
+              coordinates: forceCoords,
+            },
+          });
         } else {
           const coordsEmbed = new EmbedBuilder().setColor(colors.blue)
             .setDescription(`:warning: For this ticket, we need your in-game coordinates.
@@ -336,9 +364,13 @@ export const _createTicket = async ({
               ],
             })
             .then(async (msg) => {
+              const customName =
+                selectedServer.customName && selectedServer.customName.length >= 3
+                  ? `${selectedServer.customName.replace(/_/gi, ' ')} / `
+                  : '';
               await prisma.ticket.update({
                 where: { id: ticket!.id },
-                data: { mapNameSelectedMessageId: msg.id },
+                data: { mapNameSelectedMessageId: msg.id, mapName: `${customName}${selectedServer.mapName}` },
               });
             });
         }

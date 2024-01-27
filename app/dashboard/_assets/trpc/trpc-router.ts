@@ -559,7 +559,7 @@ export const appRouter = router({
         content,
         ticketId,
         userDiscordId: user.discordId,
-        authorUsername: user.name,
+        authorUsername: `${user.name} (website)`,
         avatar: user.image ?? undefined,
       });
 
