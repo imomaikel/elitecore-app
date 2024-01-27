@@ -10,6 +10,12 @@ type THandleWebhookEvent = {
 const handleWebhookEvent = async ({ data, res }: THandleWebhookEvent) => {
   try {
     if (data.type === 'payment.completed') {
+      await prisma.user.update({
+        where: { steamId: data.subject.customer.username.id },
+        data: {
+          basketIdent: null,
+        },
+      });
       const categories = await shopGetCategories();
       if (categories.length <= 0) return res.status(500).send('Could not get category list');
 

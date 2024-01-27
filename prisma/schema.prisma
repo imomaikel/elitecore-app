@@ -131,7 +131,7 @@ model Product {
 
 model Payment {
   id                 String @id @default(cuid())
-  transactionId      String
+  transactionId      String @unique
   status             String @db.TinyText
   priceAmount        Float
   priceCurrency      String @db.TinyText

@@ -102,7 +102,7 @@ const UpdateForm = ({
               <FormMessage />
             </FormItem>
           )}
-        />{' '}
+        />
         <FormField
           control={form.control}
           name="autoCleanTicketFilesDays"

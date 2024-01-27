@@ -17,8 +17,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className="h-full">
       <body className={cn('font-sans relative h-full overflow-x-hidden', montserrat.className)}>
-        <NextAuthProvider>{children}</NextAuthProvider>
         <Toaster richColors position="top-center" theme="dark" />
+        <NextAuthProvider>{children}</NextAuthProvider>
       </body>
     </html>
   );

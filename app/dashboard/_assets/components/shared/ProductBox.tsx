@@ -8,6 +8,7 @@ import { useCurrency } from '@/hooks/use-currency';
 import { useSheet } from '@/hooks/use-sheet';
 import { useTebex } from '@/hooks/use-tebex';
 import { ImSpinner9 } from 'react-icons/im';
+import { CiImageOff } from 'react-icons/ci';
 import ActionDialog from './ActionDialog';
 import { cn } from '@/shared/lib/utils';
 import { useState } from 'react';
@@ -20,11 +21,12 @@ type TProductBox = {
   description: string;
   productId: number;
   basePrice: number;
-  imageURL: string;
+  imageURL?: string | null;
   name: string;
   gradient?: true;
+  exist?: boolean;
 };
-const ProductBox = ({ basePrice, description, imageURL, name, productId, gradient }: TProductBox) => {
+const ProductBox = ({ basePrice, description, imageURL, name, productId, gradient, exist = true }: TProductBox) => {
   const { addToBasket: clientAddToBasket, getCategoryList, setAuthUrl, authUrl } = useTebex();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { onOpen: openShoppingCart } = useSheet();
@@ -96,17 +98,22 @@ const ProductBox = ({ basePrice, description, imageURL, name, productId, gradien
         description='Please click "Continue" to link your Steam account with your basket so we know where to send the package after purchase.'
       />
       <div className="relative group transition-all hover:!scale-105 max-w-[225px] hover:bg-black/60 rounded-lg">
+        {!exist && (
+          <div className="absolute top-0 text-destructive text-sm text-center w-full">
+            This product does not exist now
+          </div>
+        )}
         {gradient && (
           <div className="bg-gradient-to-r from-orange-600 to-primary absolute h-[50%] w-[50%] opacity-50 blur-[125px] -rotate-[50deg] z-0" />
         )}
         {/* Image */}
-        <Link href={`/dashboard/shop/${productId}`}>
+        <Link href={exist ? `/dashboard/shop/${productId}` : '#'}>
           <div className="h-[225px] relative cursor-pointer">
             {isLoading ? (
               <div className="flex w-full h-full items-center justify-center">
                 <ImSpinner9 className="w-[50%] h-[50%] animate-spin" />
               </div>
-            ) : (
+            ) : imageURL ? (
               <Image
                 loading="eager"
                 src={imageURL}
@@ -115,6 +122,8 @@ const ProductBox = ({ basePrice, description, imageURL, name, productId, gradien
                 sizes="100vw"
                 className="w-full h-full object-cover object-center rounded-lg"
               />
+            ) : (
+              <CiImageOff className="w-full h-full" />
             )}
           </div>
         </Link>
@@ -134,14 +143,18 @@ const ProductBox = ({ basePrice, description, imageURL, name, productId, gradien
                 </PopoverContent>
               </Popover>
 
-              <FaCartPlus
-                className={cn(
-                  'h-8 w-8 cursor-pointer hover:text-primary transition-colors z-10',
-                  isLoading && 'cursor-default',
-                )}
-                onClick={onAdd}
-              />
-              <div className="w-8 right-0 h-full absolute bg-orange-700/60 animate-pulse blur-[15px] z-0" />
+              {exist && (
+                <>
+                  <FaCartPlus
+                    className={cn(
+                      'h-8 w-8 cursor-pointer hover:text-primary transition-colors z-10',
+                      isLoading && 'cursor-default',
+                    )}
+                    onClick={onAdd}
+                  />
+                  <div className="w-8 right-0 h-full absolute bg-orange-700/60 animate-pulse blur-[15px] z-0" />
+                </>
+              )}
             </div>
           </div>
         </div>

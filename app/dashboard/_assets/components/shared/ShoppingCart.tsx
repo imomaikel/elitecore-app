@@ -104,7 +104,6 @@ const ShoppingCart = () => {
                     {sessionStatus === 'authenticated' && user ? (
                       <Button asChild>
                         <Link href={`https://checkout.tebex.io/checkout/${user.basketIdent}`}>
-                          {' '}
                           CHECKOUT <FaExternalLinkAlt className="h-4 w-4 ml-2" />
                         </Link>
                       </Button>

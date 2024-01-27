@@ -565,6 +565,37 @@ export const appRouter = router({
 
       return action;
     }),
+  getPayment: authorizedProcedure
+    .input(z.object({ transactionId: z.string().min(1) }))
+    .query(async ({ ctx, input }) => {
+      const { transactionId } = input;
+      const { prisma } = ctx;
+
+      const payment = await prisma.payment.findUnique({
+        where: { transactionId },
+        select: {
+          transactionId: true,
+          status: true,
+          priceAmount: true,
+          priceCurrency: true,
+          taxFeeAmount: true,
+          taxFeeCurrency: true,
+          gatewayFeeAmount: true,
+          gatewayFeeCurrency: true,
+          customerUsername: true,
+          createdAt: true,
+          products: true,
+          user: {
+            select: {
+              image: true,
+              name: true,
+            },
+          },
+        },
+      });
+
+      return payment;
+    }),
 });
 
 export type AppRouter = typeof appRouter;
