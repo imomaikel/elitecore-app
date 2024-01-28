@@ -68,6 +68,7 @@
     "socket.io-client": "^4.7.4",
     "sonner": "^1.2.4",
     "superjson": "^1.13.3",
+    "swiper": "^11.0.5",
     "tailwind-merge": "^2.1.0",
     "tailwindcss-animate": "^1.0.7",
     "tebex_headless": "^1.6.2",

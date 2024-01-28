@@ -1,4 +1,5 @@
 import { NextAuthProvider } from './_shared/providers/auth';
+import { TRPCProvider } from '@/trpc/provider';
 import { Montserrat } from 'next/font/google';
 import { cn } from './_shared/lib/utils';
 import type { Metadata } from 'next';
@@ -15,11 +16,13 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="h-full">
-      <body className={cn('font-sans relative h-full overflow-x-hidden', montserrat.className)}>
-        <Toaster richColors position="top-center" theme="dark" />
-        <NextAuthProvider>{children}</NextAuthProvider>
-      </body>
-    </html>
+    <TRPCProvider>
+      <html lang="en" className="h-full">
+        <body className={cn('font-sans relative h-full overflow-x-hidden', montserrat.className)}>
+          <Toaster richColors position="top-center" theme="dark" />
+          <NextAuthProvider>{children}</NextAuthProvider>
+        </body>
+      </html>
+    </TRPCProvider>
   );
 }

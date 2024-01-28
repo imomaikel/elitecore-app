@@ -25,6 +25,7 @@ model Config {
   currenciesLastUpdated    DateTime @default(now())
   monthlyPaymentGoal       Int      @default(50)
   lastWipe                 DateTime @default(now())
+  discordMembers           Int      @default(0)
 }
 
 model Server {

@@ -374,6 +374,7 @@ export const appRouter = router({
     .mutation(async ({ ctx, input }) => {
       const { user, prisma } = ctx;
       const { categoryId, coordinateInput, mapSelection } = input;
+      const { selectedGuildId } = user;
 
       const category = await prisma.ticketCategory.findUnique({
         where: { id: categoryId },
@@ -397,10 +398,11 @@ export const appRouter = router({
 
       const newTicket = await createTicket({
         categoryId,
-        guildId:
-          process.env.NODE_ENV === 'production'
-            ? (process.env.PRODUCTION_DISCORD_GUILD_ID as string)
-            : (process.env.DEVELOPMENT_DISCORD_GUILD_ID as string),
+        guildId: selectedGuildId
+          ? selectedGuildId
+          : process.env.NODE_ENV === 'production'
+          ? (process.env.PRODUCTION_DISCORD_GUILD_ID as string)
+          : (process.env.DEVELOPMENT_DISCORD_GUILD_ID as string),
         userId: user.discordId,
         forceCoords: coordinateInput,
         forceServerId: mapSelection,
@@ -596,6 +598,15 @@ export const appRouter = router({
 
       return payment;
     }),
+  getMembers: publicProcedure.query(async ({ ctx }) => {
+    const { prisma } = ctx;
+    const guild = await prisma.config.findFirst({
+      select: {
+        discordMembers: true,
+      },
+    });
+    return guild?.discordMembers ?? 7000;
+  }),
 });
 
 export type AppRouter = typeof appRouter;

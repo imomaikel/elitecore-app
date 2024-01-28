@@ -9,7 +9,9 @@ export type TEnvVars =
   | 'DATABASE_USER'
   | 'DATABASE_PASSWORD'
   | 'DATABASE_HOST'
-  | 'DATABASE_SCHEMA';
+  | 'DATABASE_SCHEMA'
+  | 'DEVELOPMENT_DISCORD_GUILD_ID'
+  | 'PRODUCTION_DISCORD_GUILD_ID';
 
 // https://flatuicolors.com/
 export const colors = {

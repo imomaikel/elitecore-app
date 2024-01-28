@@ -127,7 +127,7 @@ const Hero = () => {
             Explore More
           </div>
           <div className="relative">
-            <HiChevronDoubleDown className="h-12 w-12 transition-colors group-hover:text-primary" />
+            <HiChevronDoubleDown className="h-12 w-12 transition-colors group-hover:text-primary animate-pulse" />
             <div className="w-12 h-12 absolute bg-primary inset-0 rounded-full -z-10 transition-colors group-hover:bg-white" />
           </div>
         </motion.div>

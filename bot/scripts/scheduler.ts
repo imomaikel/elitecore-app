@@ -7,6 +7,7 @@ import { fetchLogs } from '../plugins/tribe';
 import { checkForNewWipe } from './wipe';
 import { getEnv } from '../utils/env';
 import prisma from '../lib/prisma';
+import { client } from '../client';
 
 const scheduler = () => {
   setInterval(() => {
@@ -42,6 +43,19 @@ const scheduler = () => {
   setInterval(() => {
     createLeaderboard();
   }, 1000 * 60 * 30);
+
+  // Update member count
+  setInterval(async () => {
+    const guildId = getEnv('PRODUCTION_DISCORD_GUILD_ID');
+    const guild = client.guilds.cache.get(guildId);
+    if (!guild) return;
+    if (guild.memberCount < 100) return;
+    await prisma.config.updateMany({
+      data: {
+        discordMembers: guild.memberCount,
+      },
+    });
+  }, 1000 * 60 * 10);
 
   setInterval(async () => {
     const config = await prisma.config.findFirst();
