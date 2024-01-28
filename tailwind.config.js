@@ -22,6 +22,9 @@ module.exports = {
         "2.5xl": "1650px",
         "3xl": "1850px",
       },
+      backgroundImage: {
+        'landing': "url('/landing.webp')"
+      },
       maxWidth: {
         "8xl": "1408px",
         "9xl": "1536px",
