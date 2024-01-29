@@ -528,7 +528,7 @@ export const appRouter = router({
       },
     });
 
-    return { success: true, message: logs };
+    return { success: true, tribeName: data.tribe.tribeName, messages: logs };
   }),
   getTranscript: authorizedProcedure
     .input(z.object({ ticketId: z.string().min(1), authorId: z.string().min(1) }))

@@ -6,21 +6,28 @@ import { Switch } from '@/shared/components/ui/switch';
 import { Label } from '@/shared/components/ui/label';
 import LogTable from './_components/LogTable';
 import { LogType } from '@prisma/client';
+import { toast } from 'sonner';
 import { trpc } from '@/trpc';
 
 const OPTIONS = Object.keys(LogType) as Array<keyof typeof LogType>;
 
 const TribeLogsPage = () => {
-  const { data, isLoading } = trpc.getTribeLogs.useQuery(undefined, { refetchOnWindowFocus: false });
+  const { data, isLoading, refetch, isRefetching } = trpc.getTribeLogs.useQuery(undefined, {
+    refetchOnWindowFocus: false,
+  });
 
   if (isLoading) return <TribeLogsPage.Skeleton />;
 
   if (!data?.success) return <p>No logs</p>;
 
   return (
-    <PageWrapper pageName="Tribe" title="test">
+    <PageWrapper pageName="Tribe" title={data.tribeName}>
       <div>
-        <LogTable logs={data.message} />
+        <LogTable
+          logs={data.messages}
+          refetch={() => refetch().then(() => toast.success('Logs updated!'))}
+          isRefetching={isRefetching}
+        />
       </div>
     </PageWrapper>
   );

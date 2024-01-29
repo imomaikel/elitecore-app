@@ -11,6 +11,7 @@ import {
 } from '@tanstack/react-table';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/shared/components/ui/table';
 import { DataTablePagination } from '@/shared/components/data-table-pagination';
+import ActionButton from '@/components/shared/ActionButton';
 import { Switch } from '@/shared/components/ui/switch';
 import { Button } from '@/shared/components/ui/button';
 import { Label } from '@/shared/components/ui/label';
@@ -58,7 +59,12 @@ const columns: ColumnDef<TLog>[] = [
   },
 ];
 
-const LogTable = ({ logs }: { logs: TLog[] }) => {
+type TLogTable = {
+  logs: TLog[];
+  refetch: () => void;
+  isRefetching: boolean;
+};
+const LogTable = ({ logs, refetch, isRefetching }: TLogTable) => {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([
     {
       id: 'logType',
@@ -123,6 +129,9 @@ const LogTable = ({ logs }: { logs: TLog[] }) => {
         <Button size="sm" className="w-32" variant="secondary" onClick={() => onSwitchAll('off')}>
           All Off
         </Button>
+        <ActionButton size="sm" className="w-48" variant="secondary" onClick={refetch} disabled={isRefetching}>
+          Check for new logs
+        </ActionButton>
       </div>
       <Table>
         <TableHeader>

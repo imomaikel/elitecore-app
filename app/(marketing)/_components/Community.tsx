@@ -84,7 +84,13 @@ const Community = () => {
           </div>
         </div>
         <div className="mt-4 md:mt-0">
-          <div className="max-w-xl">
+          <motion.div
+            variants={itemSlide(0, 300)}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true }}
+            className="max-w-xl"
+          >
             <ImageSwiper
               images={[
                 {
@@ -105,7 +111,7 @@ const Community = () => {
                 },
               ]}
             />
-          </div>
+          </motion.div>
         </div>
       </div>
       <div className="absolute bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 rotate-45 w-[400px] h-[100px] top-1/4 blur-[180px] -z-10 opacity-75 hidden md:block" />
