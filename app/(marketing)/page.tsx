@@ -1,4 +1,5 @@
 import Community from './_components/Community';
+import Tickets from './_components/Tickets';
 import Panel from './_components/Panel';
 import Hero from './_components/Hero';
 import Shop from './_components/Shop';
@@ -18,6 +19,9 @@ export default function LandingPage() {
         </section>
         <section id="panel">
           <Panel />
+        </section>
+        <section id="tickets">
+          <Tickets />
         </section>
       </div>
     </div>
