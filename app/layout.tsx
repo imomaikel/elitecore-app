@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <TRPCProvider>
-      <html lang="en" className="h-full">
+      <html lang="en" className="h-full scroll-smooth">
         <body className={cn('font-sans relative h-full overflow-x-hidden', montserrat.className)}>
           <Toaster richColors position="top-center" theme="dark" />
           <NextAuthProvider>{children}</NextAuthProvider>

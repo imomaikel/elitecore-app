@@ -52,7 +52,7 @@ const ImageSwiper = ({ images, className }: TImageSwiper) => {
           <FaArrowAltCircleRight className="h-8 w-8 animate-pulse group-hover:animate-none delay" />
         </div>
       )}
-      <Swiper className={cn('bg-white/5 rounded-md', className)} onSwiper={setSwiper}>
+      <Swiper className={cn('bg-white/5 rounded-md select-none', className)} onSwiper={setSwiper}>
         {images.map((image, index) => (
           <SwiperSlide key={`image-${index}`}>
             <Image

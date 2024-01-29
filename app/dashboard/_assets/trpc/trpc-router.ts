@@ -607,6 +607,39 @@ export const appRouter = router({
     });
     return guild?.discordMembers ?? 7000;
   }),
+  getRandomProducts: publicProcedure.query(async () => {
+    if (categories.length <= 0) {
+      const getCategories = await shopGetCategories();
+      categories = getCategories;
+    }
+
+    const allProducts = categories.map((entry) => entry.packages).flat();
+    if (allProducts.length <= 4) {
+      return allProducts.map(({ image, base_price, name, id }) => ({
+        name,
+        image,
+        basePrice: base_price,
+        id,
+      }));
+    }
+
+    const randomProducts = [];
+    const ids = new Set();
+
+    while (randomProducts.length < 4) {
+      const randomProduct = allProducts[Math.floor(Math.random() * allProducts.length)];
+      if (ids.has(randomProduct.id)) continue;
+      randomProducts.push(randomProduct);
+      ids.add(randomProduct.id);
+    }
+
+    return randomProducts.map(({ image, base_price, name, id }) => ({
+      name,
+      image,
+      basePrice: base_price,
+      id,
+    }));
+  }),
 });
 
 export type AppRouter = typeof appRouter;

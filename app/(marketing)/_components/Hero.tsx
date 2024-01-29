@@ -26,8 +26,10 @@ const Hero = () => {
           <h1 className="text-5xl sm:text-7xl font-extrabold tracking-wider">
             Elite<span className="bg-primary rounded-md px-3 mx-1">Core</span>
           </h1>
-          <p className="mt-6 text-xl font-semibold">Crafting ARK: Survival servers for you since 2019.</p>
-          <p className="text-lg">For gamers, by gamers.</p>
+          <p className="mt-6 text-xl font-semibold bg-muted px-4 py-1 rounded-lg capitalize">
+            Crafting ARK: Survival servers for you since 2019.
+          </p>
+          <p className="text-lg tracking-wide mt-1">For gamers, by gamers.</p>
         </div>
         <div>
           <div className="flex flex-col space-y-2">
@@ -116,21 +118,23 @@ const Hero = () => {
           </div>
         </div>
         {/*  */}
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ type: 'tween' }}
-          viewport={{ once: true }}
-          className="flex flex-col items-center space-y-1 group cursor-pointer"
-        >
-          <div className="w-full text-center -top-7 text-muted-foreground transition-colors group-hover:text-white text-sm">
-            Explore More
-          </div>
-          <div className="relative">
-            <HiChevronDoubleDown className="h-12 w-12 transition-colors group-hover:text-primary animate-pulse" />
-            <div className="w-12 h-12 absolute bg-primary inset-0 rounded-full -z-10 transition-colors group-hover:bg-white" />
-          </div>
-        </motion.div>
+        <Link href="#community" scroll>
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ type: 'tween' }}
+            viewport={{ once: true }}
+            className="flex flex-col items-center space-y-1 group cursor-pointer"
+          >
+            <div className="w-full text-center -top-7 text-muted-foreground transition-colors group-hover:text-white text-sm">
+              Explore More
+            </div>
+            <div className="relative">
+              <HiChevronDoubleDown className="h-12 w-12 transition-colors group-hover:text-primary animate-pulse group-hover:animate-none " />
+              <div className="w-12 h-12 absolute bg-primary inset-0 rounded-full -z-10 transition-colors group-hover:bg-white" />
+            </div>
+          </motion.div>
+        </Link>
         {/*  */}
         <div className="mt-16 flex flex-col space-y-2 text-6xl font-bold tracking-wide"></div>
         {/*  */}

@@ -1,5 +1,6 @@
 import Community from './_components/Community';
 import Hero from './_components/Hero';
+import Shop from './_components/Shop';
 
 export default function LandingPage() {
   return (
@@ -8,8 +9,11 @@ export default function LandingPage() {
         <Hero />
       </section>
       <div className="max-w-screen-xl mx-auto pb-24">
-        <section>
+        <section id="community">
           <Community />
+        </section>
+        <section id="shop">
+          <Shop />
         </section>
       </div>
     </div>

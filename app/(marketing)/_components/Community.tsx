@@ -15,8 +15,8 @@ const Community = () => {
   });
 
   return (
-    <div className="w-full my-24 relative px-6 md:px-0">
-      <div className="flex flex-col md:flex-row justify-center md:space-x-16">
+    <div className="w-full py-24 relative px-6">
+      <div className="flex flex-col md:flex-row justify-center md:space-x-8 lg:space-x-16">
         <div>
           <motion.div
             variants={itemSlide(0, -100)}
@@ -53,7 +53,7 @@ const Community = () => {
             viewport={{ once: true }}
             className="md:text-right mt-2"
           >
-            <Button asChild className="w-1/2">
+            <Button asChild className="w-1/2 text-black">
               <Link href="https://discord.gg/RjbAsWs7H6" target="_blank">
                 Join Discord <FaDiscord className="h-6 w-6 ml-2" />
               </Link>
@@ -88,19 +88,19 @@ const Community = () => {
             <ImageSwiper
               images={[
                 {
-                  url: '/discord/chat1.png',
+                  url: '/discord/chat1.webp',
                   caption: 'Talk about anything',
                 },
                 {
-                  url: '/discord/chat2.png',
+                  url: '/discord/chat2.webp',
                   caption: 'See the most recent announcements',
                 },
                 {
-                  url: '/discord/chat3.png',
+                  url: '/discord/chat3.webp',
                   caption: 'Share your content',
                 },
                 {
-                  url: '/discord/chat4.png',
+                  url: '/discord/chat4.webp',
                   caption: 'Team up with other members',
                 },
               ]}
