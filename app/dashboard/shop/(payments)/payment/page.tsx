@@ -118,7 +118,7 @@ const AfterPaymentPage = () => {
             <div className="tracking-wider">Bought by</div>
             <div className="flex items-center space-x-2">
               <Avatar>
-                <AvatarImage src={data.user.image ?? undefined} alt="avatar" />
+                <AvatarImage alt="avatar" src={data.user.image ?? undefined} />
                 <AvatarFallback className="relative">
                   <Image src="https://cdn.discordapp.com/embed/avatars/3.png" alt="avatar" fill sizes="100vw" />
                 </AvatarFallback>

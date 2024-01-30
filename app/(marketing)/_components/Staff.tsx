@@ -21,7 +21,9 @@ const Staff = () => {
             viewport={{ once: true }}
             className="text-3xl space-x-2 text-center"
           >
-            Our <span className="px-2 bg-primary rounded-md">staff</span>
+            <h3>
+              Our <span className="px-2 bg-primary rounded-md">staff</span>
+            </h3>
           </motion.div>
           <motion.div
             variants={itemSlide(0, 100)}
@@ -30,11 +32,11 @@ const Staff = () => {
             viewport={{ once: true }}
             className="max-w-xl mx-auto mt-4 text-center"
           >
-            <span>
+            <h4>
               Meet our dedicated staff! Committed to delivering the best gaming experience, we invite you to join our
               Discord server. Your journey does not end here – become a staff member in the future and play a vital role
               in shaping the community! Join us and be part of the gaming excellence we strive for!
-            </span>
+            </h4>
           </motion.div>
           <motion.div
             variants={itemSlide(0, -100)}

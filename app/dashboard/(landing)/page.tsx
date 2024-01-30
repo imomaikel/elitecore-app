@@ -24,7 +24,7 @@ const DashboardPage = () => {
           >
             Welcome to the EliteCore
           </motion.h1>
-          <motion.p
+          <motion.h2
             initial={{
               y: 50,
               opacity: 0,
@@ -42,7 +42,7 @@ const DashboardPage = () => {
             EliteCore is a x1000 cluster with a friendly and healthy community. In order to get you started and ready
             for pvp quickly, we have great kits and a large shop! On our site you will find all the information you
             require. From game links all the way to donations!
-          </motion.p>
+          </motion.h2>
           <div className="bg-gradient-to-r from-yellow-600 to-red-600 absolute w-[75%] left-[10%] top-[20%] h-[75%] rotate-45 blur-[220px] opacity-75 z-0" />
         </div>
         <TopDonators />

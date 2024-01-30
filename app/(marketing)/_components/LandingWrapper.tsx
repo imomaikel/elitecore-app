@@ -43,7 +43,9 @@ const LandingWrapper = ({
           viewport={{ once: true }}
           className="text-3xl space-x-2"
         >
-          {title} <span className="px-2 bg-primary rounded-md">{colorTitle}</span> {extraTitle}
+          <h3>
+            {title} <span className="px-2 bg-primary rounded-md">{colorTitle}</span> {extraTitle}
+          </h3>
         </motion.div>
         <motion.div
           variants={itemSlide(0, 100)}
@@ -52,7 +54,7 @@ const LandingWrapper = ({
           viewport={{ once: true }}
           className="max-w-md mt-4 text-justify"
         >
-          <div>{description}</div>
+          <h4>{description}</h4>
         </motion.div>
         <motion.div
           variants={itemSlide(0, -100)}

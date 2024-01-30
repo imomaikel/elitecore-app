@@ -27,7 +27,7 @@ const Staff = () => {
               <TableRow key={user.id}>
                 <TableCell className="flex items-center">
                   <Avatar>
-                    <AvatarImage src={user.avatar ?? ''} />
+                    <AvatarImage alt="avatar" src={user.avatar ?? ''} />
                     <AvatarFallback className="w-8 h-8 relative">
                       <Image src="https://cdn.discordapp.com/embed/avatars/3.png" alt="avatar" fill sizes="" />
                     </AvatarFallback>

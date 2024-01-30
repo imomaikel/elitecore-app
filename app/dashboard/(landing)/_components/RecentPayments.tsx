@@ -13,7 +13,7 @@ const RecentPayments = () => {
 
   return (
     <div>
-      <h1 className="font-semibold text-xl md:text-2xl text-primary">Recent Payments</h1>
+      <h3 className="font-semibold text-xl md:text-2xl text-primary">Recent Payments</h3>
       <div className="flex flex-col gap-y-2">
         {isLoading ? (
           <>

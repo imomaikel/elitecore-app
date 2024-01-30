@@ -27,7 +27,7 @@ const Hero = () => {
           <h1 className="sr-only">EliteCore</h1>
           <div className="w-52 h-52 md:h-64 md:w-64 mx-auto mt-6 md:mt-0">
             <Image
-              src="/ec.webp"
+              src="/ec2.webp"
               width={0}
               height={0}
               loading="eager"
@@ -36,9 +36,9 @@ const Hero = () => {
               className="w-full h-full object-center object-contain"
             />
           </div>
-          <p className="text-xl font-semibold bg-muted px-4 py-1 rounded-lg capitalize">
+          <h2 className="text-xl font-semibold bg-muted px-4 py-1 rounded-lg capitalize">
             Crafting ARK: Survival servers for you since 2019.
-          </p>
+          </h2>
           <p className="text-lg tracking-wide mt-1">For gamers, by gamers.</p>
         </div>
         <div>

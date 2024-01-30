@@ -33,7 +33,7 @@ const ForYou = () => {
   return (
     <div className="w-full relative">
       <div className="flex space-x-2 items-center mb-2">
-        <motion.h1
+        <motion.h3
           initial={{
             x: 100,
             opacity: 0,
@@ -46,7 +46,7 @@ const ForYou = () => {
           className="font-semibold text-2xl md:text-2xl text-primary"
         >
           For You
-        </motion.h1>
+        </motion.h3>
         <motion.p
           initial={{
             x: 100,
@@ -62,10 +62,7 @@ const ForYou = () => {
           Click on an image to see the full description
         </motion.p>
       </div>
-      <div
-        className="grid grid-cols-1 smb:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 2.5xl:grid-cols-3
-                  gap-y-12 md:gap-y-6 gap-x-3 md:gap-x-6 2.5xl:gap-x-12 2.5xl:gap-y-12 3xl:grid-cols-4 place-items-center md:place-items-start mt-6 mb:mt-0"
-      >
+      <div className="flex gap-6 md:gap-12 justify-center sm:justify-start flex-wrap">
         {isLoading
           ? [...Array.from(Array(8).keys())].map((index) => <ProductBox.Skeleton key={`${index}-skeleton`} />)
           : topPicks &&

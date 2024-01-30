@@ -29,7 +29,7 @@ const Message = ({ data, lastAuthorId }: TMessage) => {
       <div className="flex items-center justify-center">
         {showDetails && (
           <Avatar className="mx-4">
-            <AvatarImage src={authorAvatar} />
+            <AvatarImage alt="avatar" src={authorAvatar} />
             <AvatarFallback>
               <Image
                 src="https://cdn.discordapp.com/embed/avatars/3.png"

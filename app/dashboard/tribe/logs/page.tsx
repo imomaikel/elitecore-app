@@ -41,7 +41,7 @@ TribeLogsPage.Skeleton = function ShowSkeleton() {
             <Label htmlFor={option} className="invisible">
               {option.replace(/_/gi, ' ')}
             </Label>
-            <Switch id={option} className="invisible" />
+            <Switch id={option} className="invisible" aria-label="Switch filter" />
             <Skeleton className="h-full w-full absolute" />
           </div>
         ))}

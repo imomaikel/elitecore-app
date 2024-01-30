@@ -72,7 +72,7 @@ const UserSettings = ({ setIsDialogOpen }: TUserSettings) => {
             </div>
             <FiChevronsDown className="w-6 h-6 md:mr-1 group-data-[state=open]:rotate-180 group-data-[state=open]:text-primary transition-all group-hover:text-primary" />
             <Avatar className="w-8 h-8 hidden md:block">
-              <AvatarImage src={user?.image || ''} />
+              <AvatarImage alt="avatar" src={user?.image || ''} />
               <AvatarFallback className="w-8 h-8 relative">
                 {sessionStatus === 'unauthenticated' ? (
                   <FaUserAltSlash />
@@ -107,7 +107,7 @@ const UserSettings = ({ setIsDialogOpen }: TUserSettings) => {
               </div>
               <div>
                 <Avatar className="w-11 h-11">
-                  <AvatarImage src={user?.image ?? 'https://cdn.discordapp.com/embed/avatars/3.png'} />
+                  <AvatarImage alt="avatar" src={user?.image ?? 'https://cdn.discordapp.com/embed/avatars/3.png'} />
                   <AvatarFallback className="w-11 h-11 relative">
                     <Image src="https://cdn.discordapp.com/embed/avatars/3.png" alt="avatar" fill sizes="" />
                   </AvatarFallback>

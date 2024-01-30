@@ -49,7 +49,7 @@ const StaffList = ({ members, refetch }: TStaffList) => {
               <TableCell>
                 <div className="flex items-center font-semibold space-x-2">
                   <Avatar>
-                    <AvatarImage src={member.avatarUrl} />
+                    <AvatarImage alt="avatar" src={member.avatarUrl} />
                     <AvatarFallback>?</AvatarFallback>
                   </Avatar>
                   <span>{member.username}</span>

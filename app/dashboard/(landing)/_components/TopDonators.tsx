@@ -13,7 +13,7 @@ const TopDonators = () => {
 
   return (
     <div>
-      <h1 className="font-semibold text-xl md:text-2xl text-primary">Top Donators</h1>
+      <h3 className="font-semibold text-xl md:text-2xl text-primary">Top Donators</h3>
       <div className="flex flex-col gap-y-2">
         {isLoading ? (
           <>

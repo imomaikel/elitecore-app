@@ -135,7 +135,7 @@ const ProductBox = ({ basePrice, description, imageURL, name, productId, gradien
             <div className="font-extrabold mr-3 w-[100px] h-6">{formatPrice(basePrice)}</div>
             <div className="flex mr-2 gap-x-4 relative">
               <Popover>
-                <PopoverTrigger>
+                <PopoverTrigger aria-label="See details">
                   <FaCircleInfo className="h-7 w-7 cursor-pointer relative hover:text-primary transition-colors" />
                 </PopoverTrigger>
                 <PopoverContent className="max-h-[350px] overflow-y-auto">

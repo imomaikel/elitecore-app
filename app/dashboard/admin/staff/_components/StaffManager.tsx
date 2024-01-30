@@ -129,7 +129,7 @@ const StaffManager = ({ refetch }: TStaffManager) => {
           <p>Avatar preview</p>
           <div>
             <Avatar>
-              <AvatarImage src={form.getValues('avatarUrl')} />
+              <AvatarImage alt="avatar" src={form.getValues('avatarUrl')} />
               <AvatarFallback>?</AvatarFallback>
             </Avatar>
           </div>

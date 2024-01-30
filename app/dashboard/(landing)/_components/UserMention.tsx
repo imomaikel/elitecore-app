@@ -14,7 +14,7 @@ const UserMention = ({ className, avatarUrl, username, text }: TUserMention) => 
   return (
     <div className={cn('flex flex-row space-x-4 items-center w-[260px] px-2 py-1 rounded-md', className)}>
       <Avatar>
-        <AvatarImage src={avatarUrl} />
+        <AvatarImage alt="avatar" src={avatarUrl} />
         <AvatarFallback>
           <Image src={unknownAvatar} fill alt="avatar" />
         </AvatarFallback>
