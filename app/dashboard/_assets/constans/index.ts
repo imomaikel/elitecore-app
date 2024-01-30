@@ -104,12 +104,6 @@ export const panelTabs: TPanelTabs = [
         Icon: FaBook,
         path: '/dashboard/tribe/logs',
       },
-      // TODO
-      // {
-      //   tabName: 'Raids',
-      //   Icon: GiPointySword,
-      //   path: '/dashboard/tribe/raids',
-      // },
     ],
   },
 ];

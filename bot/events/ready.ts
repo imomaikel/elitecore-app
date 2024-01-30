@@ -4,6 +4,7 @@ import scheduler from '../scripts/scheduler';
 import { event } from '../utils/events';
 import logger from '../scripts/logger';
 import prisma from '../lib/prisma';
+import updateServerStatusWidget from '../plugins/server-status';
 
 // Wait for client to start
 export default event('ready', async (client) => {
@@ -55,4 +56,5 @@ export default event('ready', async (client) => {
 
   // Register client commands
   registerCommands();
+  updateServerStatusWidget();
 });

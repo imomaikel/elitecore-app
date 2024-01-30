@@ -4,8 +4,6 @@
 
 ## Website (TypeScript, Next.js)
 
-The application is being rewritten. Update soon.
-
 - Website store with payments using [tebex](https://docs.tebex.io/developers)
 - API routes built using [tRPC](https://trpc.io/)
 - User Interface created using [shadcn](https://ui.shadcn.com/)
@@ -33,8 +31,6 @@ This feature is used to control game servers and send real-time status to the Ne
 - Supporting only Windows
 
 ## Discord (TypeScript)
-
-The application is being rewritten. Update soon.
 
 The bot was built using module [discord.js](https://discord.js.org/)
 

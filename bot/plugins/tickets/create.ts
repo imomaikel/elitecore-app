@@ -324,6 +324,10 @@ export const _createTicket = async ({
         const mapEmbed = new EmbedBuilder().setColor(colors.blue).setDescription('**Select your game map**');
         const servers = await prisma.server.findMany();
         if (servers.length <= 0) {
+          await prisma.ticket.update({
+            where: { id: ticket!.id },
+            data: { mapName: 'No maps were provided' },
+          });
           return {
             status: 'success',
             details: { message: 'Ticket created', data: { inviteLink: inviteUrl, ticketId: ticket.id } },

@@ -14,7 +14,6 @@ export const clientStates = {
   lastSelectionPicked: false,
 };
 // Create a container for bot clients
-// TODO
 export const clientBots: {
   isLoggedIn: boolean;
   account: Client;

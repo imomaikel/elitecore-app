@@ -53,6 +53,7 @@ export const _closeTicket = async ({ closedBy, channelId, autoClose }: TCloseTic
   if (autoClose) return;
 
   try {
+    if (closedTicket._count.messages <= 0) return;
     const user = await client.users.fetch(authorDiscordId);
     if (!user.id) return;
 

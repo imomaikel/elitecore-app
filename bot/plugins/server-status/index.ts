@@ -1,6 +1,6 @@
 import { colors, extraSigns, gifs } from '../../constans';
 import { broadcaster } from '../../helpers/broadcaster';
-import { time, EmbedBuilder } from 'discord.js';
+import { time, EmbedBuilder, hyperlink } from 'discord.js';
 import prisma from '../../lib/prisma';
 import { updateBots } from './bots';
 
@@ -40,20 +40,20 @@ const updateServerStatusWidget = async (updateOnlyOneGuildId: string | undefined
     const serverName = server?.customName ?? server.mapName;
     const statusIcon = server.lastStatus === 'online' ? ':green_circle:' : ':red_circle:';
     const statusLabel = server.lastStatus === 'online' ? `Players: ${server.lastPlayers}` : 'Offline';
+
+    const joinLink =
+      server.gameType === 'Evolved'
+        ? `:video_game: ${hyperlink(
+            'Click',
+            `${process.env.NEXT_PUBLIC_SERVER_URL}/join/${server.queryPort}`,
+          )} to join\n`
+        : '';
+
     embed.addFields({
       name: `:map: ${serverName} (ARK: ${server.gameType})`,
-      // TODO
-      // value: `
-      //     ${statusIcon} ${statusLabel}
-      //     :crossed_swords: ${server.gameMode}
-      //     :video_game: ${hyperlink(
-      //         'Click',
-      //         `${process.env.NEXT_PUBLIC_SERVER_URL}/join/${server.queryPort}`,
-      //     )} to join
-      //     `,
       value: `
                 ${statusIcon} ${statusLabel}
-                :crossed_swords: ${server.gameMode}
+                ${joinLink}:crossed_swords: ${server.gameMode}
                 `,
       inline: true,
     });
