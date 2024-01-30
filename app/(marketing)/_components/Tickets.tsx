@@ -13,11 +13,23 @@ const Tickets = () => {
       <div className="flex flex-col md:flex-row justify-center md:space-x-8 lg:space-x-16">
         <div className="mt-4 md:mt-0">
           <div className="max-w-xl relative">
-            <div className="absolute w-full h-full inset-0 z-10 backdrop-blur-xl rounded-md" />
             <ImageSwiper
               images={[
                 {
-                  url: '/discord/chat1.webp',
+                  url: '/tickets/review.webp',
+                  caption: 'Review your tickets',
+                },
+                {
+                  url: '/tickets/message.webp',
+                  caption: 'Send messages through the web panel',
+                },
+                {
+                  url: '/tickets/controls.webp',
+                  caption: 'Control your ticket',
+                },
+                {
+                  url: '/tickets/notification.webp',
+                  caption: 'Receive notifications on ticket close',
                 },
               ]}
             />
