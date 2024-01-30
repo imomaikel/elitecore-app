@@ -45,7 +45,7 @@ const Staff = () => {
           ></motion.div>
         </div>
 
-        <div className="flex flex-wrap gap-4 mt-4 justify-center min-h-[100px]">
+        <div className="flex flex-col md:flex-row flex-wrap gap-4 mt-4 justify-center min-h-[100px]">
           {members?.map((member, index) => (
             <motion.div
               key={member.id}

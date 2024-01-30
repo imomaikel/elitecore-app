@@ -21,11 +21,11 @@ const Hero = () => {
       }}
     >
       <div className="absolute w-full h-full backdrop-blur-sm bg-black/60" />
-      <div className="h-full flex flex-col items-center max-w-screen-xl mx-auto z-10 relative justify-evenly px-6">
+      <div className="h-full flex flex-col items-center max-w-screen-xl mx-auto z-10 relative px-6 justify-evenly">
         {/*  */}
         <div className="text-center">
           <h1 className="sr-only">EliteCore</h1>
-          <div className="w-64 h-64 mx-auto mt-12">
+          <div className="w-52 h-52 md:h-64 md:w-64 mx-auto mt-6 md:mt-0">
             <Image
               src="/ec.webp"
               width={0}
@@ -36,7 +36,7 @@ const Hero = () => {
               className="w-full h-full object-center object-contain"
             />
           </div>
-          <p className="mt-6 text-xl font-semibold bg-muted px-4 py-1 rounded-lg capitalize">
+          <p className="text-xl font-semibold bg-muted px-4 py-1 rounded-lg capitalize">
             Crafting ARK: Survival servers for you since 2019.
           </p>
           <p className="text-lg tracking-wide mt-1">For gamers, by gamers.</p>
@@ -136,7 +136,7 @@ const Hero = () => {
             viewport={{ once: true }}
             className="flex flex-col items-center space-y-1 group cursor-pointer"
           >
-            <div className="w-full text-center -top-7 text-muted-foreground transition-colors group-hover:text-white text-sm">
+            <div className="w-full text-center -top-7 text-muted-foreground transition-colors group-hover:text-white text-sm mt-2">
               Explore More
             </div>
             <div className="relative">

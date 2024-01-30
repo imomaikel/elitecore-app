@@ -1,11 +1,10 @@
 'use client';
-import { itemSlide, staggerContainer } from '@/shared/lib/animate';
-import { Button } from '@/shared/components/ui/button';
+import { itemSlide } from '@/shared/lib/animate';
+import LandingWrapper from './LandingWrapper';
 import { FaDiscord } from 'react-icons/fa';
 import ImageSwiper from './ImageSwiper';
 import { motion } from 'framer-motion';
 import { trpc } from '@/trpc';
-import Link from 'next/link';
 import Count from './Count';
 
 const Community = () => {
@@ -17,72 +16,35 @@ const Community = () => {
   return (
     <div className="w-full py-24 relative px-6">
       <div className="flex flex-col md:flex-row justify-center md:space-x-8 lg:space-x-16">
-        <div>
-          <motion.div
-            variants={itemSlide(0, -100)}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true }}
-            className="text-3xl space-x-2"
-          >
-            Our <span className="px-2 bg-primary rounded-md">community</span>
-          </motion.div>
-          <motion.div
-            variants={itemSlide(0, 100)}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true }}
-            className="max-w-md mt-4 text-justify"
-          >
-            <span>
-              Join our vibrant Discord community. Engage in discussions about the game, seek support, team up with
-              fellow members, explore in-game statistics, and discover many more exciting features. Don&apos;t miss out
-              – be part of the <span className="tracking-wide font-bold">EliteCore</span> experience!
-            </span>
-            <div className="mt-2 text-lg md:text-right space-x-1">
-              <span className="w-[55px] inline-block font-bold">
-                {!isLoading && <Count countTo={memberCount ?? 7000} duration={2} />}
+        <LandingWrapper
+          title="Our"
+          colorTitle="community"
+          buttonLink="https://discord.gg/RjbAsWs7H6"
+          buttonText={
+            <>
+              Join Discord <FaDiscord className="h-6 w-6 ml-2" />
+            </>
+          }
+          description={
+            <>
+              <span>
+                Join our vibrant Discord community. Engage in discussions about the game, seek support, team up with
+                fellow members, explore in-game statistics, and discover many more exciting features. Don&apos;t miss
+                out – be part of the <span className="tracking-wide font-bold">EliteCore</span> experience!
               </span>
-              <span>members so far</span>
-            </div>
-          </motion.div>
-          <motion.div
-            variants={itemSlide(0, -100)}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true }}
-            className="md:text-right mt-2"
-          >
-            <Button asChild className="w-1/2 text-black">
-              <Link href="https://discord.gg/RjbAsWs7H6" target="_blank">
-                Join Discord <FaDiscord className="h-6 w-6 ml-2" />
-              </Link>
-            </Button>
-          </motion.div>
-          <div className="mt-2 text-right md:text-left">
-            <motion.span
-              variants={itemSlide(0, 0)}
-              initial="hidden"
-              whileInView="show"
-              viewport={{ once: true }}
-              className="text-muted-foreground"
-            >
-              Moreover, you can
-            </motion.span>
-            <motion.ul
-              className="ml-4"
-              variants={staggerContainer()}
-              initial="hidden"
-              whileInView="show"
-              viewport={{ once: true }}
-            >
-              <motion.li variants={itemSlide(100, 0)}>Track your in-game stats</motion.li>
-              <motion.li variants={itemSlide(100, 0)}>See server statuses</motion.li>
-              <motion.li variants={itemSlide(100, 0)}>Create tickets</motion.li>
-              <motion.li variants={itemSlide(100, 0)}>and many more!</motion.li>
-            </motion.ul>
-          </div>
-        </div>
+              <div className="mt-2 text-lg md:text-right space-x-1">
+                <span className="w-[55px] inline-block font-bold">
+                  {!isLoading && <Count countTo={memberCount ?? 7000} duration={2} />}
+                </span>
+                <span>members so far</span>
+              </div>
+            </>
+          }
+          textRight
+          listHeader="Moreover, you can"
+          listItems={['Track your in-game stats', 'See server statuses', 'Create tickets', 'and many more!']}
+        />
+
         <div className="mt-4 md:mt-0">
           <motion.div
             variants={itemSlide(0, 300)}
@@ -114,7 +76,7 @@ const Community = () => {
           </motion.div>
         </div>
       </div>
-      <div className="absolute bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 rotate-45 w-[400px] h-[100px] top-1/4 blur-[180px] -z-10 opacity-75 hidden md:block" />
+      <div className="absolute bg-gradient-to-r from-slate-900 via-purple-900 to-slate-900 w-[300px] h-[200px] left-0 top-1/3 -z-10 blur-[200px]" />
       <div className="absolute bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 rotate-45 w-[400px] h-[100px] top-1/4 blur-[180px] -z-10 opacity-75 right-0" />
     </div>
   );

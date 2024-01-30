@@ -1,10 +1,7 @@
 'use client';
-import { itemSlide, staggerContainer } from '@/shared/lib/animate';
-import { Button } from '@/shared/components/ui/button';
 import { IoTicketOutline } from 'react-icons/io5';
+import LandingWrapper from './LandingWrapper';
 import ImageSwiper from './ImageSwiper';
-import { motion } from 'framer-motion';
-import Link from 'next/link';
 
 const Tickets = () => {
   return (
@@ -35,70 +32,33 @@ const Tickets = () => {
             />
           </div>
         </div>
-        <div>
-          <motion.div
-            variants={itemSlide(0, -100)}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true }}
-            className="text-3xl space-x-2"
-          >
-            Our <span className="px-2 bg-primary rounded-md">ticket</span> system
-          </motion.div>
-          <motion.div
-            variants={itemSlide(0, 100)}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true }}
-            className="max-w-md mt-4 text-justify"
-          >
-            <span>
-              Explore our streamlined support with a custom ticket system! Easily share your questions or issues,
-              specify the related server, and enjoy transcriptions for clarity. Manage tickets effortlessly on our
-              website or Discord for quick resolutions. Elevate your support experience with us!
-            </span>
-          </motion.div>
-          <motion.div
-            variants={itemSlide(0, -100)}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true }}
-            className="md:text-right mt-2"
-          >
-            <Button asChild className="w-1/2 text-black">
-              <Link href="/dashboard/tickets/create">
-                Create a ticket <IoTicketOutline className="h-6 w-6 ml-2" />
-              </Link>
-            </Button>
-          </motion.div>
-          <div className="mt-2 text-right md:text-left">
-            <motion.span
-              variants={itemSlide(0, 0)}
-              initial="hidden"
-              whileInView="show"
-              viewport={{ once: true }}
-              className="text-muted-foreground"
-            >
-              Some features
-            </motion.span>
-            <motion.ul
-              className="ml-4"
-              variants={staggerContainer()}
-              initial="hidden"
-              whileInView="show"
-              viewport={{ once: true }}
-            >
-              <motion.li variants={itemSlide(100, 0)}>Adding another member to the ticket.</motion.li>
-              <motion.li variants={itemSlide(100, 0)}>Specify your in-game coordinates with validation</motion.li>
-              <motion.li variants={itemSlide(100, 0)}>Specify ticket-related server</motion.li>
-              <motion.li variants={itemSlide(100, 0)}>Pair your Discord with in-game and Steam account</motion.li>
-              <motion.li variants={itemSlide(100, 0)}>Instant transcription after close</motion.li>
-            </motion.ul>
-          </div>
-        </div>
+        <LandingWrapper
+          title="Our"
+          colorTitle="ticket"
+          extraTitle="system"
+          buttonLink=""
+          buttonText={
+            <>
+              Create a ticket <IoTicketOutline className="h-6 w-6 ml-2" />
+            </>
+          }
+          description="Explore our streamlined support with a custom ticket system! Easily share your questions or issues,
+          specify the related server, and enjoy transcriptions for clarity. Manage tickets effortlessly on our
+          website or Discord for quick resolutions. Elevate your support experience with us!"
+          textRight
+          listHeader="Some features"
+          listItems={[
+            'Adding another member to the ticket',
+            'Specify your in-game coordinates with validation',
+            'Specify ticket-related server',
+            'Pair your Discord with in-game and Steam account',
+            'Instant transcription after close',
+          ]}
+        />
       </div>
       <div className="absolute bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 rotate-45 w-[400px] h-[100px] top-1/4 blur-[180px] -z-10 opacity-75 hidden md:block" />
       <div className="absolute bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 rotate-45 w-[400px] h-[100px] top-1/4 blur-[180px] -z-10 opacity-75 right-0" />
+      <div className="absolute bg-gradient-to-r from-slate-900 via-purple-900 to-slate-900 w-[300px] h-[200px] right-1/3 top-0 -z-10 blur-[200px]" />
     </div>
   );
 };
