@@ -4,6 +4,7 @@ import { HiOutlineStatusOnline } from 'react-icons/hi';
 import { MdOutlineLeaderboard } from 'react-icons/md';
 import { IoTicketOutline } from 'react-icons/io5';
 import { LuCalendarClock } from 'react-icons/lu';
+import { FaPeopleGroup } from 'react-icons/fa6';
 import { TbDeviceRemote } from 'react-icons/tb';
 import { FaInfoCircle } from 'react-icons/fa';
 import { RiAdminFill } from 'react-icons/ri';
@@ -55,6 +56,11 @@ export const panelTabs: TPanelTabs = [
         tabName: 'Leader Board',
         Icon: MdOutlineLeaderboard,
         path: '/dashboard/admin/leaderboard',
+      },
+      {
+        tabName: 'Staff',
+        Icon: FaPeopleGroup,
+        path: '/dashboard/admin/staff',
       },
       {
         tabName: 'Miscellaneous',

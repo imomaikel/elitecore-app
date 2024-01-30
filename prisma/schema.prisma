@@ -162,6 +162,15 @@ model Currency {
   @@unique([code])
 }
 
+model Staff {
+  id String @id @default(cuid())
+
+  username  String   @db.TinyText
+  avatarUrl String   @db.TinyText
+  role      String   @db.TinyText
+  joinedAt  DateTime
+}
+
 // Discord client models 
 model Guild {
   // General

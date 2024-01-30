@@ -71,7 +71,7 @@ const Tickets = () => {
             </motion.span>
             <motion.ul
               className="ml-4"
-              variants={staggerContainer}
+              variants={staggerContainer()}
               initial="hidden"
               whileInView="show"
               viewport={{ once: true }}

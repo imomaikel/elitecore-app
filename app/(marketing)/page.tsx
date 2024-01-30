@@ -1,12 +1,13 @@
 import Community from './_components/Community';
 import Tickets from './_components/Tickets';
+import Staff from './_components/Staff';
 import Panel from './_components/Panel';
 import Hero from './_components/Hero';
 import Shop from './_components/Shop';
 
 export default function LandingPage() {
   return (
-    <div>
+    <div className="pb-24 overflow-x-hidden">
       <section>
         <Hero />
       </section>
@@ -22,6 +23,9 @@ export default function LandingPage() {
         </section>
         <section id="tickets">
           <Tickets />
+        </section>
+        <section id="staff">
+          <Staff />
         </section>
       </div>
     </div>

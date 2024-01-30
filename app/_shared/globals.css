@@ -64,7 +64,8 @@
   @apply bg-primary/75 rounded-lg;
 }
 
-input[type='datetime-local'] {
+input[type='datetime-local'],
+input[type='date'] {
   @apply px-4 py-2 rounded-lg bg-background;
   color-scheme: dark;
 }

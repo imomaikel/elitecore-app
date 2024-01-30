@@ -640,6 +640,22 @@ export const appRouter = router({
       id,
     }));
   }),
+  getStaffMembers: publicProcedure.query(async ({ ctx }) => {
+    const { prisma } = ctx;
+
+    const now = new Date().getTime();
+    const divide = 1000 * 3600 * 24;
+
+    const members = (
+      await prisma.staff.findMany({
+        orderBy: {
+          joinedAt: 'asc',
+        },
+      })
+    ).map((member) => ({ ...member, days: Math.round((now - member.joinedAt.getTime()) / divide) }));
+
+    return members;
+  }),
 });
 
 export type AppRouter = typeof appRouter;

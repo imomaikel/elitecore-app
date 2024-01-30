@@ -1,4 +1,5 @@
 import {
+  StaffMemberSchema,
   TicketCategoryCreateSchema,
   TicketCategoryEditSchema,
   UpdateDelaySchema,
@@ -13,6 +14,7 @@ import { apiWipeSchemas } from '../../../../bot/api/apiWipeSchemas';
 import { apiUpdateWidget } from '../../../../bot/api/widgetUpdate';
 import { apiUpdateRole } from '../../../../bot/api/apiUpdateRole';
 import { adminProcedure, managerProcedure, router } from './trpc';
+import { apiAvatar } from '../../../../bot/api/apiAvatar';
 import { createAdminLog } from '../../admin/_actions';
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
@@ -661,4 +663,58 @@ export const adminRouter = router({
 
     return { created: createdLeaderboard, sent: false };
   }),
+  addStaffMember: adminProcedure.input(StaffMemberSchema).mutation(async ({ ctx, input }) => {
+    const { avatarUrl, joinedAt, role, username } = input;
+    const { prisma, userDiscordId, selectedGuildId } = ctx;
+
+    const member = await prisma.staff.create({
+      data: {
+        avatarUrl,
+        joinedAt,
+        role,
+        username,
+      },
+    });
+
+    if (!member.id) return { error: true };
+
+    await createAdminLog({
+      content: `Added staff member "${member.username}"`,
+      guildId: selectedGuildId,
+      userDiscordId,
+    });
+
+    return { success: true, memberName: member.username };
+  }),
+  removeStaffMember: adminProcedure.input(z.object({ id: z.string().min(1) })).mutation(async ({ ctx, input }) => {
+    const { id } = input;
+    const { prisma, userDiscordId, selectedGuildId } = ctx;
+
+    const member = await prisma.staff.delete({
+      where: { id },
+    });
+
+    if (!member.id) return { error: true };
+
+    await createAdminLog({
+      content: `Removed staff member "${member.username}"`,
+      guildId: selectedGuildId,
+      userDiscordId,
+    });
+
+    return { success: true, memberName: member.username };
+  }),
+  getAvatar: adminProcedure
+    .input(
+      z.object({
+        discordId: z.string().min(4),
+      }),
+    )
+    .mutation(async ({ input }) => {
+      const { discordId } = input;
+
+      const avatarUrl = await apiAvatar(discordId);
+
+      return avatarUrl;
+    }),
 });

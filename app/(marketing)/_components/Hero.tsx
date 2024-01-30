@@ -4,6 +4,7 @@ import { HiChevronDoubleDown } from 'react-icons/hi';
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import Image from 'next/image';
 
 const Hero = () => {
   const [isMounted, setIsMounted] = useState(false);
@@ -23,9 +24,18 @@ const Hero = () => {
       <div className="h-full flex flex-col items-center max-w-screen-xl mx-auto z-10 relative justify-evenly px-6">
         {/*  */}
         <div className="text-center">
-          <h1 className="text-5xl sm:text-7xl font-extrabold tracking-wider">
-            Elite<span className="bg-primary rounded-md px-3 mx-1">Core</span>
-          </h1>
+          <h1 className="sr-only">EliteCore</h1>
+          <div className="w-64 h-64 mx-auto mt-12">
+            <Image
+              src="/ec.webp"
+              width={0}
+              height={0}
+              loading="eager"
+              sizes="100vw"
+              alt="logo"
+              className="w-full h-full object-center object-contain"
+            />
+          </div>
           <p className="mt-6 text-xl font-semibold bg-muted px-4 py-1 rounded-lg capitalize">
             Crafting ARK: Survival servers for you since 2019.
           </p>

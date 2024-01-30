@@ -53,3 +53,12 @@ export const UpdateDelaySchema = z.object({
   autoCleanTicketFilesDays: z.optional(z.number().min(1)),
 });
 export type TUpdateDelaySchema = z.infer<typeof UpdateDelaySchema>;
+
+export const StaffMemberSchema = z.object({
+  username: z.string().min(1),
+  avatarUrl: z.string().min(1),
+  role: z.string().min(1),
+  joinedAt: z.date(),
+});
+
+export type TStaffMemberSchema = z.infer<typeof StaffMemberSchema>;
