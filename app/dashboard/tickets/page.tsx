@@ -6,7 +6,9 @@ import TicketTable from '@/components/TicketTable';
 import { trpc } from '@/trpc';
 
 const TicketsPage = () => {
-  const { data: tickets, isLoading } = trpc.getUserTickets.useQuery();
+  const { data: tickets, isLoading } = trpc.getUserTickets.useQuery(undefined, {
+    retry: 1,
+  });
 
   return (
     <PageWrapper pageName="Tickets" title="Review">

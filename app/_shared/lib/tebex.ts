@@ -45,7 +45,7 @@ type TCreateBasket = {
   ipAddress: string;
   basketAuthRedirectUrl: string;
 };
-const createBasket = async ({
+export const createBasket = async ({
   ipAddress,
   userId,
   basketAuthRedirectUrl,

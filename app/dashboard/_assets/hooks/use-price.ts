@@ -9,7 +9,10 @@ export const usePrice = () => {
   const { user } = useCurrentUser();
 
   const updatePrice = (forceUpdate?: boolean) => {
-    if (!user?.basketIdent) return;
+    if (!user?.basketIdent) {
+      _updatePrice();
+      return;
+    }
     if (basket.giftcards.length >= 1 || forceUpdate) {
       const url = `${BASE_URL}/api/accounts/${WEBSTORE_IDENTIFIER}/baskets/${user.basketIdent}`;
       fetch(url, { method: 'GET' })

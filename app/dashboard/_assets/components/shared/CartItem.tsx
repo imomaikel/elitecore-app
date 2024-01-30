@@ -14,9 +14,9 @@ type TCartItem = {
   basketItem: BasketPackage;
 };
 const CartItem = ({ basketItem, productItem }: TCartItem) => {
-  const { removeFromBasket: clientRemoveFromBasket } = useTebex();
-  const { user } = useCurrentUser();
+  const { removeFromBasket: clientRemoveFromBasket, _updatePrice } = useTebex();
   const { formatPrice } = useCurrency();
+  const { user } = useCurrentUser();
 
   const image = productItem?.image ?? '/logo.png';
 
@@ -39,6 +39,7 @@ const CartItem = ({ basketItem, productItem }: TCartItem) => {
       if (!isLoading) removeFromBasket({ productId: basketItem.id });
     } else {
       clientRemoveFromBasket(basketItem.id);
+      _updatePrice();
       toast.success(`Removed "${basketItem.name}" from the cart!`);
     }
   };

@@ -4,6 +4,7 @@ import { Skeleton } from '@/shared/components/ui/skeleton';
 import PageWrapper from '@/components/shared/PageWrapper';
 import { Switch } from '@/shared/components/ui/switch';
 import { Label } from '@/shared/components/ui/label';
+import NoData from '@/components/shared/NoData';
 import LogTable from './_components/LogTable';
 import { LogType } from '@prisma/client';
 import { toast } from 'sonner';
@@ -14,11 +15,12 @@ const OPTIONS = Object.keys(LogType) as Array<keyof typeof LogType>;
 const TribeLogsPage = () => {
   const { data, isLoading, refetch, isRefetching } = trpc.getTribeLogs.useQuery(undefined, {
     refetchOnWindowFocus: false,
+    retry: 1,
   });
 
   if (isLoading) return <TribeLogsPage.Skeleton />;
 
-  if (!data?.success) return <p>No logs</p>;
+  if (!data?.success) return <NoData />;
 
   return (
     <PageWrapper pageName="Tribe" title={data.tribeName}>

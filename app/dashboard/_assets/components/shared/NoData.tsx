@@ -8,7 +8,9 @@ const NoData = () => {
         <div className="p-4">
           <p className="text-muted-foreground">Make sure that</p>
           <ul>
+            <li>You are logged into the website</li>
             <li>You have played on this wipe</li>
+            <li>You have a tribe in-game</li>
             <li>Your Steam account is connected to your Discord</li>
           </ul>
           <p className="text-muted-foreground mt-4">Open a ticket if you still cannot see your in-game tribe</p>

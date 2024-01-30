@@ -59,6 +59,7 @@ const ControlCartItem = ({ basketItem, category, productData }: TControlCartItem
       removeFromBasket({ productId: basketItem.id });
     } else {
       clientRemoveFromBasket(basketItem.id);
+      updatePrice();
       toast.success(`Removed "${basketItem.name}" from the cart!`);
     }
   };
@@ -66,9 +67,11 @@ const ControlCartItem = ({ basketItem, category, productData }: TControlCartItem
     if (user?.id) {
       updateQuantity({ productId: basketItem.id, quantity });
     } else {
-      addToBasket(basketItem, quantity <= 0 ? 1 : quantity);
+      const newQuantity = quantity <= 0 ? 1 : quantity;
+      addToBasket(basketItem, newQuantity);
+      updatePrice();
       toast.success(`Updated "${basketItem.name}" quantity!`);
-      setQuantity(1);
+      setQuantity(newQuantity);
     }
   };
 

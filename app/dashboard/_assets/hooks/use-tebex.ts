@@ -15,6 +15,9 @@ type TUseTebex = {
   basket: Basket;
   setBasket: (basket: Basket) => void;
 
+  fetched: boolean;
+  setFetched: () => void;
+
   addToBasket: (product: BasketPackage, setQuantity?: number) => void;
   removeFromBasket: (productId: number) => void;
 
@@ -50,6 +53,11 @@ export const useTebex = create<TUseTebex>()(
             };
           }),
         }));
+      },
+
+      fetched: false,
+      setFetched: () => {
+        set(() => ({ fetched: true }));
       },
 
       showItemType: 'none',

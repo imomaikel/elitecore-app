@@ -2,43 +2,65 @@
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/shared/components/ui/sheet';
 import { Alert, AlertDescription, AlertTitle } from '@/shared/components/ui/alert';
 import { useCurrentUser } from '@/hooks/use-current-user';
+import { usePathname, useRouter } from 'next/navigation';
 import { Button } from '@/shared/components/ui/button';
 import { useCurrency } from '@/hooks/use-currency';
-import { FaExternalLinkAlt } from 'react-icons/fa';
 import GiftCardApplied from './GiftCardApplied';
 import { FaDollarSign } from 'react-icons/fa6';
 import { useTebex } from '@/hooks/use-tebex';
+import CheckoutButton from './CheckoutButton';
 import { usePrice } from '@/hooks/use-price';
 import { useSheet } from '@/hooks/use-sheet';
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import SignInConfirm from './SignInConfirm';
 import ActionDialog from './ActionDialog';
 import { signIn } from 'next-auth/react';
 import { motion } from 'framer-motion';
 import CartItem from './CartItem';
+import { toast } from 'sonner';
 import Image from 'next/image';
-import Link from 'next/link';
+import { trpc } from '@/trpc';
 
 const WEBSTORE_IDENTIFIER = process.env.NEXT_PUBLIC_TEBEX_WEBSTORE_IDENTIFIER;
 const BASE_URL = process.env.NEXT_PUBLIC_TEBEX_BASE_URL;
 
 const ShoppingCart = () => {
-  const { categoryList, setBasket, basket } = useTebex();
+  const { categoryList, setBasket, basket, fetched, setFetched } = useTebex();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isDataReady, setIsDataReady] = useState(false);
   const { sessionStatus, user } = useCurrentUser();
   const { isOpen, onOpenChange } = useSheet();
   const { formatPrice } = useCurrency();
   const { updatePrice } = usePrice();
+  const pathname = usePathname();
   const router = useRouter();
 
+  const { mutate: addToBasket } = trpc.addToBasket.useMutation();
+
   useEffect(() => {
-    if (sessionStatus === 'unauthenticated') {
+    if (sessionStatus !== 'authenticated' || !user || !user.basketIdent) {
       setIsDataReady(true);
       return;
     }
-    if (sessionStatus !== 'authenticated' || !user) return;
+    if (!fetched) {
+      basket.packages.forEach((item) => {
+        for (let i = 0; i < item.in_basket.quantity; i++) {
+          addToBasket(
+            {
+              pathname,
+              productId: item.id,
+            },
+            {
+              onSuccess: () => {
+                if (!fetched) setFetched();
+              },
+            },
+          );
+        }
+      });
+      toast.info('Your basket has been updated!', { duration: 10_000 });
+      return;
+    }
     const url = `${BASE_URL}/api/accounts/${WEBSTORE_IDENTIFIER}/baskets/${user.basketIdent}`;
     fetch(url, { method: 'GET' })
       .then((res) => res.json())
@@ -47,7 +69,7 @@ const ShoppingCart = () => {
         setIsDataReady(true);
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sessionStatus, user]);
+  }, [sessionStatus]);
 
   useEffect(() => {
     updatePrice();
@@ -101,15 +123,7 @@ const ShoppingCart = () => {
               ) : (
                 <div>
                   <div className="space-x-4 z-10 relative">
-                    {sessionStatus === 'authenticated' && user ? (
-                      <Button asChild>
-                        <Link href={`https://checkout.tebex.io/checkout/${user.basketIdent}`}>
-                          CHECKOUT <FaExternalLinkAlt className="h-4 w-4 ml-2" />
-                        </Link>
-                      </Button>
-                    ) : (
-                      <Button onClick={() => setIsDialogOpen(true)}>Login to proceed</Button>
-                    )}
+                    <CheckoutButton onClick={() => setIsDialogOpen(true)} />
                     <Button
                       variant="ghost"
                       onClick={() => {

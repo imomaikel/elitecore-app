@@ -1,6 +1,7 @@
 import {
   addProduct,
   applyGiftCard,
+  createBasket,
   removeGiftCard,
   removeProduct,
   shopGetCategories,
@@ -655,6 +656,29 @@ export const appRouter = router({
     ).map((member) => ({ ...member, days: Math.round((now - member.joinedAt.getTime()) / divide) }));
 
     return members;
+  }),
+  createBasket: authorizedProcedure.input(z.object({ path: z.string() })).mutation(async ({ ctx, input }) => {
+    const { prisma, user, req } = ctx;
+    const { path } = input;
+
+    const userData = await prisma.user.findUnique({
+      where: { discordId: user.discordId },
+    });
+
+    if (userData?.basketAuthUrl) return { error: true, message: 'Basket already exists' };
+    if (!userData?.id || !req.ip) return { error: true, message: 'Unauthorized' };
+
+    const newBasket = await createBasket({
+      basketAuthRedirectUrl: path,
+      ipAddress: req.ip,
+      userId: userData?.id,
+    });
+
+    if (newBasket.status === 'error' || !newBasket.authUrl) {
+      return { error: true, message: 'Something went wrong!' };
+    }
+
+    return { success: true, url: newBasket.authUrl };
   }),
 });
 
