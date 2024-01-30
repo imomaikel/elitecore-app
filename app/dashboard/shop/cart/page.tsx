@@ -114,7 +114,7 @@ const CartPage = () => {
         <div className="fixed bottom-0 right-1 max-w-10xl">
           <div className="h-80 w-80 relative select-none z-10">
             <Image
-              src="/cart.png"
+              src="/shop/cart.webp"
               alt="cart"
               fill
               className="h-80 w-80 object-contain object-center -scale-x-100 opacity-25 md:opacity-100"
@@ -243,7 +243,7 @@ const CartPage = () => {
       <div className="fixed bottom-0 right-1 max-w-10xl">
         <div className="h-80 w-80 relative select-none z-10">
           <Image
-            src="/cart.png"
+            src="/shop/cart.webp"
             alt="cart"
             fill
             className="h-80 w-80 object-contain object-center -scale-x-100 opacity-25 md:opacity-100"

@@ -143,7 +143,7 @@ const AfterPaymentPage = () => {
         </div>
         <div className="relative">
           <Image
-            src="/bought.png"
+            src="/shop/bought.webp"
             width={0}
             height={0}
             sizes="100vw"

@@ -87,7 +87,7 @@ const ShoppingCart = () => {
                   }}
                 >
                   <div className="w-full h-[350px] md:h-[425px]">
-                    <Image src="/emptyCart.png" fill alt="empty cart" className="mt-4" />
+                    <Image src="/shop/emptyCart.webp" fill alt="empty cart" className="mt-4" />
                   </div>
                   <motion.span
                     initial={{ opacity: 0 }}

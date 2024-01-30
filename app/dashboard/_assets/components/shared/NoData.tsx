@@ -16,7 +16,7 @@ const NoData = () => {
       </div>
       <div className="flex w-full relative overflow-hidden lg:rounded-tr-lg lg:rounded-br-lg">
         <Image
-          src="/no-data.png"
+          src="/tribe/no-data.webp"
           alt="no data"
           width={300}
           height={300}
