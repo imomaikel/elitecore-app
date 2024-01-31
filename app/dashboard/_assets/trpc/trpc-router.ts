@@ -13,6 +13,7 @@ import {
   createTicket,
   createTicketTranscript,
 } from '../../../../bot/plugins/tickets';
+import { findPairedAccount } from '../../../../bot/plugins/tickets/verification';
 import { COORDS_REGEX } from '../../../../bot/plugins/tickets/message';
 import { authorizedProcedure, publicProcedure, router } from './trpc';
 import { getTribe } from '../../../../bot/plugins/tribe';
@@ -494,12 +495,31 @@ export const appRouter = router({
     return tickets;
   }),
   getTribe: authorizedProcedure.query(async ({ ctx }) => {
-    const { user } = ctx;
+    const { user, prisma } = ctx;
+    console.log('f', user.name);
 
-    if (!user) throw new TRPCError({ code: 'UNAUTHORIZED' });
+    if (!user || !user.discordId) throw new TRPCError({ code: 'UNAUTHORIZED' });
 
-    const steamId = user?.steamId;
-    if (!steamId) return { error: true, message: 'Steam is not paired' };
+    let steamId: string | undefined = user?.steamId;
+
+    if (!steamId) {
+      const findSteam = await findPairedAccount(user.discordId);
+      console.log(findSteam, user.name);
+      if (typeof findSteam !== 'boolean') {
+        const steam = findSteam.find((entry) => entry.method === 'STEAM')?.id;
+        if (steam) {
+          steamId = steam;
+          await prisma.user.update({
+            where: { id: user.id },
+            data: {
+              steamId: steam,
+            },
+          });
+        }
+      }
+
+      return { error: true, message: 'Steam is not paired' };
+    }
 
     const data = await getTribe(steamId);
     if (!data) return { error: true, message: 'Could not find a tribe' };
@@ -509,13 +529,32 @@ export const appRouter = router({
   getTribeLogs: authorizedProcedure.query(async ({ ctx }) => {
     const { user, prisma } = ctx;
 
-    if (!user) throw new TRPCError({ code: 'UNAUTHORIZED' });
+    if (!user || !user.discordId) throw new TRPCError({ code: 'UNAUTHORIZED' });
 
-    const steamId = user.steamId;
-    if (!steamId) return { error: true, message: 'Steam is not paired' };
+    let steamId: string | undefined = user?.steamId;
+
+    if (!steamId) {
+      const findSteam = await findPairedAccount(user.discordId);
+      console.log(findSteam, user.name);
+      if (typeof findSteam !== 'boolean') {
+        const steam = findSteam.find((entry) => entry.method === 'STEAM')?.id;
+        if (steam) {
+          steamId = steam;
+          await prisma.user.update({
+            where: { id: user.id },
+            data: {
+              steamId: steam,
+            },
+          });
+        }
+      }
+
+      return { error: true, message: 'Steam is not paired' };
+    }
 
     const data = await getTribe(steamId);
-    if (!data) return { error: true, message: 'Could not find a tribe' };
+    if (!data?.tribe.tribeId) return { error: true, message: 'Could not find a tribe' };
+    console.log(data, user.name);
 
     const logs = await prisma.tribeLog.findMany({
       where: { tribeId: data.tribe.tribeId },

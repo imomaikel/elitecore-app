@@ -10,17 +10,17 @@ export const _createLeaderboard = async (firstTime?: boolean): Promise<boolean> 
   // Calculate each player kdr and add playtime to tribe
   for (const player of players) {
     if (player.deaths === 0) {
-      player.kdr = player.playersKills;
+      player.kdr = player.playersKills ?? 0;
     } else {
-      player.kdr = parseFloat((player.playersKills / player.deaths).toFixed(2));
+      player.kdr = parseFloat(((player.playersKills ?? 0) / (player.deaths ?? 1)).toFixed(2));
     }
     if (player.tribeId) {
       const tribe = tribes.find((entry) => entry.pk === player.tribeId);
       if (!tribe) continue;
       if (tribe.playTime) {
-        tribe.playTime += player.playTime;
+        tribe.playTime += player.playTime ?? 0;
       } else {
-        tribe.playTime = player.playTime;
+        tribe.playTime = player.playTime ?? 0;
       }
     }
   }
@@ -29,9 +29,9 @@ export const _createLeaderboard = async (firstTime?: boolean): Promise<boolean> 
   for (const tribe of tribes) {
     if (!tribe.playTime) tribe.playTime = 0;
     if (tribe.playersDeaths === 0) {
-      tribe.kdr = tribe.playersKills;
+      tribe.kdr = tribe.playersKills ?? 0;
     } else {
-      tribe.kdr = parseFloat((tribe.playersKills / tribe.playersDeaths).toFixed(2));
+      tribe.kdr = parseFloat(((tribe.playersKills ?? 0) / (tribe.playersDeaths ?? 1)).toFixed(2));
     }
   }
 

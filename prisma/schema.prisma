@@ -293,8 +293,8 @@ model TicketCategory {
   mentionSupport         Boolean @default(false)
   name                   String  @unique
   parentChannelId        String?
-  afterCreateDescription String?
-  description            String
+  afterCreateDescription String? @db.LongText
+  description            String  @db.LongText
   steamRequired          Boolean
   mapSelection           Boolean
   coordinateInput        Boolean

@@ -64,7 +64,7 @@ const TribeLogsPage = () => {
       <Chart
         data={[userInGame, ...members].map(({ playerName, playTime, playTimeText }) => ({
           label: playerName.length >= 1 ? playerName : 'Unnamed',
-          value: playTime,
+          value: playTime ?? 0,
           customText: playTimeText,
         }))}
       />

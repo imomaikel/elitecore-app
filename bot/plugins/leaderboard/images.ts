@@ -53,9 +53,9 @@ export const _createImages = async ({ players, tribes }: TCreateImages): Promise
           headerImage: PLAYERS_IMAGE,
           output: resolve(GENERATE_PATH, 'playersPlaytime.jpg' satisfies TImages),
           rows: players
-            .sort((a, b) => b.playTime - a.playTime)
+            .sort((a, b) => (b.playTime ?? 0) - (a.playTime ?? 0))
             .slice(0, BOARD_SIZE)
-            .map((entry) => ({ name: entry.playerName, score: playTimeToText(entry.playTime) })),
+            .map((entry) => ({ name: entry.playerName, score: playTimeToText(entry.playTime ?? 0) })),
         },
         {
           // Tribes playtime
@@ -77,7 +77,7 @@ export const _createImages = async ({ players, tribes }: TCreateImages): Promise
           headerImage: PLAYERS_IMAGE,
           output: resolve(GENERATE_PATH, 'playersKills.jpg' satisfies TImages),
           rows: players
-            .sort((a, b) => b.playersKills - a.playersKills)
+            .sort((a, b) => (b.playersKills ?? 0) - (a.playersKills ?? 0))
             .slice(0, BOARD_SIZE)
             .map((entry) => ({ name: entry.playerName, score: entry.playersKills })),
         },
@@ -89,7 +89,7 @@ export const _createImages = async ({ players, tribes }: TCreateImages): Promise
           headerImage: TRIBES_IMAGE,
           output: resolve(GENERATE_PATH, 'tribesKills.jpg' satisfies TImages),
           rows: tribes
-            .sort((a, b) => b.playersKills - a.playersKills)
+            .sort((a, b) => (b.playersKills ?? 0) - (a.playersKills ?? 0))
             .slice(0, BOARD_SIZE)
             .map((entry) => ({ name: entry.tribeName, score: entry.playersKills })),
         },
@@ -101,7 +101,7 @@ export const _createImages = async ({ players, tribes }: TCreateImages): Promise
           headerImage: PLAYERS_IMAGE,
           output: resolve(GENERATE_PATH, 'playersDeaths.jpg' satisfies TImages),
           rows: players
-            .sort((a, b) => b.deaths - a.deaths)
+            .sort((a, b) => (b.deaths ?? 0) - (a.deaths ?? 0))
             .slice(0, BOARD_SIZE)
             .map((entry) => ({ name: entry.playerName, score: entry.deaths })),
         },
@@ -113,7 +113,7 @@ export const _createImages = async ({ players, tribes }: TCreateImages): Promise
           headerImage: TRIBES_IMAGE,
           output: resolve(GENERATE_PATH, 'tribesDeaths.jpg' satisfies TImages),
           rows: tribes
-            .sort((a, b) => b.playersDeaths - a.playersDeaths)
+            .sort((a, b) => (b.playersDeaths ?? 0) - (a.playersDeaths ?? 0))
             .slice(0, BOARD_SIZE)
             .map((entry) => ({ name: entry.tribeName, score: entry.playersDeaths })),
         },
@@ -149,7 +149,7 @@ export const _createImages = async ({ players, tribes }: TCreateImages): Promise
           headerImage: PLAYERS_IMAGE,
           output: resolve(GENERATE_PATH, 'playersWildDinosKills.jpg' satisfies TImages),
           rows: players
-            .sort((a, b) => b.wildDinosKills - a.wildDinosKills)
+            .sort((a, b) => (b.wildDinosKills ?? 0) - (a.wildDinosKills ?? 0))
             .slice(0, BOARD_SIZE)
             .map((entry) => ({ name: entry.playerName, score: entry.wildDinosKills })),
         },
@@ -161,7 +161,7 @@ export const _createImages = async ({ players, tribes }: TCreateImages): Promise
           headerImage: TRIBES_IMAGE,
           output: resolve(GENERATE_PATH, 'tribesWildDinosKills.jpg' satisfies TImages),
           rows: tribes
-            .sort((a, b) => b.wildDinosKills - a.wildDinosKills)
+            .sort((a, b) => (b.wildDinosKills ?? 0) - (a.wildDinosKills ?? 0))
             .slice(0, BOARD_SIZE)
             .map((entry) => ({ name: entry.tribeName, score: entry.wildDinosKills })),
         },
@@ -173,7 +173,7 @@ export const _createImages = async ({ players, tribes }: TCreateImages): Promise
           headerImage: PLAYERS_IMAGE,
           output: resolve(GENERATE_PATH, 'playersTamedDinosKills.jpg' satisfies TImages),
           rows: players
-            .sort((a, b) => b.tamedDinosKills - a.tamedDinosKills)
+            .sort((a, b) => (b.tamedDinosKills ?? 0) - (a.tamedDinosKills ?? 0))
             .slice(0, BOARD_SIZE)
             .map((entry) => ({ name: entry.playerName, score: entry.tamedDinosKills })),
         },
@@ -185,7 +185,7 @@ export const _createImages = async ({ players, tribes }: TCreateImages): Promise
           headerImage: TRIBES_IMAGE,
           output: resolve(GENERATE_PATH, 'tribesTamedDinosKills.jpg' satisfies TImages),
           rows: tribes
-            .sort((a, b) => b.tamedDinosKills - a.tamedDinosKills)
+            .sort((a, b) => (b.tamedDinosKills ?? 0) - (a.tamedDinosKills ?? 0))
             .slice(0, BOARD_SIZE)
             .map((entry) => ({ name: entry.tribeName, score: entry.tamedDinosKills })),
         },

@@ -95,9 +95,9 @@ export const getTribeData = async (steamId: string) => {
 
   const members = data.map((player) => ({
     steamId: player.steam_id,
-    lastLogin: new Date(player.last_login * 1000),
+    lastLogin: new Date((player.last_login ?? 0) * 1000),
     playerName: player.player_name,
-    playTimeText: playTimeToText(player.play_time),
+    playTimeText: playTimeToText(player.play_time ?? 0),
     playTime: player.play_time,
     isOnline: !!player.online_status,
     deaths: player.deaths,
