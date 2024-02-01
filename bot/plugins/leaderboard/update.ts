@@ -55,45 +55,49 @@ export const _updateLeaderboard = async (onlyOneGuildId?: string): Promise<boole
       const updateEmbed = leaderboardUpdateEmbed().setDescription(`**Last update: ** ${time(new Date(), 'R')}`);
 
       // 1. Players image
-      const playersMessage = await sendMessage({
-        channelOrId: channel,
-        attachments: [playersImage],
-        editMessageId: playersMessageId,
-      });
+      const playersMessage =
+        (
+          await sendMessage({
+            channelOrId: channel,
+            attachments: [playersImage],
+            editMessageId: playersMessageId,
+          })
+        ).details?.data?.messageId ?? '';
+
       // 2. Update message
-      const updateMessage = await sendMessage({
-        channelOrId: channel,
-        editMessageId: updateMessageId,
-        messageEmbeds: [updateEmbed],
-      });
+      const updateMessage =
+        (
+          await sendMessage({
+            channelOrId: channel,
+            editMessageId: updateMessageId,
+            messageEmbeds: [updateEmbed],
+          })
+        ).details?.data?.messageId ?? '';
+
       // 3. Tribes image
-      const tribesMessage = await sendMessage({
-        channelOrId: channel,
-        attachments: [tribesImage],
-        editMessageId: tribesMessageId,
-      });
+      const tribesMessage =
+        (
+          await sendMessage({
+            channelOrId: channel,
+            attachments: [tribesImage],
+            editMessageId: tribesMessageId,
+          })
+        ).details?.data?.messageId ?? '';
 
-      const updatePlayersMessage =
-        playersMessage.status === 'success' && playersMessage.details?.data.messageId !== playersMessageId;
-      const updateUpdateMessage =
-        updateMessage.status === 'success' && updateMessage.details?.data.messageId !== updateMessageId;
-      const updateTribesMessage =
-        tribesMessage.status === 'success' && tribesMessage.details?.data.messageId !== tribesMessageId;
-
-      if (updatePlayersMessage || updateUpdateMessage || updateTribesMessage) {
+      if (playersMessage || updateMessage || tribesMessage) {
         await prisma.leaderboardData.update({
           where: {
             guildId: guild.guildId,
           },
           data: {
-            ...(updatePlayersMessage && {
-              [schema.playerMessageId]: playersMessage.details?.data.messageId,
+            ...(playersMessage?.length >= 5 && {
+              [schema.playerMessageId]: playersMessage,
             }),
-            ...(updateUpdateMessage && {
-              [schema.updateMessageId]: updateMessage.details?.data.messageId,
+            ...(updateMessage.length >= 5 && {
+              [schema.updateMessageId]: updateMessage,
             }),
-            ...(updateTribesMessage && {
-              [schema.tribeMessageId]: tribesMessage.details?.data.messageId,
+            ...(tribesMessage.length >= 5 && {
+              [schema.tribeMessageId]: tribesMessage,
             }),
           },
         });
