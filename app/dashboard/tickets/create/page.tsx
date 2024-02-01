@@ -1,4 +1,5 @@
 'use client';
+import { Skeleton } from '@/shared/components/ui/skeleton';
 import TicketCard from './_components/TicketCard';
 import { trpc } from '@/trpc';
 
@@ -7,12 +8,12 @@ const TicketCreatePage = () => {
     refetchOnWindowFocus: false,
   });
 
+  if (isLoading) return <TicketCreatePage.Skeleton />;
+
   return (
     <div>
-      <div className="grid grid-cols-1 lg:grid-cols-2 xl  :grid-cols-3 2xl:grid-cols-4 gap-4">
-        {isLoading
-          ? 'Loading'
-          : categories && categories.length >= 1
+      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
+        {categories && categories.length >= 1
           ? categories.map((category, index) => (
               <TicketCard
                 coordinateInput={category.coordinateInput}
@@ -29,6 +30,18 @@ const TicketCreatePage = () => {
               />
             ))
           : 'No categories'}
+      </div>
+    </div>
+  );
+};
+TicketCreatePage.Skeleton = function ShowSkeleton() {
+  return (
+    <div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
+        <Skeleton className="h-[276px] w-full" />
+        <Skeleton className="h-[276px] w-full" />
+        <Skeleton className="h-[276px] w-full" />
+        <Skeleton className="h-[276px] w-full" />
       </div>
     </div>
   );

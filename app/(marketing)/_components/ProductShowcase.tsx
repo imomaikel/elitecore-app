@@ -26,17 +26,17 @@ const ProductShowcase = ({ products, hover }: TProductShowcase) => {
   };
 
   useEffect(() => {
-    if (window.innerWidth < 768) return;
+    if (window.innerWidth < 1024) return;
     if (stateRef.current === true) return;
     stateRef.current = true;
 
     if (hover) {
       // @ts-expect-error type error
-      animate('div#product-4', { top: '106px', translateX: '-280px' });
+      animate('div#product-4', { top: '96px', translateX: '-260px' });
       // @ts-expect-error type error
-      animate('div#product-3', { top: '-210px', translateX: '-280px' });
+      animate('div#product-3', { top: '-200px', translateX: '-260px' });
       // @ts-expect-error type error
-      animate('div#product-2', { top: '-210px', translateX: '0px' });
+      animate('div#product-2', { top: '-200px', translateX: '0px' });
     } else {
       collapse();
     }
@@ -45,7 +45,7 @@ const ProductShowcase = ({ products, hover }: TProductShowcase) => {
   }, [hover]);
 
   useEffect(() => {
-    if (window.innerWidth > 768) {
+    if (window.innerWidth > 1024) {
       collapse();
       return;
     }
@@ -59,11 +59,11 @@ const ProductShowcase = ({ products, hover }: TProductShowcase) => {
   }, [window.innerWidth]);
 
   return (
-    <div ref={ref} className="md:mr-[260px] flex flex-wrap gap-1 sm:gap-4 md:block md:gap-0 mt-4 md:mt-0">
-      <Product product={products[0]} className="md:absolute md:top-[106px] md:-translate-x-0" id="product-1" />
-      <Product product={products[1]} className="md:absolute md:top-[74px] md:-translate-x-10" id="product-2" />
-      <Product product={products[2]} className="md:absolute md:top-[42px] md:-translate-x-20" id="product-3" />
-      <Product product={products[3]} className="md:absolute md:top-[10px] md:-translate-x-[120px]" id="product-4" />
+    <div ref={ref} className="flex flex-wrap gap-4 lg:block lg:gap-0 mt-4 lg:mt-0">
+      <Product product={products[0]} className="z-0" id="product-1" />
+      <Product product={products[1]} className="lg:absolute lg:top-[74px] lg:-translate-x-10" id="product-2" />
+      <Product product={products[2]} className="lg:absolute lg:top-[42px] lg:-translate-x-20" id="product-3" />
+      <Product product={products[3]} className="lg:absolute lg:top-[10px] lg:-translate-x-[120px]" id="product-4" />
     </div>
   );
 };

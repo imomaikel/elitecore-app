@@ -7,8 +7,8 @@ const Tickets = () => {
   return (
     <div className="w-full py-12 relative px-6">
       <div className="absolute w-screen h-full inset-0 left-1/2 -translate-x-1/2 bg-white/5 -z-10" />
-      <div className="flex flex-col md:flex-row justify-center md:space-x-8 lg:space-x-16">
-        <div className="mt-4 md:mt-0">
+      <div className="flex flex-col-reverse lg:flex-row justify-center lg:space-x-8 lg:space-x-16">
+        <div className="mt-4 lg:mt-0">
           <div className="max-w-xl relative">
             <ImageSwiper
               images={[
@@ -37,6 +37,7 @@ const Tickets = () => {
           colorTitle="ticket"
           extraTitle="system"
           buttonLink=""
+          className="max-w-md"
           buttonText={
             <>
               Create a ticket <IoTicketOutline className="h-6 w-6 ml-2" />
@@ -56,7 +57,7 @@ const Tickets = () => {
           ]}
         />
       </div>
-      <div className="absolute bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 rotate-45 w-[400px] h-[100px] top-1/4 blur-[180px] -z-10 opacity-75 hidden md:block" />
+      <div className="absolute bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 rotate-45 w-[400px] h-[100px] top-1/4 blur-[180px] -z-10 opacity-75 hidden lg:block" />
       <div className="absolute bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 rotate-45 w-[400px] h-[100px] top-1/4 blur-[180px] -z-10 opacity-75 right-0" />
       <div className="absolute bg-gradient-to-r from-slate-900 via-purple-900 to-slate-900 w-[300px] h-[200px] right-1/3 top-0 -z-10 blur-[200px]" />
     </div>

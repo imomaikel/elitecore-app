@@ -20,17 +20,19 @@ const Product = ({ product, className, id }: TProduct) => {
     <Link href={`/dashboard/shop/${product.id}`}>
       <div
         className={cn(
-          'w-[164px] md:w-[260px] border-2 hover:border-primary transition-colors cursor-pointer rounded-md relative',
+          'w-[212px] md:w-[244px] border-2 hover:border-primary transition-colors cursor-pointer rounded-md relative',
           className,
         )}
         id={id}
       >
-        <div className="relative z-10 w-40 h-40 md:w-64 md:h-64">
+        <div className="relative z-10 w-52 h-52 md:w-60 md:h-60">
           <Image
             src={product.image ?? '/normal.png'}
             alt="product"
             width={0}
             height={0}
+            loading="eager"
+            quality={80}
             sizes="100vw"
             className="h-full w-full object-cover object-center relative z-10 rounded-tr-md rounded-tl-md"
           />

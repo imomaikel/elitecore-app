@@ -15,7 +15,7 @@ const Community = () => {
 
   return (
     <div className="w-full py-24 relative px-6">
-      <div className="flex flex-col md:flex-row justify-center md:space-x-8 lg:space-x-16">
+      <div className="flex flex-col md:flex-row justify-center md:space-x-4 lg:space-x-8 xl:space-x-16">
         <LandingWrapper
           title="Our"
           colorTitle="community"
@@ -51,7 +51,7 @@ const Community = () => {
             initial="hidden"
             whileInView="show"
             viewport={{ once: true }}
-            className="max-w-xl"
+            className="md:max-w-lg lg:max-w-xl"
           >
             <ImageSwiper
               images={[

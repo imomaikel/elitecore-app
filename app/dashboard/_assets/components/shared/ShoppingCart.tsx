@@ -17,7 +17,6 @@ import ActionDialog from './ActionDialog';
 import { signIn } from 'next-auth/react';
 import { motion } from 'framer-motion';
 import CartItem from './CartItem';
-import { toast } from 'sonner';
 import Image from 'next/image';
 import { trpc } from '@/trpc';
 
@@ -58,7 +57,7 @@ const ShoppingCart = () => {
           );
         }
       });
-      toast.info('Your basket has been updated!', { duration: 10_000 });
+      // toast.info('Your basket has been updated!', { duration: 10_000 });
       return;
     }
     const url = `${BASE_URL}/api/accounts/${WEBSTORE_IDENTIFIER}/baskets/${user.basketIdent}`;

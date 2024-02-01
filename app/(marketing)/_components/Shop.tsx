@@ -29,13 +29,13 @@ const Shop = () => {
 
   return (
     <div
-      className="w-full py-24 relative px-5 rounded-md"
+      className="w-full pt-24 mb-24 md:mt-24 xl:mt-0 pb-3 relative px-5 rounded-md"
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
     >
       <div className="absolute w-screen h-full inset-0 left-1/2 -translate-x-1/2 bg-white/5" />
-      <div className={cn('absolute h-full md:w-[560px] bottom-0 -left-9', hover && 'h-[632px]')} />
-      <div className="flex flex-col-reverse md:flex-row justify-center md:space-x-16">
+      <div className={cn('absolute h-full lg:w-[560px] bottom-0 -left-9', hover && 'h-[632px]')} />
+      <div className="flex flex-col-reverse lg:flex-row justify-end lg:mr-6 xl:mr-0 xl:justify-center lg:space-x-6 xl:space-x-16">
         <div ref={ref}>{products && <ProductShowcase products={products} hover={hover} />}</div>
         <LandingWrapper
           title="Our"

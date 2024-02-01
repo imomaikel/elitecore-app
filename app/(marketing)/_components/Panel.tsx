@@ -7,10 +7,10 @@ import Image from 'next/image';
 
 const Panel = () => {
   return (
-    <div className="w-full py-24 relative px-6">
-      <div className="flex flex-col md:flex-row justify-start md:space-x-8 lg:space-x-16">
+    <div className="w-full py-24 pb-48 relative px-6">
+      <div className="flex flex-col lg:flex-row justify-start lg:space-x-8 xl:space-x-16">
         <LandingWrapper
-          className="flex flex-col space-y-4"
+          className="flex flex-col space-y-4 max-w-md"
           title="Our web"
           colorTitle="panel"
           description="Stay in the loop with our comprehensive in-game dashboard! Access statistics, check your in-game tribe
@@ -45,8 +45,8 @@ const Panel = () => {
           }
         />
 
-        <div className="mt-4 md:mt-0 relative flex flex-1 flex-col md:flex-row space-y-2 md:space-y-0">
-          <div className="md:absolute w-full md:-translate-y-0 right-0 z-10">
+        <div className="mt-4 lg:mt-0 relative flex flex-1 flex-col lg:flex-row space-y-2 lg:space-y-0">
+          <div className="lg:absolute w-full lg:-translate-y-0 right-0 z-10">
             <motion.div variants={itemSlide(100, 0)} initial="hidden" whileInView="show" viewport={{ once: true }}>
               <Image
                 src="/tribe/filters.webp"
@@ -56,10 +56,10 @@ const Panel = () => {
                 className="object-contain object-center h-full w-full rounded-lg"
                 alt="logs filter"
               />
-              <div className="hidden md:block absolute w-full h-full inset-0 backdrop-blur-[1px] bg-black/10" />
+              <div className="hidden lg:block absolute w-full h-full inset-0 backdrop-blur-[1px] bg-black/10" />
             </motion.div>
           </div>
-          <div className="md:absolute w-full md:translate-y-48 -right-24 z-10">
+          <div className="lg:absolute w-full lg:translate-y-48 2xl:-right-24 z-10">
             <motion.div
               variants={itemSlide(100, 0)}
               initial="hidden"
@@ -72,7 +72,7 @@ const Panel = () => {
                 width={0}
                 height={0}
                 sizes="100vw"
-                className="object-cover object-center h-full w-full rounded-lg md:border-2 border-primary/50"
+                className="object-cover object-center h-full w-full rounded-lg lg:border-2 border-primary/50"
                 alt="logs"
               />
             </motion.div>
