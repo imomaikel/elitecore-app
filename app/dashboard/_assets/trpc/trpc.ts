@@ -12,10 +12,13 @@ const t = initTRPC.context<ExpressContext>().create({
 export const router = t.router;
 export const middleware = t.middleware;
 
-const prismaContext = middleware(({ next }) => {
+const prismaContext = middleware(async ({ next, ctx }) => {
+  const { req } = ctx;
+  const session = (await getSession({ req })) as NextAuthSession | null;
   return next({
     ctx: {
       prisma,
+      user: session?.user ?? null,
     },
   });
 });

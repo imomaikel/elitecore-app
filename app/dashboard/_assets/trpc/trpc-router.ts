@@ -344,9 +344,21 @@ export const appRouter = router({
     return categories;
   }),
   getTicketCategories: publicProcedure.query(async ({ ctx }) => {
-    const { prisma } = ctx;
+    const { prisma, user } = ctx;
+
+    const _selectedGuildId = user?.selectedGuildId ?? null;
+    const selectedGuildId = _selectedGuildId && _selectedGuildId?.length >= 4 ? _selectedGuildId : null;
 
     const ticketCategories = await prisma.ticketCategory.findMany({
+      where: {
+        Guild: {
+          guildId: selectedGuildId
+            ? selectedGuildId
+            : process.env.NODE_ENV === 'production'
+            ? (process.env.PRODUCTION_DISCORD_GUILD_ID as string)
+            : (process.env.DEVELOPMENT_DISCORD_GUILD_ID as string),
+        },
+      },
       select: {
         id: true,
         coordinateInput: true,
@@ -496,7 +508,6 @@ export const appRouter = router({
   }),
   getTribe: authorizedProcedure.query(async ({ ctx }) => {
     const { user, prisma } = ctx;
-    console.log('f', user.name);
 
     if (!user || !user.discordId) throw new TRPCError({ code: 'UNAUTHORIZED' });
 
@@ -504,7 +515,6 @@ export const appRouter = router({
 
     if (!steamId) {
       const findSteam = await findPairedAccount(user.discordId);
-      console.log(findSteam, user.name);
       if (typeof findSteam !== 'boolean') {
         const steam = findSteam.find((entry) => entry.method === 'STEAM')?.id;
         if (steam) {
@@ -535,7 +545,6 @@ export const appRouter = router({
 
     if (!steamId) {
       const findSteam = await findPairedAccount(user.discordId);
-      console.log(findSteam, user.name);
       if (typeof findSteam !== 'boolean') {
         const steam = findSteam.find((entry) => entry.method === 'STEAM')?.id;
         if (steam) {
@@ -554,7 +563,6 @@ export const appRouter = router({
 
     const data = await getTribe(steamId);
     if (!data?.tribe.tribeId) return { error: true, message: 'Could not find a tribe' };
-    console.log(data, user.name);
 
     const logs = await prisma.tribeLog.findMany({
       where: { tribeId: data.tribe.tribeId },

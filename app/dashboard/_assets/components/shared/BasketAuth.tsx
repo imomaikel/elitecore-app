@@ -11,7 +11,6 @@ const BasketAuth = () => {
   useEffect(() => {
     const success = searchParams.get('success');
     if (!success) return;
-    console.log(success);
     if (success === 'true') {
       toast.success('Authenticated!');
     } else {

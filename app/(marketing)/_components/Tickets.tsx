@@ -7,7 +7,7 @@ const Tickets = () => {
   return (
     <div className="w-full py-12 relative px-6">
       <div className="absolute w-screen h-full inset-0 left-1/2 -translate-x-1/2 bg-white/5 -z-10" />
-      <div className="flex flex-col-reverse lg:flex-row justify-center lg:space-x-8 lg:space-x-16">
+      <div className="flex flex-col-reverse lg:flex-row justify-center lg:space-x-8">
         <div className="mt-4 lg:mt-0">
           <div className="max-w-xl relative">
             <ImageSwiper

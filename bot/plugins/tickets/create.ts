@@ -202,7 +202,7 @@ export const _createTicket = async ({
 
     const inviteUrl = (
       await chn.createInvite({
-        maxAge: 14 * 24 * 60 * 60,
+        maxAge: 7 * 24 * 60 * 60,
       })
     ).url;
 
