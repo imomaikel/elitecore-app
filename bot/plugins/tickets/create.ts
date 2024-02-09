@@ -164,7 +164,7 @@ export const _createTicket = async ({
 
     if (supportRoles.length >= 1) {
       for (const role of supportRoles) {
-        await ticketChn.permissionOverwrites.edit(role.roleId, { ViewChannel: true });
+        await ticketChn.permissionOverwrites.edit(role.roleId, { ViewChannel: true, SendMessages: true });
       }
     }
     await ticketChn.permissionOverwrites.edit(guild.roles.everyone.id, { ViewChannel: false });
