@@ -4,7 +4,7 @@ import { client } from '../client';
 import logger from './logger';
 
 // Create webhook if not exist
-export const createWebhook = async (channel_id: string) => {
+export const createWebhook = async (channel_id: string, avatar?: string) => {
   const channel = client.channels.cache.get(channel_id);
   if (!channel || channel.type !== ChannelType.GuildText) return null;
 
@@ -13,7 +13,7 @@ export const createWebhook = async (channel_id: string) => {
   await channel
     .createWebhook({
       name: 'EliteCore',
-      avatar: specialAvatar,
+      avatar: avatar ?? specialAvatar,
     })
     .then(async (webhook) => {
       newWebhook = {
@@ -87,7 +87,7 @@ export const sendWebhookMessageOrEdit = async ({
     webhookToken = '';
 
   if (!(_webhookId && _webhookToken)) {
-    const createHook = await createWebhook(channelId);
+    const createHook = await createWebhook(channelId, customAvatar);
     if (createHook) {
       webhookId = createHook.id;
       webhookToken = createHook.token;
@@ -97,7 +97,7 @@ export const sendWebhookMessageOrEdit = async ({
     webhookToken = _webhookToken;
     const ifExist = await findWebhook(channelId, webhookId);
     if (!ifExist) {
-      const createHook = await createWebhook(channelId);
+      const createHook = await createWebhook(channelId, customAvatar);
       if (createHook) {
         webhookId = createHook.id;
         webhookToken = createHook.token;
@@ -130,7 +130,7 @@ export const sendWebhookMessageOrEdit = async ({
       .send({
         embeds,
         content: messageContent,
-        avatarURL: customAvatar,
+        // avatarURL: customAvatar,
         username: customName,
       })
       .then((msg) => {

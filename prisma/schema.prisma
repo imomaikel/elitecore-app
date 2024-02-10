@@ -42,6 +42,7 @@ model Server {
   lastStatus  String  @default("offline") @db.VarChar(45)
   lastPlayers Int     @default(0) @db.TinyInt
   position    Int     @default(1) @db.TinyInt
+  serverName  String  @default("EliteCore")
 }
 
 model Player {
@@ -179,19 +180,29 @@ model Guild {
   guildName String @db.TinyText
 
   // Widgets
-  serverStatusChannelId        String?   @db.TinyText
-  serverStatusChannelMessageId String?   @db.TinyText
-  serverStatusNotifyChannelId  String?   @db.TinyText
-  serverControlChannelId       String?   @db.TinyText
-  serverControlMessageId       String?   @db.TinyText
-  serverControlLogChannelId    String?   @db.TinyText
-  countdownLastDate            DateTime?
-  countdownNextDate            DateTime?
-  countdownRestartInMinutes    Int       @default(20160)
-  countdownChannelId           String?   @db.TinyText
-  countdownMessageId           String?   @db.TinyText
-  countdownHeader              String    @default("Next wipe countdown")
-  countdownDescription         String    @default(":hourglass: The **last** wipe was <old/R>\n:calendar_spiral: The **next** wipe is on <new/F>\n:timer: That will be <new/R>")
+  serverStatusChannelId                 String? @db.TinyText
+  serverStatusChannelMessageId          String? @db.TinyText
+  serverStatusNotifyChannelId           String? @db.TinyText
+  serverStatusChannelWebhookId          String? @db.TinyText
+  serverStatusChannelWebhookToken       String? @db.TinyText
+  serverStatusNotifyChannelWebhookId    String? @db.TinyText
+  serverStatusNotifyChannelWebhookToken String? @db.TinyText
+
+  serverControlChannelId              String? @db.TinyText
+  serverControlMessageId              String? @db.TinyText
+  serverControlChannelWebhookId       String? @db.TinyText
+  serverControlChannelWebhookToken    String? @db.TinyText
+  serverControlLogChannelId           String? @db.TinyText
+  serverControlLogChannelWebhookId    String? @db.TinyText
+  serverControlLogChannelWebhookToken String? @db.TinyText
+
+  countdownLastDate         DateTime?
+  countdownNextDate         DateTime?
+  countdownRestartInMinutes Int       @default(20160)
+  countdownChannelId        String?   @db.TinyText
+  countdownMessageId        String?   @db.TinyText
+  countdownHeader           String    @default("Next wipe countdown")
+  countdownDescription      String    @default(":hourglass: The **last** wipe was <old/R>\n:calendar_spiral: The **next** wipe is on <new/F>\n:timer: That will be <new/R>")
 
   // Stats data
   LeaderboardData LeaderboardData?

@@ -1,14 +1,18 @@
-import { CustomResponse } from '../constans/responses';
 import type { ActionRowBuilder, ButtonBuilder, EmbedBuilder } from 'discord.js';
+import { sendWebhookMessageOrEdit } from '../scripts/webhook';
+import { CustomResponse } from '../constans/responses';
+import { specialAvatar } from '../constans';
 import type { Guild } from '@prisma/client';
-import { sendMessage } from './sendMessage';
 import logger from '../scripts/logger';
 import prisma from '../lib/prisma';
+import { client } from '../client';
 
 // All widgets that can be sent
 type TWidgets = 'serverStatus' | 'serverNotify' | 'serverControl' | 'serverControlLog';
 // Database message field related to widget
 type TDBMessageFields = 'serverStatusChannelMessageId' | 'serverControlMessageId';
+// Webhook fields
+type TDBWebhookFields = keyof Guild;
 // Database channel field related to widget
 type TDBChannelFields =
   | 'serverStatusChannelId'
@@ -28,6 +32,8 @@ type TChecker = {
   allowedGuilds: Guild[];
   channelField: TDBChannelFields;
   messageField?: TDBMessageFields;
+  webhookIdField: TDBWebhookFields;
+  webhookTokenField: TDBWebhookFields;
 };
 
 /**
@@ -61,6 +67,8 @@ export const broadcaster = async ({
       updateOnlyOneGuildId,
       messageField: 'serverStatusChannelMessageId',
       channelField: 'serverStatusChannelId',
+      webhookIdField: 'serverStatusChannelWebhookId',
+      webhookTokenField: 'serverStatusChannelWebhookToken',
     });
   } else if (widget === 'serverNotify') {
     const allowedGuilds = await prisma.guild.findMany({
@@ -80,6 +88,8 @@ export const broadcaster = async ({
       messageEmbeds,
       updateOnlyOneGuildId,
       channelField: 'serverStatusNotifyChannelId',
+      webhookIdField: 'serverStatusNotifyChannelWebhookId',
+      webhookTokenField: 'serverStatusNotifyChannelWebhookToken',
     });
   } else if (widget === 'serverControl') {
     const allowedGuilds = await prisma.guild.findMany({
@@ -96,6 +106,8 @@ export const broadcaster = async ({
       messageEmbeds,
       messageButtons,
       messageField: 'serverControlMessageId',
+      webhookIdField: 'serverControlChannelWebhookId',
+      webhookTokenField: 'serverControlChannelWebhookToken',
     });
   } else if (widget === 'serverControlLog') {
     const allowedGuilds = await prisma.guild.findMany({
@@ -110,6 +122,8 @@ export const broadcaster = async ({
       channelField: 'serverControlLogChannelId',
       widget: 'serverControlLog',
       messageEmbeds,
+      webhookIdField: 'serverControlLogChannelWebhookId',
+      webhookTokenField: 'serverControlLogChannelWebhookToken',
     });
   } else {
     return { status: 'error' };
@@ -126,7 +140,8 @@ const broadcasterChecker = async ({
   messageEmbeds,
   messageField,
   channelField,
-  messageButtons,
+  webhookIdField,
+  webhookTokenField,
 }: TBroadcaster & TChecker): Promise<CustomResponse<'broadcaster'>> => {
   // Reject if there are no servers with configured widget channel
   if (allowedGuilds.length === 0 && updateOnlyOneGuildId) {
@@ -143,50 +158,57 @@ const broadcasterChecker = async ({
   for await (const allowedGuild of allowedGuilds) {
     const channelId = allowedGuild[channelField] as string;
     const messageId = messageField ? allowedGuild[messageField] : undefined;
+    const avatar = client.guilds.cache.get(allowedGuild.guildId)?.iconURL() ?? specialAvatar;
     try {
       // Send widget
-      const action = await sendMessage({
-        channelOrId: channelId,
-        editMessageId: messageId,
-        messageEmbeds,
+      const action = await sendWebhookMessageOrEdit({
+        channelId: channelId,
+        messageId: messageId ?? undefined,
+        webhookId: allowedGuild[webhookIdField] as string,
+        webhookToken: allowedGuild[webhookTokenField] as string,
+        customName: `${allowedGuild.guildName} Servers`,
+        customAvatar: avatar,
+        embeds: messageEmbeds,
         messageContent,
-        messageButtons,
       });
       // Catch sending message error
       if (action.status === 'error') {
         if (updateOnlyOneGuildId) {
           return {
             status: 'error',
-            ...(action.details?.message && {
-              details: {
-                message: action.details.message,
-              },
-            }),
+            details: {
+              message: 'The bot has no permission',
+            },
           };
         }
         continue;
       }
-      // If message the is edited there is no need to update the database field
-      if (action?.details?.message === 'Message edited') {
-        if (updateOnlyOneGuildId) return { status: 'success' };
-        continue;
-      }
+
       // Update the message field when a new message is sent
-      if (action.details?.message === 'Message sent') {
-        const newMessageId = action.details.data.messageId;
-        if (messageField) {
+      if (action.messageId.length >= 5) {
+        const newMessageId = action.messageId;
+        const newWebhookId = action.webhookId;
+        const newWebhookToken = action.webhookToken;
+        if (allowedGuild[webhookIdField] !== newWebhookId || allowedGuild[webhookTokenField] !== newWebhookToken) {
           await prisma.guild.update({
             where: {
               id: allowedGuild.id,
             },
             data: {
-              [messageField]: newMessageId,
+              ...(messageField &&
+                messageField !== newMessageId && {
+                  [messageField]: newMessageId,
+                }),
+              [webhookIdField]: newWebhookId,
+              [webhookTokenField]: newWebhookToken,
             },
           });
         }
         if (updateOnlyOneGuildId) return { status: 'success' };
       }
     } catch (error) {
+      console.log(11);
+      console.log(error);
       // Catch unknown error
       logger({
         message: 'Unknown error',
