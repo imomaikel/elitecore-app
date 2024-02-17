@@ -80,7 +80,7 @@ def dbGetAllServers() -> List[ServerDetails] | List:
         for row in rows:
             response.append(
                 ServerDetails(row[1], row[8], row[9], row[3], row[4],
-                              row[6], row[7], row[0], 'unknown', row[5], row[2], row[10])
+                              row[6], row[7], row[0], 'unknown', row[5], row[2], row[10], row[13])
             )
         return response
     except Exception as e:
@@ -103,7 +103,7 @@ def dbFindServer(pathOrId) -> None | ServerDetails:
         if row == None:
             return None
         else:
-            return ServerDetails(row[1], row[8], row[9], row[3], row[4], row[6], row[7], row[0], 'unknown', row[5], row[2], row[10])
+            return ServerDetails(row[1], row[8], row[9], row[3], row[4], row[6], row[7], row[0], 'unknown', row[5], row[2], row[10], row[13])
     except Exception as e:
         lastConn.close()
         dbAppendNewLog(e, 'dbFindServer')
@@ -168,7 +168,7 @@ def dbAddNewServer(serverDetails: ServerDetails, path: str):
         conn = dbCreateConnection()
         cur = conn.cursor()
         cur.execute(
-            'INSERT INTO server(mapName, queryPort, rconPort, gameMode, gameType, customName, multiHome, path, autoRestart) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);', (
+            'INSERT INTO server(mapName, queryPort, rconPort, gameMode, gameType, customName, multiHome, path, autoRestart, serverName) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);', (
                 serverDetails.mapName,
                 serverDetails.queryPort,
                 serverDetails.rconPort,
@@ -177,7 +177,8 @@ def dbAddNewServer(serverDetails: ServerDetails, path: str):
                 serverDetails.customName,
                 serverDetails.multiHome,
                 path,
-                False
+                False,
+                serverDetails.serverName,
             ))
         conn.commit()
         conn.close()

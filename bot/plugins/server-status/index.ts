@@ -1,6 +1,6 @@
+import { time, EmbedBuilder, hyperlink } from 'discord.js';
 import { colors, extraSigns, gifs } from '../../constans';
 import { broadcaster } from '../../helpers/broadcaster';
-import { time, EmbedBuilder, hyperlink } from 'discord.js';
 import prisma from '../../lib/prisma';
 import { updateBots } from './bots';
 
@@ -9,7 +9,14 @@ import { updateBots } from './bots';
  * @param updateOnlyOneGuildId If specified, the widget will be sent to only one guild, and the returned value will be more detailed
  */
 const updateServerStatusWidget = async (updateOnlyOneGuildId: string | undefined = undefined) => {
-  const [servers, config] = await Promise.all([prisma.server.findMany(), prisma.config.findFirst()]);
+  const [servers, config] = await Promise.all([
+    prisma.server.findMany({
+      where: {
+        serverName: 'EliteCore',
+      },
+    }),
+    prisma.config.findFirst(),
+  ]);
 
   const { zap } = extraSigns;
   const { pulseUrl } = gifs;

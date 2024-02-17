@@ -7,7 +7,7 @@ actionModes = Literal['ALL', 'ACTION_START',
 
 # Server Class
 class ServerDetails():
-    def __init__(self, mapName, queryPort, rconPort, gameMode, gameType, customName, multiHome, id, status='unknown', autoRestart=0, path: str = None, lastStatus: str = None):
+    def __init__(self, mapName, queryPort, rconPort, gameMode, gameType, customName, multiHome, id, status='unknown', autoRestart=0, path: str = None, lastStatus: str = None, serverName: str = 'EliteCore'):
         self.mapName = mapName
         self.queryPort = queryPort
         self.rconPort = rconPort
@@ -20,6 +20,7 @@ class ServerDetails():
         self.autoRestart = autoRestart
         self.path = path
         self.lastStatus = lastStatus
+        self.serverName = serverName
 
     def getData(self):
         return {
@@ -30,11 +31,13 @@ class ServerDetails():
             'gameMode': self.gameMode,
             'gameType': self.gameType,
             'customName': self.customName,
-            'status': self.status
+            'status': self.status,
+            'serverName': self.serverName
         }
 
 
 # Servers schema table
+# TODO
 serversTableTemplate = '''CREATE TABLE IF NOT EXISTS webapp.server (
   id INT NOT NULL AUTO_INCREMENT,
   mapName VARCHAR(45) NOT NULL,

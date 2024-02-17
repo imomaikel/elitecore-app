@@ -1,6 +1,7 @@
 import { getTableCreateTime } from '../lib/mysql';
 import { Prisma } from '@prisma/client';
 import prisma from '../lib/prisma';
+import { getEnv } from '../utils/env';
 
 export const checkForNewWipe = async () => {
   const [config, tableData] = await Promise.all([
@@ -16,7 +17,9 @@ export const checkForNewWipe = async () => {
   if (lastWipe === createTime) return;
 
   await prisma.$queryRaw(Prisma.sql`DROP TABLE IF EXISTS TribeLogBackup;`);
-  await prisma.$queryRaw(Prisma.sql`CREATE TABLE TribeLogBackup AS SELECT * FROM ec.TribeLog;`);
+  await prisma.$queryRaw(
+    Prisma.sql`CREATE TABLE TribeLogBackup AS SELECT * FROM ${getEnv('DATABASE_SCHEMA')}.TribeLog;`,
+  );
   await prisma.tribeLog.deleteMany();
   await prisma.config.updateMany({
     data: {

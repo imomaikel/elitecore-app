@@ -5,6 +5,7 @@ import re
 
 # Define regex
 customNameRegex = "CustomName=[^\s]*"
+serverNameRegex = "ServerName=[^\s]*"
 queryPortRegex = "QueryPort=[0-9]{0,5}"
 multiHomeRegex = "MULTIHOME=[^\s*]*"
 rconPortRegex = "RCONPort=[0-9]{0,5}"
@@ -31,6 +32,7 @@ def getDetails(script: str) -> ServerDetails | None:
         multiHome = findUsingRegex(script, multiHomeRegex)
         queryPort = findUsingRegex(script, queryPortRegex)
         rconPort = findUsingRegex(script, rconPortRegex)
+        serverName = findUsingRegex(script, serverNameRegex)
         mapName = 'Error'
 
         if queryPort == None:
@@ -50,8 +52,12 @@ def getDetails(script: str) -> ServerDetails | None:
         if len(mapName) < 1:
             return None
 
+        serverName = serverName if len(serverName) >= 4 else 'EliteCore'
+        if 'fiber' in serverName.lower():
+            serverName = 'Fiber'
+
         response = ServerDetails(
-            mapName, queryPort, rconPort, gameMode, gameType, customName, multiHome, None)
+            mapName, queryPort, rconPort, gameMode, gameType, customName, multiHome, None, 'unknown', 0, None, None, serverName)
 
         return response
     except Exception as e:
