@@ -52,7 +52,8 @@ def getDetails(script: str) -> ServerDetails | None:
         if len(mapName) < 1:
             return None
 
-        serverName = serverName if len(serverName) >= 4 else 'EliteCore'
+        serverName = serverName if serverName != None and len(
+            serverName) >= 4 else 'EliteCore'
         if 'fiber' in serverName.lower():
             serverName = 'Fiber'
 

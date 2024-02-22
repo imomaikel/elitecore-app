@@ -14,7 +14,14 @@ export const updateServerControlWidget = async (): Promise<CustomResponse<'broad
   const data = await fetchRequest('getStatuses');
   if (!data) return { status: 'error', details: { message: 'Unknown error' } };
 
-  const [storedServers, config] = await Promise.all([prisma.server.findMany(), prisma.config.findFirst()]);
+  const [storedServers, config] = await Promise.all([
+    prisma.server.findMany({
+      where: {
+        serverName: 'EliteCore',
+      },
+    }),
+    prisma.config.findFirst(),
+  ]);
 
   const onlineServers = data.filter((entry) => entry.currentStatus === 'online').length;
   const offlineServers = data.filter((entry) => entry.currentStatus === 'offline').length;

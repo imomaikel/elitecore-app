@@ -71,6 +71,8 @@ class ServerList(ttk.Toplevel):
             )
             ttk.Label(self, text="Status").grid(
                 row=0, column=4, padx=5, pady=(5, 25))
+            ttk.Label(self, text="Server").grid(
+                row=0, column=5, padx=5, pady=(5, 25))
         else:
             ttk.Label(self, text="Action").grid(
                 row=0, column=3, padx=5, pady=(5, 25))
@@ -125,6 +127,12 @@ class ServerList(ttk.Toplevel):
                     text=server.status.upper(),
                     bootstyle=SUCCESS if server.status == "online" else DANGER,
                 ).grid(row=index, column=4, padx=5, pady=5)
+                # Server network
+                ttk.Label(
+                    self,
+                    text=server.serverName,
+                    bootstyle=INFO,
+                ).grid(row=index, column=5, padx=5, pady=5)
             index += 1
 
         # Bind action to each check button
