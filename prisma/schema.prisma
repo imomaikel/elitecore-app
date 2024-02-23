@@ -232,6 +232,10 @@ model LeaderboardData {
   categoryLabel     String  @default("Game Stats")
   categoryChannelId String? @db.TinyText
 
+  damageLabel     String  @default("top-damage")
+  damageChannelId String? @db.TinyText
+  damageMsgId     String? @db.TinyText
+
   playtimeLabel       String  @default("top-playtime")
   playtimeChannelId   String? @db.TinyText
   playtimePlayerMsgId String? @db.TinyText
@@ -440,6 +444,27 @@ model TribeLog {
   logType        LogType
 
   timestamp DateTime
+}
+
+model Building {
+  id Int @id @default(autoincrement())
+
+  label  String
+  points Int?
+}
+
+enum TribePosition {
+  PROMOTE
+  DEMOTE
+  SAME
+}
+
+model Tribe {
+  tribeId      Int           @id
+  tribeName    String        @db.TinyText
+  points       Int           @default(0)
+  position     Int?
+  newScoreMode TribePosition @default(PROMOTE)
 }
 
 model TribeLogBackup {

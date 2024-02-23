@@ -16,14 +16,18 @@ export const checkForNewWipe = async () => {
   if (!createTime) return;
   if (lastWipe === createTime) return;
 
-  await prisma.$queryRaw(Prisma.sql`DROP TABLE IF EXISTS TribeLogBackup;`);
-  await prisma.$queryRaw(
-    Prisma.sql`CREATE TABLE TribeLogBackup AS SELECT * FROM ${getEnv('DATABASE_SCHEMA')}.TribeLog;`,
-  );
-  await prisma.tribeLog.deleteMany();
-  await prisma.config.updateMany({
-    data: {
-      lastWipe: new Date(createTime),
-    },
-  });
+  try {
+    await prisma.$queryRaw(Prisma.sql`DROP TABLE IF EXISTS TribeLogBackup;`);
+    await prisma.$queryRaw(
+      Prisma.sql`CREATE TABLE TribeLogBackup AS SELECT * FROM ${getEnv('DATABASE_SCHEMA')}.TribeLog;`,
+    );
+    await prisma.tribeLog.deleteMany();
+    await prisma.config.updateMany({
+      data: {
+        lastWipe: new Date(createTime),
+      },
+    });
+  } catch (error) {
+    console.log('Failed to wipe logs', error);
+  }
 };

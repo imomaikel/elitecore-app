@@ -160,15 +160,35 @@ export const LOCALE_CODES = [
   },
 ];
 
-export const schemaList = [
+export const schemaDeleteList = [
   'webapp.player',
   'arkshop',
   'arkshopasax1000',
   'gog_stats_ark',
+  'genderchangerfiber',
+  'kalcrosschatfiber',
+  'statisticsfiber',
+  'arkshopfiber',
   'tribes.wtribes_events',
   'tribes.wtribes_log',
   'tribes.wtribes_playerdata',
   'tribes.wtribes_playerids',
   'tribes.wtribes_tribedata',
   'tribes.wtribes_tribelog_webhooks',
+  'tribesfiber.wtribes_events',
+  'tribesfiber.wtribes_log',
+  'tribesfiber.wtribes_playerdata',
+  'tribesfiber.wtribes_playerids',
+  'tribesfiber.wtribes_tribedata',
+  'tribesfiber.wtribes_tribelog_webhooks',
+];
+export const schemaCreateList = [
+  'webapp.player',
+  'arkshop',
+  'arkshopasax1000',
+  'gog_stats_ark',
+  'genderchangerfiber',
+  'kalcrosschatfiber',
+  'statisticsfiber',
+  'arkshopfiber',
 ];

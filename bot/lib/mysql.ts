@@ -6,7 +6,7 @@ import {
   MYSQL_TRIBE_LOGS_QUERY,
   MYSQL_TRIBE_MEMBER_QUERY,
 } from '../constans/types';
-import { schemaList } from '../../app/dashboard/_assets/constans';
+import { schemaCreateList, schemaDeleteList } from '../../app/dashboard/_assets/constans';
 import { playTimeToText } from '../utils/misc';
 import { getEnv } from '../utils/env';
 import mysql from 'mysql';
@@ -50,10 +50,13 @@ export const findSteam = async (userDiscordId: string) => {
 };
 
 export const deleteSchema = async (schemaName: string) => {
-  if (!schemaList.includes(schemaName)) return false;
+  if (![...schemaDeleteList, ...schemaCreateList].includes(schemaName)) return false;
   const mode = schemaName.includes('.') ? 'TABLE' : 'SCHEMA';
 
   await db(`DROP ${mode} ${schemaName};`);
+  if (schemaCreateList.includes(schemaName) && mode == 'SCHEMA') {
+    await db(`CREATE SCHEMA ${schemaName};`);
+  }
   return true;
 };
 

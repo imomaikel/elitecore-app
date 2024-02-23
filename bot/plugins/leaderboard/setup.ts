@@ -47,6 +47,7 @@ export const _setupLeaderboard = async (guildId: string): Promise<boolean> => {
   const channelsToUpdate: Array<Partial<Record<TLeaderboardDataField, string>>> = [];
   let categoryId: string | undefined = undefined;
   let error = false;
+
   for await (const schema of channelsSchema) {
     if (error) break;
     await guild.channels
@@ -79,6 +80,34 @@ export const _setupLeaderboard = async (guildId: string): Promise<boolean> => {
         error = true;
       });
   }
+  await guild.channels
+    .create({
+      type: ChannelType.GuildText,
+      parent: categoryId ?? undefined,
+      name: dbLeaderboard['damageLabel'],
+      position: 1,
+      permissionOverwrites: [
+        {
+          id: guild.roles.everyone,
+          deny: [PermissionFlagsBits.SendMessages],
+        },
+        {
+          id: client.user.id,
+          allow: [PermissionFlagsBits.SendMessages],
+        },
+      ],
+    })
+    .then(async (channel) => {
+      dbLeaderboard['damageChannelId'] = channel.id;
+      channelsToUpdate.push({
+        damageChannelId: channel.id,
+      });
+    })
+    .catch((e) => {
+      console.log(e);
+      error = true;
+    });
+
   if (error) return false;
 
   // Update ids

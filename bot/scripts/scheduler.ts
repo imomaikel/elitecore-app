@@ -1,9 +1,10 @@
 import { cleanTicketAttachments, ticketCleaner } from '../plugins/tickets';
 import { updateServerControlWidget } from '../plugins/server-control';
+import { fetchLogs, updateDamageWidget } from '../plugins/tribe';
 import updateServerStatusWidget from '../plugins/server-status';
 import { createLeaderboard } from '../plugins/leaderboard';
 import { updateCountdown } from '../plugins/countdown';
-import { fetchLogs } from '../plugins/tribe';
+import { hoursToMilliseconds } from 'date-fns';
 import { checkForNewWipe } from './wipe';
 import { getEnv } from '../utils/env';
 import prisma from '../lib/prisma';
@@ -43,6 +44,10 @@ const scheduler = () => {
   setInterval(() => {
     createLeaderboard();
   }, 1000 * 60 * 30);
+
+  setInterval(() => {
+    updateDamageWidget();
+  }, hoursToMilliseconds(6));
 
   // Update member count
   setInterval(async () => {
