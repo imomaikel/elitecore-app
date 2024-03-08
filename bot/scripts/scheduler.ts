@@ -4,7 +4,7 @@ import { fetchLogs, updateDamageWidget } from '../plugins/tribe';
 import updateServerStatusWidget from '../plugins/server-status';
 import { createLeaderboard } from '../plugins/leaderboard';
 import { updateCountdown } from '../plugins/countdown';
-import { hoursToMilliseconds } from 'date-fns';
+import { minutesToMilliseconds } from 'date-fns';
 import { checkForNewWipe } from './wipe';
 import { getEnv } from '../utils/env';
 import prisma from '../lib/prisma';
@@ -47,7 +47,7 @@ const scheduler = () => {
 
   setInterval(() => {
     updateDamageWidget();
-  }, hoursToMilliseconds(6));
+  }, minutesToMilliseconds(60));
 
   // Update member count
   setInterval(async () => {

@@ -14,9 +14,7 @@ export const _fetchLogs = async () => {
           .replace(/<\/>/gi, '')
           .replace(/[0-9]{6,12}/gi, '');
         const logType = getLogType(content);
-        const possiblePoints = logType === 'You_destroyed_structure' || logType === 'Your_structure_destroyed';
         return {
-          possiblePoints,
           content,
           timestamp,
           tribeId,

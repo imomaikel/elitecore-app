@@ -3,9 +3,9 @@ import { EmbedBuilder, time } from 'discord.js';
 import prisma from '../../lib/prisma';
 
 export const _generateScoreMessage = async () => {
-  const tribes = await prisma.tribe.findMany({
+  const tribes = await prisma.tribeScore.findMany({
     orderBy: {
-      points: 'desc',
+      score: 'desc',
     },
     take: 10,
   });
@@ -15,30 +15,34 @@ export const _generateScoreMessage = async () => {
 
   const content = tribes.map((tribe, index) => {
     const position = index + 1;
-    const mode = tribe.newScoreMode === 'DEMOTE' ? '-' : tribe.newScoreMode === 'PROMOTE' ? '+' : ' ';
-    const modeIcon = tribe.newScoreMode === 'DEMOTE' ? '🡻' : tribe.newScoreMode === 'PROMOTE' ? '🡹' : ' ';
-    const points = tribe.points.toLocaleString('de-DE');
+    const mode = tribe.mode === 'DEMOTE' ? '-' : tribe.mode === 'PROMOTE' ? '+' : ' ';
+    const points = tribe.score.toLocaleString('de-DE');
     const positionSpace = position <= 9 ? ' ' : '';
     const tribeSpace = ' '.repeat(longestNameLength - tribe.tribeName.length + 4);
+    const positiveProgress = tribe.progress >= 0;
 
-    const line = `${mode} ${position}.${positionSpace} ${tribe.tribeName}${tribeSpace} ${modeIcon} ${points}`;
+    const line = `${mode} ${position}.${positionSpace}  ${tribe.tribeName}${tribeSpace} ${points} (${
+      positiveProgress ? '+' : '-'
+    }${Math.abs(tribe.progress)} score)`;
     return line;
   });
+
+  const title = 'PLACE | TRIBE NAME | POINTS (PROGRESS)\n';
 
   const embed = new EmbedBuilder()
     .setColor(colors.purple)
     .setDescription(`**Last update: ** ${time(new Date(), 'R')}`)
     .setFooter({
-      text: `${extraSigns.zap} Auto update every 6 hours`,
+      text: `${extraSigns.zap} Auto update every 60 minutes`,
     })
     .addFields({
       name: 'How is it calculated?',
       value:
-        'Each structure in game has its certain points. Every time you destroy a structure you get points, as well as minus points when someone destroys your structure.',
+        'Each structure in the game has its certain points. Every time **you destroy** a structure you get points, as well as minus points when someone **destroys your** structure. Furthermore, collapsed structures are also tallied in the scoring system.',
     });
 
   return {
     embed,
-    content: `\`\`\`diff\n${content.join('\n')}\`\`\``,
+    content: `\`\`\`diff\n${title + content.join('\n')}\`\`\``,
   };
 };

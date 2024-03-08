@@ -75,7 +75,7 @@ model User {
   role               UserRole  @default(USER)
   selectedDiscordId  String?
   basketIdent        String?   @db.Text
-  basketAuthUrl      String?
+  basketAuthUrl      String?   @db.Text
   currency           String?
   lastViewedTicketId String?
 
@@ -437,44 +437,45 @@ enum LogType {
 model TribeLog {
   id Int @id @default(autoincrement())
 
-  tribeId        Int
-  tribeName      String
-  content        String
-  possiblePoints Boolean
-  logType        LogType
+  tribeId   Int
+  tribeName String
+  content   String
+  logType   LogType
 
   timestamp DateTime
-}
-
-model Building {
-  id Int @id @default(autoincrement())
-
-  label  String
-  points Int?
-}
-
-enum TribePosition {
-  PROMOTE
-  DEMOTE
-  SAME
-}
-
-model Tribe {
-  tribeId      Int           @id
-  tribeName    String        @db.TinyText
-  points       Int           @default(0)
-  position     Int?
-  newScoreMode TribePosition @default(PROMOTE)
 }
 
 model TribeLogBackup {
   id Int @id
 
-  tribeId        Int
-  tribeName      String
-  content        String
-  possiblePoints Boolean
-  logType        LogType
+  tribeId   Int
+  tribeName String
+  content   String
+  logType   LogType
 
   timestamp DateTime
+}
+
+enum TribeScorePosition {
+  PROMOTE
+  DEMOTE
+  KEEP
+}
+
+model TribeScore {
+  tribeId   BigInt             @id
+  tribeName String             @db.VarChar(64)
+  score     Int                @default(0)
+  oldScore  Int                @default(0)
+  position  Int                @default(0)
+  progress  Int                @default(0)
+  mode      TribeScorePosition @default(PROMOTE)
+}
+
+model TribeScoreAdminDisabledId {
+  steamId String @id @db.VarChar(32)
+}
+
+model TribeScorePlayerDisabledId {
+  steamId String @id @db.VarChar(32)
 }
