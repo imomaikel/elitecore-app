@@ -74,7 +74,7 @@ model User {
   accounts           Account[]
   role               UserRole  @default(USER)
   selectedDiscordId  String?
-  basketIdent        String?
+  basketIdent        String?   @db.Text
   basketAuthUrl      String?
   currency           String?
   lastViewedTicketId String?

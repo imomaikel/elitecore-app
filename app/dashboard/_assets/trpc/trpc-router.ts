@@ -208,7 +208,7 @@ export const appRouter = router({
     const { prisma } = ctx;
     const users = (
       await prisma.payment.findMany({
-        orderBy: { createdAt: 'asc' },
+        orderBy: { createdAt: 'desc' },
         where: {
           priceAmount: {
             not: 0,

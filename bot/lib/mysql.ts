@@ -11,7 +11,7 @@ import { playTimeToText } from '../utils/misc';
 import { getEnv } from '../utils/env';
 import mysql from 'mysql';
 
-const db = async (query: string) => {
+const db = async (query: string, noLog?: boolean) => {
   try {
     const connection = mysql.createConnection({
       host: getEnv('DATABASE_HOST'),
@@ -24,7 +24,7 @@ const db = async (query: string) => {
     const result = await new Promise((resolve, reject) => {
       connection.query(query, (err, res) => {
         if (err) {
-          console.log(err);
+          if (!noLog) console.log(err);
           reject(null);
         }
         if (res && res[0]) return resolve(res);
@@ -53,9 +53,9 @@ export const deleteSchema = async (schemaName: string) => {
   if (![...schemaDeleteList, ...schemaCreateList].includes(schemaName)) return false;
   const mode = schemaName.includes('.') ? 'TABLE' : 'SCHEMA';
 
-  await db(`DROP ${mode} ${schemaName};`);
+  await db(`DROP ${mode} ${schemaName};`, true).catch(() => {});
   if (schemaCreateList.includes(schemaName) && mode == 'SCHEMA') {
-    await db(`CREATE SCHEMA ${schemaName};`);
+    await db(`CREATE SCHEMA ${schemaName};`, true).catch(() => {});
   }
   return true;
 };

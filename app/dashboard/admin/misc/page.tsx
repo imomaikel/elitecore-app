@@ -9,7 +9,7 @@ import { CgPentagonRight } from 'react-icons/cg';
 import { errorToast } from '@/shared/lib/utils';
 import Loader from '@/components/shared/Loader';
 import ItemWrapper from '@/admin/ItemWrapper';
-import { schemaList } from '@/constans';
+import { schemaDeleteList } from '@/constans';
 import Staff from './_components/Staff';
 import Goal from './_components/Goal';
 import { format } from 'date-fns';
@@ -63,7 +63,7 @@ const AdminMiscPage = () => {
             title="Reset database"
             description={
               <ul>
-                {schemaList.map((schema) => (
+                {schemaDeleteList.map((schema) => (
                   <li className="flex" key={schema}>
                     <CgPentagonRight className="h-6 w-6" /> {schema}
                   </li>

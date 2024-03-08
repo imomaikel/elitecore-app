@@ -290,7 +290,7 @@ type TAddProductResponse =
       message:
         | 'Unauthorized'
         | 'Internal error'
-        | 'Could not find the basket auth url'
+        | 'Could not find the basket auth url. Please retry.'
         | 'Basket not authorized'
         | 'Unknown error';
       errorMessage?: string;
@@ -344,9 +344,15 @@ export const addProduct = async ({
       select: { basketAuthUrl: true },
     });
     if (!userData?.basketAuthUrl) {
+      await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          basketIdent: null,
+        },
+      });
       return {
         status: 'error',
-        message: 'Could not find the basket auth url',
+        message: 'Could not find the basket auth url. Please retry.',
       };
     }
     return {

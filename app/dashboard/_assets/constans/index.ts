@@ -166,7 +166,6 @@ export const schemaDeleteList = [
   'arkshopasax1000',
   'gog_stats_ark',
   'genderchangerfiber',
-  'kalcrosschatfiber',
   'statisticsfiber',
   'arkshopfiber',
   'tribes.wtribes_events',
@@ -188,7 +187,6 @@ export const schemaCreateList = [
   'arkshopasax1000',
   'gog_stats_ark',
   'genderchangerfiber',
-  'kalcrosschatfiber',
   'statisticsfiber',
   'arkshopfiber',
 ];
