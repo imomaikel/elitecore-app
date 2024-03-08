@@ -15,7 +15,10 @@ type TServerSelection = {
  * Show all possible servers depending on the action
  */
 export const serverSelection = async ({ action, interaction }: TServerSelection) => {
-  const [statuses, storedServers] = await Promise.all([fetchRequest('getStatuses'), prisma.server.findMany()]);
+  const [statuses, storedServers] = await Promise.all([
+    fetchRequest('getStatuses'),
+    prisma.server.findMany({ where: { serverName: { equals: 'EliteCore' } } }),
+  ]);
   if (!statuses) {
     await interaction.editReply({
       embeds: [errorEmbed('Something went wrong. Please try again')],

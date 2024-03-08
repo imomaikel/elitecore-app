@@ -15,7 +15,7 @@ type TSendServerStatusNotifications = {
  */
 const sendServerStatusNotifications = async (serversOrId: TSendServerStatusNotifications[] | number) => {
   // Get servers from the database
-  const storedServers = await prisma.server.findMany();
+  const storedServers = await prisma.server.findMany({ where: { serverName: { equals: 'EliteCore' } } });
 
   const { red, green } = colors;
   const embeds = [];

@@ -18,7 +18,7 @@ export const _ticketSelectMap = async (interaction: StringSelectMenuInteraction)
   const serverId = parseInt(interaction.values[0]);
   const [server, ticket] = await Promise.all([
     prisma.server.findFirst({
-      where: { id: serverId },
+      where: { id: serverId, serverName: { equals: 'EliteCore' } },
     }),
     prisma.ticket.findUnique({
       where: { channelId, closedAt: null },

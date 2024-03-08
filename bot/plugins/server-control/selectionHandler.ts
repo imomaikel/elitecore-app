@@ -85,7 +85,7 @@ export const serverControlSelectionHandler = async ({ interaction }: TSelectionH
           name: 'Your result',
           iconURL: specialAvatar,
         });
-      const storedServers = await prisma.server.findMany();
+      const storedServers = await prisma.server.findMany({ where: { serverName: { equals: 'EliteCore' } } });
       for (const server of data) {
         const serverDetails = storedServers.find((entry) => entry.id === server.serverId);
         if (!serverDetails) continue;

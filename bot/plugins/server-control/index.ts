@@ -17,7 +17,9 @@ export const updateServerControlWidget = async (): Promise<CustomResponse<'broad
   const [storedServers, config] = await Promise.all([
     prisma.server.findMany({
       where: {
-        serverName: 'EliteCore',
+        serverName: {
+          equals: 'EliteCore',
+        },
       },
     }),
     prisma.config.findFirst(),

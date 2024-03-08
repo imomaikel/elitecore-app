@@ -12,7 +12,9 @@ const updateServerStatusWidget = async (updateOnlyOneGuildId: string | undefined
   const [servers, config] = await Promise.all([
     prisma.server.findMany({
       where: {
-        serverName: 'EliteCore',
+        serverName: {
+          equals: 'EliteCore',
+        },
       },
     }),
     prisma.config.findFirst(),

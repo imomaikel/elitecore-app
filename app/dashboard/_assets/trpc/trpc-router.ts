@@ -402,7 +402,7 @@ export const appRouter = router({
         if (category.mapSelection) {
           if (!mapSelection) throw new TRPCError({ code: 'BAD_REQUEST' });
           const findServer = await prisma.server.findUnique({
-            where: { id: mapSelection },
+            where: { id: mapSelection, serverName: { equals: 'EliteCore' } },
           });
           if (!findServer) throw new TRPCError({ code: 'BAD_REQUEST' });
         }
@@ -443,6 +443,11 @@ export const appRouter = router({
         mapName: true,
         customName: true,
         gameType: true,
+      },
+      where: {
+        serverName: {
+          equals: 'EliteCore',
+        },
       },
     });
     return servers;

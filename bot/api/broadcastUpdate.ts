@@ -35,7 +35,6 @@ const apiUpdateBroadcastChannel = async ({
     if (!channel) {
       return { status: 'error', details: { message: 'Unknown error' } };
     }
-
     if (widgetName === 'serverStatusWidget') {
       const oldChannel = await prisma.guild.findUnique({
         where: { guildId },

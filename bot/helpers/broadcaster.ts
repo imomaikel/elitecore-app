@@ -142,6 +142,7 @@ const broadcasterChecker = async ({
   channelField,
   webhookIdField,
   webhookTokenField,
+  messageButtons,
 }: TBroadcaster & TChecker): Promise<CustomResponse<'broadcaster'>> => {
   // Reject if there are no servers with configured widget channel
   if (allowedGuilds.length === 0 && updateOnlyOneGuildId) {
@@ -170,6 +171,7 @@ const broadcasterChecker = async ({
         customAvatar: avatar,
         embeds: messageEmbeds,
         messageContent,
+        messageButtons,
       });
       // Catch sending message error
       if (action.status === 'error') {
@@ -207,7 +209,6 @@ const broadcasterChecker = async ({
         if (updateOnlyOneGuildId) return { status: 'success' };
       }
     } catch (error) {
-      console.log(11);
       console.log(error);
       // Catch unknown error
       logger({

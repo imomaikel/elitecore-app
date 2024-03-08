@@ -13,6 +13,9 @@ const rconCommand = async ({ command, serverId }: TCommand) => {
     prisma.server.findFirst({
       where: {
         id: serverId,
+        serverName: {
+          equals: 'EliteCore',
+        },
       },
     }),
     getRconPassword(),

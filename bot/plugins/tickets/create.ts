@@ -322,7 +322,7 @@ export const _createTicket = async ({
       }
       if (mapSelection) {
         const mapEmbed = new EmbedBuilder().setColor(colors.blue).setDescription('**Select your game map**');
-        const servers = await prisma.server.findMany();
+        const servers = await prisma.server.findMany({ where: { serverName: { equals: 'EliteCore' } } });
         if (servers.length <= 0) {
           await prisma.ticket.update({
             where: { id: ticket!.id },

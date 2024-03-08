@@ -1,4 +1,4 @@
-import { ChannelType, EmbedBuilder, WebhookClient } from 'discord.js';
+import { ActionRowBuilder, ButtonBuilder, ChannelType, EmbedBuilder, WebhookClient } from 'discord.js';
 import { specialAvatar } from '../constans';
 import { client } from '../client';
 import logger from './logger';
@@ -70,6 +70,7 @@ type TSendWebhookMessageOrEdit = {
   messageId?: string;
   messageContent?: string;
   embeds?: EmbedBuilder[];
+  messageButtons?: ActionRowBuilder<ButtonBuilder>[];
   webhookId: string;
   webhookToken: string;
 };
@@ -80,6 +81,7 @@ export const sendWebhookMessageOrEdit = async ({
   embeds,
   messageContent,
   messageId,
+  messageButtons,
   webhookId: _webhookId,
   webhookToken: _webhookToken,
 }: TSendWebhookMessageOrEdit): Promise<TSendWebhookMessageOrEditResponse> => {
@@ -120,6 +122,7 @@ export const sendWebhookMessageOrEdit = async ({
       .editMessage(messageId!, {
         embeds,
         content: messageContent,
+        components: messageButtons,
       })
       .then((msg) => {
         response = { status: 'success', messageId: msg.id, webhookId, webhookToken };
@@ -131,6 +134,7 @@ export const sendWebhookMessageOrEdit = async ({
         embeds,
         content: messageContent,
         // avatarURL: customAvatar,
+        components: messageButtons,
         username: customName,
       })
       .then((msg) => {

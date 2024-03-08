@@ -10,7 +10,13 @@ type TServerControlLog = {
   action: string;
 };
 const serverControlLog = async ({ restartedBy, serversOrId, action }: TServerControlLog) => {
-  const storedServers = await prisma.server.findMany();
+  const storedServers = await prisma.server.findMany({
+    where: {
+      serverName: {
+        equals: 'EliteCore',
+      },
+    },
+  });
 
   const embeds = [];
 

@@ -47,7 +47,7 @@ export default command(cmd, async (client, interaction) => {
       return;
     }
 
-    const servers = await prisma.server.findMany();
+    const servers = await prisma.server.findMany({ where: { serverName: { equals: 'EliteCore' } } });
     servers.sort((a, b) => a.gameType.localeCompare(b.gameType));
 
     const playersEmbed = new EmbedBuilder()
