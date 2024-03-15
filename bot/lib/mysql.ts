@@ -5,41 +5,61 @@ import {
   MYSQL_TRIBES_DATA,
   MYSQL_TRIBE_LOGS_QUERY,
   MYSQL_TRIBE_MEMBER_QUERY,
+  TDbGetTopTribeScore,
 } from '../constans/types';
 import { schemaCreateList, schemaDeleteList } from '../../app/dashboard/_assets/constans';
+import { TribeScorePosition } from '@prisma/client';
 import { playTimeToText } from '../utils/misc';
 import { getEnv } from '../utils/env';
 import mysql from 'mysql';
 
+const pool = mysql.createPool({
+  connectionLimit: 50,
+  host: getEnv('DATABASE_HOST'),
+  user: getEnv('DATABASE_USER'),
+  password: getEnv('DATABASE_PASSWORD'),
+  supportBigNumbers: true,
+  connectTimeout: 5_000,
+});
+
 const db = async (query: string, noLog?: boolean) => {
-  try {
-    const connection = mysql.createConnection({
-      host: getEnv('DATABASE_HOST'),
-      user: getEnv('DATABASE_USER'),
-      password: getEnv('DATABASE_PASSWORD'),
-      supportBigNumbers: true,
-      connectTimeout: 5_000,
-    });
-
-    const result = await new Promise((resolve, reject) => {
-      connection.query(query, (err, res) => {
+  const result = await new Promise((resolve, reject) => {
+    try {
+      pool.getConnection(async (err, connection) => {
         if (err) {
-          if (!noLog) console.log(err);
-          reject(null);
+          console.log('DB Pool awaiting');
+          setTimeout(() => {
+            db(query);
+            return;
+          }, 2000);
+        } else {
+          try {
+            connection.query(
+              {
+                sql: query,
+              },
+              (error, res) => {
+                if (error) {
+                  if (!noLog) console.log(err);
+                  reject(null);
+                }
+                if (res && res[0]) return resolve(res);
+                return reject(null);
+              },
+            );
+            connection.release();
+          } catch (error) {
+            console.log('Mysql Error', error);
+            reject(null);
+          }
         }
-        if (res && res[0]) return resolve(res);
-        return reject();
       });
-    }).catch(() => null);
-
-    connection.end();
-
-    return typeof result === 'object' ? result : null;
-  } catch {
-    return null;
-  }
+    } catch {
+      reject(null);
+    }
+  }).catch(() => null);
+  return result;
 };
-
 export const findEOS = async (userDiscordId: string) => {
   const query = await db(`SELECT eos_id FROM eosid.player_discord WHERE discord_id = ${userDiscordId};`);
   return typeof query === 'object' ? (query as MYSQL_EOS_QUERY[]) : null;
@@ -151,4 +171,35 @@ export const getTribesData = async () => {
   );
   const data = typeof query === 'object' ? (query as MYSQL_TRIBES_DATA[]) : null;
   return data;
+};
+
+export const getTopTribeScore = async () => {
+  const query = await db(
+    // eslint-disable-next-line quotes
+    `SELECT * FROM webapp.tribescore WHERE TribeName NOT LIKE '' ORDER BY score DESC LIMIT 10;`,
+  );
+
+  return query ? (query as TDbGetTopTribeScore) : [];
+};
+export const getAllTribeScore = async () => {
+  const query = await db(
+    // eslint-disable-next-line quotes
+    `SELECT * FROM webapp.tribescore WHERE TribeName NOT LIKE '' ORDER BY SCORE DESC;`,
+  );
+
+  return query ? (query as TDbGetTopTribeScore) : [];
+};
+export const updateTribeScore = async (
+  tribeId: bigint,
+  progress: number,
+  oldScore: number,
+  position: number,
+  mode: TribeScorePosition,
+) => {
+  await db(
+    // eslint-disable-next-line quotes
+    `UPDATE webapp.tribescore SET progress = ${progress}, oldScore = ${oldScore}, mode = '${mode}', position = ${position} WHERE TribeID = ${tribeId};`,
+  );
+
+  return;
 };

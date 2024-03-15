@@ -1,3 +1,4 @@
+import { TribeScorePosition } from '@prisma/client';
 import { z } from 'zod';
 
 export const API_BROADCAST_WIDGETS = z.enum([
@@ -77,3 +78,12 @@ export type MYSQL_TRIBES_DATA = {
   kdr?: number;
   playTime?: number;
 };
+export type TDbGetTopTribeScore = {
+  tribeId: bigint;
+  tribeName: string;
+  score: number;
+  oldScore: number;
+  position: number;
+  progress: number;
+  mode: TribeScorePosition;
+}[];

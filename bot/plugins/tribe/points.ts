@@ -1,11 +1,12 @@
-import prisma from '../../lib/prisma';
+import { getAllTribeScore, updateTribeScore } from '../../lib/mysql';
 
 export const _calculateTribePoints = async () => {
-  const tribes = await prisma.tribeScore.findMany({
-    orderBy: {
-      score: 'desc',
-    },
-  });
+  const tribes = await getAllTribeScore();
+
+  if (!tribes || tribes.length <= 0) {
+    _calculateTribePoints();
+    return;
+  }
 
   const newTribeScores = tribes.map((tribe, newPosition) => {
     newPosition++;
@@ -24,11 +25,8 @@ export const _calculateTribePoints = async () => {
   });
 
   await Promise.all(
-    newTribeScores.map(async (tribe) => {
-      await prisma.tribeScore.update({
-        where: { tribeId: tribe.tribeId },
-        data: { ...tribe },
-      });
+    newTribeScores.map(async ({ tribeId, oldScore, mode, position, progress }) => {
+      await updateTribeScore(tribeId, progress, oldScore, position, mode);
     }),
   );
 };

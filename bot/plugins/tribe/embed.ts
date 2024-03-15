@@ -1,15 +1,14 @@
 import { colors, extraSigns } from '../../constans';
+import { getTopTribeScore } from '../../lib/mysql';
 import { EmbedBuilder, time } from 'discord.js';
-import prisma from '../../lib/prisma';
 
 export const _generateScoreMessage = async () => {
-  const tribes = await prisma.tribeScore.findMany({
-    orderBy: {
-      score: 'desc',
-    },
-    take: 10,
-  });
-  if (tribes.length <= 0) return null;
+  const tribes = await getTopTribeScore();
+
+  if (!tribes || tribes.length <= 0) {
+    _generateScoreMessage();
+    return;
+  }
 
   const longestNameLength = tribes.slice().sort((a, b) => b.tribeName.length - a.tribeName.length)[0].tribeName.length;
 
