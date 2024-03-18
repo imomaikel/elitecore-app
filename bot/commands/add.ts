@@ -30,6 +30,13 @@ export default command(cmd, async (client, interaction) => {
 
     const ticket = await prisma.ticket.findUnique({
       where: { channelId: channel.id },
+      include: {
+        TicketCategory: {
+          include: {
+            supportRoles: true,
+          },
+        },
+      },
     });
 
     if (!ticket?.id) {
@@ -44,8 +51,15 @@ export default command(cmd, async (client, interaction) => {
       return;
     }
 
-    if (ticket.authorDiscordId !== interaction.user.id) {
-      await interaction.editReply({ embeds: [errorEmbed('Only ticket authors can add other members.')] });
+    const isAuthor = ticket.authorDiscordId === interaction.user.id;
+
+    const supportRoles = ticket.TicketCategory?.supportRoles.map(({ roleId }) => roleId);
+    const memberRoles = (await client.guilds.cache.get(interaction.guild.id)?.members.fetch(interaction.user.id))
+      ?.roles;
+    const isSupporter = memberRoles?.cache.some((role) => supportRoles?.includes(role.id));
+
+    if (!(isAuthor || isSupporter)) {
+      await interaction.editReply({ embeds: [errorEmbed('You are not allowed to add other members.')] });
       return;
     }
 
