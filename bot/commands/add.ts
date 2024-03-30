@@ -1,4 +1,4 @@
-import { PermissionsBitField, SlashCommandBuilder } from 'discord.js';
+import { ChannelType, SlashCommandBuilder } from 'discord.js';
 import { errorEmbed, successEmbed } from '../constans/embeds';
 import { command } from '../utils/commands';
 import { extraSigns } from '../constans';
@@ -63,19 +63,20 @@ export default command(cmd, async (client, interaction) => {
       return;
     }
 
-    await channel
-      .edit({
-        permissionOverwrites: [
-          { id: user.id, allow: [PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.SendMessages] },
-        ],
-      })
-      .then(
-        async () =>
-          await interaction.editReply({
-            embeds: [successEmbed(`Added ${user.toString()} to this ticket! :white_check_mark:`)],
-          }),
-      )
-      .catch(async () => await interaction.editReply({ embeds: [errorEmbed('Something went wrong!')] }));
+    if (channel.isTextBased() && channel.type === ChannelType.GuildText) {
+      await channel.permissionOverwrites
+        .edit(user.id, { ViewChannel: true, SendMessages: true })
+        .then(
+          async () =>
+            await interaction.editReply({
+              embeds: [successEmbed(`Added ${user.toString()} to this ticket! :white_check_mark:`)],
+            }),
+        )
+        .catch(async () => await interaction.editReply({ embeds: [errorEmbed('Something went wrong!')] }));
+    } else {
+      await interaction.editReply({ embeds: [errorEmbed('Something went wrong!')] });
+      return;
+    }
   } catch (error) {
     logger({
       type: 'error',
