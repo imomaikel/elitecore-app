@@ -27,12 +27,21 @@ export const publicProcedure = t.procedure.use(prismaContext);
 
 const isLoggedIn = middleware(async ({ ctx, next }) => {
   const { req } = ctx;
+
+  const realIp = req.headers['x-real-ip'];
+  if (!realIp || typeof realIp !== 'string') throw new TRPCError({ code: 'UNAUTHORIZED' });
+
   const session = (await getSession({ req })) as NextAuthSession | null;
+
   if (session && session.user.id) {
     return next({
       ctx: {
         user: session.user,
         prisma,
+        req: {
+          ...req,
+          ip: realIp,
+        },
       },
     });
   }
