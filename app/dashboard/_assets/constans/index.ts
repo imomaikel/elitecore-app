@@ -180,6 +180,8 @@ export const schemaDeleteList = [
   'tribesfiber.wtribes_playerids',
   'tribesfiber.wtribes_tribedata',
   'tribesfiber.wtribes_tribelog_webhooks',
+  'webapp.tribescore',
+  'fibercraft.tribescore',
 ];
 export const schemaCreateList = [
   'webapp.player',
