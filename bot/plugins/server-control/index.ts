@@ -11,8 +11,8 @@ import { client } from '../../client';
  */
 export const updateServerControlWidget = async (): Promise<CustomResponse<'broadcaster'>> => {
   // Get the data from the Python socket
-  const data = await fetchRequest('getStatuses');
-  if (!data) return { status: 'error', details: { message: 'Unknown error' } };
+  const _data = await fetchRequest('getStatuses');
+  if (!_data) return { status: 'error', details: { message: 'Unknown error' } };
 
   const [storedServers, config] = await Promise.all([
     prisma.server.findMany({
@@ -24,6 +24,8 @@ export const updateServerControlWidget = async (): Promise<CustomResponse<'broad
     }),
     prisma.config.findFirst(),
   ]);
+
+  const data = _data.filter((entry) => storedServers.some((server) => server.id === entry.serverId));
 
   const onlineServers = data.filter((entry) => entry.currentStatus === 'online').length;
   const offlineServers = data.filter((entry) => entry.currentStatus === 'offline').length;
