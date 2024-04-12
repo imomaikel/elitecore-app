@@ -7,9 +7,10 @@ import Navbar from '@/components/shared/Navbar';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'EliteCore - Dashboard',
-  description:
-    'EliteCore is dedicated to enhancing the gaming experience of ARK players, providing a comprehensive platform filled with resources, community interaction, and opportunities to bolster your in-game assets.',
+  title: {
+    default: 'Dashboard | EliteCore',
+    template: '%s | EliteCore',
+  },
 };
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
