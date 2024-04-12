@@ -1,14 +1,14 @@
 'use server';
-import { shopGetCategories } from '@/shared/lib/tebex';
+import { getCachedCategories } from '@/trpc/cache';
 import { startCase } from 'lodash';
 import { Metadata } from 'next';
 import { cache } from 'react';
 
 const getProduct = cache(async (productId: string) => {
+  const cachedCategories = await getCachedCategories();
   const parsedId = parseInt(productId);
-  const categories = await shopGetCategories();
 
-  const product = categories
+  const product = cachedCategories
     .find((category) => category.packages.some((entry) => entry.id === parsedId))
     ?.packages.find((entry) => entry.id === parsedId);
 

@@ -4,7 +4,6 @@ import {
   createBasket,
   removeGiftCard,
   removeProduct,
-  shopGetCategories,
   updateQuantity,
 } from '../../../_shared/lib/tebex';
 import {
@@ -16,17 +15,15 @@ import {
 import { findPairedAccount } from '../../../../bot/plugins/tickets/verification';
 import { COORDS_REGEX } from '../../../../bot/plugins/tickets/message';
 import { authorizedProcedure, publicProcedure, router } from './trpc';
+import { getCachedCategories, refetchCategories } from './cache';
 import { getTribe } from '../../../../bot/plugins/tribe';
-import { Category, GetBasket } from 'tebex_headless';
 import { adminRouter } from './admin-router';
+import { GetBasket } from 'tebex_headless';
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 
-let categories: Category[] = [];
-
 setInterval(async () => {
-  const response = await shopGetCategories();
-  categories = response;
+  await refetchCategories();
 }, 3 * 60 * 1000);
 
 const getCurrentMonth = () => {
@@ -81,12 +78,9 @@ export const appRouter = router({
 
       const descOrder = productsCount.sort((a, b) => b.count - a.count).map((entry) => entry.productId);
 
-      if (categories.length <= 0) {
-        const getCategories = await shopGetCategories();
-        categories = getCategories;
-      }
+      const cachedCategories = await getCachedCategories();
 
-      const products = categories
+      const products = cachedCategories
         .filter(({ name }) => productFilter(name, game))
         .map(({ packages }) => packages)
         .flat();
@@ -335,13 +329,9 @@ export const appRouter = router({
       return response;
     }),
   getCategories: publicProcedure.query(async () => {
-    if (categories.length <= 0) {
-      const fetchCategories = await shopGetCategories();
-      categories = fetchCategories;
-      return fetchCategories;
-    }
+    const cachedCategories = await getCachedCategories();
 
-    return categories;
+    return cachedCategories;
   }),
   getTicketCategories: publicProcedure.query(async ({ ctx }) => {
     const { prisma, user } = ctx;
@@ -661,12 +651,9 @@ export const appRouter = router({
     return guild?.discordMembers ?? 7000;
   }),
   getRandomProducts: publicProcedure.query(async () => {
-    if (categories.length <= 0) {
-      const getCategories = await shopGetCategories();
-      categories = getCategories;
-    }
+    const cachedCategories = await getCachedCategories();
 
-    const allProducts = categories.map((entry) => entry.packages).flat();
+    const allProducts = cachedCategories.map((entry) => entry.packages).flat();
     if (allProducts.length <= 4) {
       return allProducts.map(({ image, base_price, name, id }) => ({
         name,
