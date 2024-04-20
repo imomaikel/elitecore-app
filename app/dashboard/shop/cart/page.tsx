@@ -67,6 +67,13 @@ const CartPage = () => {
   const salesTax = formatPrice(basket?.sales_tax ?? 0);
   const totalPrice = formatPrice(basket?.total_price ?? 0);
 
+  let hasGiftcards = false;
+  if (basket?.giftcards) {
+    if (basket.giftcards?.length >= 1) {
+      hasGiftcards = true;
+    }
+  }
+
   return (
     <>
       <ActionDialog
@@ -108,7 +115,7 @@ const CartPage = () => {
               </div>
             </div>
           </div>
-          {basket.giftcards.length >= 1 && <GiftCardApplied />}
+          {hasGiftcards && <GiftCardApplied />}
           <Separator />
           {/* Gift cards */}
           <div className="relative z-10">

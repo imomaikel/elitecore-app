@@ -77,6 +77,13 @@ const ShoppingCart = () => {
 
   if (!isDataReady) return;
 
+  let hasGiftcards = false;
+  if (basket?.giftcards) {
+    if (basket.giftcards?.length >= 1) {
+      hasGiftcards = true;
+    }
+  }
+
   return (
     <>
       <ActionDialog
@@ -149,7 +156,7 @@ const ShoppingCart = () => {
                       <div className="h-[1px] flex-1 bg-primary/40 mx-4"></div>
                       <span>{formatPrice(basket.total_price)}</span>
                     </div>
-                    {basket.giftcards.length >= 1 && <GiftCardApplied className="my-4" />}
+                    {hasGiftcards && <GiftCardApplied className="my-4" />}
                     <Alert className="my-2 z-10 relative">
                       <div className="bg-gradient-to-r from-red-500 to-red-800 w-[75%] h-[50%] left-[50%] -translate-x-[50%]  blur-[150px] absolute top-0 opacity-75 z-0" />
                       <FaDollarSign className="h-4 w-4" />

@@ -13,7 +13,15 @@ export const usePrice = () => {
       _updatePrice();
       return;
     }
-    if (basket.giftcards.length >= 1 || forceUpdate) {
+
+    let hasGiftcards = false;
+    if (basket?.giftcards) {
+      if (basket.giftcards?.length >= 1) {
+        hasGiftcards = true;
+      }
+    }
+
+    if (hasGiftcards || forceUpdate) {
       const url = `${BASE_URL}/api/accounts/${WEBSTORE_IDENTIFIER}/baskets/${user.basketIdent}`;
       fetch(url, { method: 'GET' })
         .then((res) => res.json())
