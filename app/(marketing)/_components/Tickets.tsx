@@ -36,7 +36,7 @@ const Tickets = () => {
           title="Our"
           colorTitle="ticket"
           extraTitle="system"
-          buttonLink=""
+          buttonLink="/dashboard/tickets/create"
           className="max-w-md"
           buttonText={
             <>
