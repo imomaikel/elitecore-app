@@ -182,6 +182,7 @@ export const schemaDeleteList = [
   'tribesfiber.wtribes_tribelog_webhooks',
   'webapp.tribescore',
   'fibercraft.tribescore',
+  'doubleloginfiber.ndl_characters',
 ];
 export const schemaCreateList = [
   'webapp.player',
