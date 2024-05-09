@@ -1,4 +1,4 @@
-from lib.db import dbFindServer, dbAppendNewLog
+from lib.db import dbFindServer, dbAppendNewLog, dbUpdateAutoRestart
 from engine.getStatuses import getStatuses
 from actions.getDetails import getDetails
 from utils.constans import ServerDetails
@@ -11,6 +11,7 @@ import psutil
 def stopServer(serverId):
     # One server
     if not serverId == 'all':
+        dbUpdateAutoRestart(serverId, False)
         server = dbFindServer(serverId)
         action = __killServers([server])
         return action
@@ -20,6 +21,8 @@ def stopServer(serverId):
     onlineServers = [
         entry for entry in servers if entry.status == 'online']
     action = __killServers(onlineServers)
+    for entry in onlineServers:
+        dbUpdateAutoRestart(entry.id, False)
     return action
 
 
