@@ -1,4 +1,4 @@
-from lib.db import dbFindServer, dbAppendNewLog
+from lib.db import dbFindServer, dbAppendNewLog, dbUpdateAutoRestart
 from engine.getStatuses import getStatuses
 from utils.constans import ServerDetails
 from threading import Thread
@@ -56,6 +56,7 @@ def __start(server: ServerDetails):
         'serverId': server.id,
         'status': 'success' if checkServer == True else 'error'
     })
+    dbUpdateAutoRestart(server.id, True)
     threadIndex += 1
     return
 
