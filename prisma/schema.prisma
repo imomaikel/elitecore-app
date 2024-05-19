@@ -26,6 +26,7 @@ model Config {
   monthlyPaymentGoal       Int      @default(50)
   lastWipe                 DateTime @default(now())
   discordMembers           Int      @default(0)
+  ipAddress                String   @default("103.214.68.111")
 }
 
 model Server {
