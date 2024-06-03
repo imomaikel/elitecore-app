@@ -1,5 +1,6 @@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/shared/components/ui/card';
 import { MdKeyboardDoubleArrowRight } from 'react-icons/md';
+import { useCurrentUser } from '@/hooks/use-current-user';
 import { Button } from '@/shared/components/ui/button';
 import { Badge } from '@/shared/components/ui/badge';
 import { errorToast } from '@/shared/lib/utils';
@@ -35,6 +36,7 @@ const TicketCard = ({
   createConfirmation,
 }: TTicketCard) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const { sessionStatus } = useCurrentUser();
 
   const { mutate: createTicket, isLoading } = trpc.createTicket.useMutation({
     onSuccess: (response) => {
@@ -48,6 +50,11 @@ const TicketCard = ({
   });
 
   const onClick = () => {
+    if (sessionStatus !== 'authenticated') {
+      toast.error('Please login first.');
+      return;
+    }
+
     if (coordinateInput || mapSelection || createConfirmation) {
       setIsDialogOpen(true);
       return;
