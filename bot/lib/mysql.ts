@@ -81,7 +81,25 @@ export const deleteSchema = async (schemaName: string) => {
 };
 
 export const getLogs = async () => {
-  const query = await db(`
+  try {
+    const checkColumn = await db(`
+    SELECT * 
+      FROM information_schema.COLUMNS 
+    WHERE 
+        TABLE_SCHEMA = 'tribes' 
+          AND TABLE_NAME = 'wtribes_events' 
+            AND COLUMN_NAME = 'timestamp'
+  `);
+
+    if (!Array.isArray(checkColumn)) return null;
+    if (checkColumn.length <= 0) {
+      await db(
+        'ALTER TABLE `tribes`.`wtribes_events` ADD COLUMN `timestamp` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP AFTER `TribeName`, ADD COLUMN `fetched` TINYINT NULL DEFAULT 0 AFTER `timestamp`;',
+      );
+      await db('DELETE FROM webapp.tribelog WHERE ID >= 0;');
+    }
+
+    const query = await db(`
   SELECT 
   tribes.wtribes_tribedata.TribeName AS tribeName,
   tribes.wtribes_events.TribeName AS content,
@@ -98,7 +116,11 @@ export const getLogs = async () => {
         tribes.wtribes_events.EventType = 1012
       AND
         tribes.wtribes_events.fetched = FALSE;`);
-  return typeof query === 'object' ? (query as MYSQL_TRIBE_LOGS_QUERY[]) : null;
+    return typeof query === 'object' ? (query as MYSQL_TRIBE_LOGS_QUERY[]) : null;
+  } catch (error) {
+    console.log('Fetch log error', error);
+    return null;
+  }
 };
 
 export const disableLogs = async (logIds: number[]) => {
