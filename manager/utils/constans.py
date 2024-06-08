@@ -37,34 +37,46 @@ class ServerDetails():
 
 
 # Servers schema table
-# TODO
 serversTableTemplate = '''CREATE TABLE IF NOT EXISTS webapp.server (
-  id INT NOT NULL AUTO_INCREMENT,
-  mapName VARCHAR(45) NOT NULL,
-  path VARCHAR(200) NOT NULL,
-  gameMode VARCHAR(45) NOT NULL,
-  gameType VARCHAR(45) NOT NULL,
-  autoRestart TINYINT NOT NULL,
-  customName VARCHAR(45),
-  multiHome VARCHAR(45),
-  queryPort INT NOT NULL,
-  rconPort INT NOT NULL,
-  lastStatus VARCHAR(45) DEFAULT 'offline' NOT NULL,
-  lastPlayers TINYINT DEFAULT 0 NOT NULL,
-  position TINYINT DEFAULT 1 NOT NULL,
-  PRIMARY KEY (id));'''
+  `id` int NOT NULL AUTO_INCREMENT,
+  `mapName` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `path` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `gameMode` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `gameType` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `autoRestart` tinyint NOT NULL,
+  `customName` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `multiHome` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `queryPort` int NOT NULL,
+  `rconPort` int NOT NULL,
+  `lastStatus` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'offline',
+  `lastPlayers` tinyint NOT NULL DEFAULT '0',
+  `position` tinyint NOT NULL DEFAULT '1',
+  `serverName` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'EliteCore',
+  PRIMARY KEY (`id`)
+  '''
 # Logs schema table
 logsTableTemplate = '''CREATE TABLE IF NOT EXISTS webapp.AppLog (
-  id INT NOT NULL AUTO_INCREMENT,
-  content VARCHAR(1024) NOT NULL,
-  file VARCHAR(64) NOT NULL,
-  logCreatedAt DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (id));'''
+ `id` int NOT NULL AUTO_INCREMENT,
+  `content` varchar(1024) NOT NULL,
+  `file` varchar(64) NOT NULL,
+  `logCreatedAt` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+  '''
 # Schema schema table
 schemaTableTemplate = '''CREATE TABLE IF NOT EXISTS webapp.config (
-  id INT NOT NULL AUTO_INCREMENT,
-  rconPassword VARCHAR(1024) NOT NULL,
-  PRIMARY KEY (id));'''
+  `id` int NOT NULL AUTO_INCREMENT,
+  `rconPassword` varchar(1024) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `serverStatusUpdateDelay` tinyint NOT NULL DEFAULT '5',
+  `serverControlUpdateDelay` tinyint NOT NULL DEFAULT '3',
+  `currenciesLastUpdated` datetime(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+  `monthlyPaymentGoal` int NOT NULL DEFAULT '50',
+  `autoCleanTicketFilesDays` tinyint NOT NULL DEFAULT '21',
+  `countdownUpdateDelay` tinyint NOT NULL DEFAULT '5',
+  `lastWipe` datetime(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+  `discordMembers` int NOT NULL DEFAULT '0',
+  `ipAddress` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '127.0.0.1',
+  PRIMARY KEY (`id`)
+  '''
 
 
 # App icon (base64 format)
