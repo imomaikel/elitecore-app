@@ -22,7 +22,7 @@ def __set_interval(func, sec):
 
 # Initialize observer
 def observeServers():
-    __set_interval(runObserver, 30)
+    __set_interval(runObserver, 100)
 
 
 # Check servers
@@ -52,13 +52,13 @@ def runObserver():
             entry for entry in currentServers if entry.id == storedServer.id).status
         if not lastStatus == currentStatus:
             dbUpdateLastStatus(storedServer.id, currentStatus)
-            if currentStatus == 'offline' and storedServer.autoRestart == 1:
-                idsToStart.append(storedServer.id)
             if storedServer.serverName == 'EliteCore':
                 changedServers.append({
                     'serverId': storedServer.id,
                     'currentStatus': currentStatus
                 })
+        if currentStatus == 'offline' and storedServer.autoRestart == 1:
+            idsToStart.append(storedServer.id)
     if len(changedServers) > 0:
         for changedServer in changedServers:
             if changedServer['serverId'] in idsToStart:
