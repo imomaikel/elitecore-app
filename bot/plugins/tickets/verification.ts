@@ -17,7 +17,7 @@ export const findPairedAccount = async (userDiscordId: string): Promise<TFindRet
   }
 
   const getEOS = await findEOS(userDiscordId);
-  const eosId = getEOS && getEOS[0].eos_id;
+  const eosId = getEOS && getEOS.length >= 1 && getEOS[0].eos_id;
   if (eosId) {
     if (userData?.id) {
       await prisma.user.update({

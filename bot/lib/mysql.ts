@@ -14,7 +14,7 @@ import { getEnv } from '../utils/env';
 import mysql from 'mysql';
 
 const pool = mysql.createPool({
-  connectionLimit: 50,
+  connectionLimit: 10,
   host: getEnv('DATABASE_HOST'),
   user: getEnv('DATABASE_USER'),
   password: getEnv('DATABASE_PASSWORD'),
@@ -23,43 +23,43 @@ const pool = mysql.createPool({
 });
 
 const db = async (query: string, noLog?: boolean) => {
-  const result = await new Promise((resolve, reject) => {
+  let retries = 5;
+  let delay = 2000;
+
+  while (retries > 0) {
     try {
-      pool.getConnection(async (err, connection) => {
-        if (err) {
-          console.log('DB Pool awaiting');
-          setTimeout(() => {
-            db(query);
-            return;
-          }, 2000);
-        } else {
-          try {
-            connection.query(
-              {
-                sql: query,
-              },
-              (error, res) => {
-                if (error) {
-                  if (!noLog) console.log(err);
-                  reject(null);
-                }
-                if (res && res[0]) return resolve(res);
-                return reject(null);
-              },
-            );
-            connection.release();
-          } catch (error) {
-            console.log('Mysql Error', error);
-            reject(null);
+      const result = await new Promise((resolve, reject) => {
+        pool.getConnection((err, connection) => {
+          if (err) {
+            console.log('Error getting DB connection', err);
+            reject(err);
+          } else {
+            connection.query({ sql: query }, (error, res) => {
+              connection.release();
+              if (error) {
+                if (!noLog) console.log('MySQL Error:', error);
+                reject(error);
+              } else {
+                resolve(res);
+              }
+            });
           }
-        }
+        });
       });
-    } catch {
-      reject(null);
+
+      return result;
+    } catch (err) {
+      console.log('Database query failed, retrying...', err);
+      retries -= 1;
+      await new Promise((res) => setTimeout(res, delay));
+      delay *= 2;
     }
-  }).catch(() => null);
-  return result;
+  }
+
+  console.log('Database query failed after retries');
+  return null;
 };
+
 export const findEOS = async (userDiscordId: string) => {
   const query = await db(`SELECT eos_id FROM eosid.player_discord WHERE discord_id = ${userDiscordId};`);
   return typeof query === 'object' ? (query as MYSQL_EOS_QUERY[]) : null;
@@ -81,25 +81,7 @@ export const deleteSchema = async (schemaName: string) => {
 };
 
 export const getLogs = async () => {
-  try {
-    const checkColumn = await db(`
-    SELECT * 
-      FROM information_schema.COLUMNS 
-    WHERE 
-        TABLE_SCHEMA = 'tribes' 
-          AND TABLE_NAME = 'wtribes_events' 
-            AND COLUMN_NAME = 'timestamp'
-  `);
-
-    if (!Array.isArray(checkColumn)) return null;
-    if (checkColumn.length <= 0) {
-      await db(
-        'ALTER TABLE `tribes`.`wtribes_events` ADD COLUMN `timestamp` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP AFTER `TribeName`, ADD COLUMN `fetched` TINYINT NULL DEFAULT 0 AFTER `timestamp`;',
-      );
-      await db('DELETE FROM webapp.tribelog WHERE ID >= 0;');
-    }
-
-    const query = await db(`
+  const query = await db(`
   SELECT 
   tribes.wtribes_tribedata.TribeName AS tribeName,
   tribes.wtribes_events.TribeName AS content,
@@ -116,11 +98,7 @@ export const getLogs = async () => {
         tribes.wtribes_events.EventType = 1012
       AND
         tribes.wtribes_events.fetched = FALSE;`);
-    return typeof query === 'object' ? (query as MYSQL_TRIBE_LOGS_QUERY[]) : null;
-  } catch (error) {
-    console.log('Fetch log error', error);
-    return null;
-  }
+  return typeof query === 'object' ? (query as MYSQL_TRIBE_LOGS_QUERY[]) : null;
 };
 
 export const disableLogs = async (logIds: number[]) => {
