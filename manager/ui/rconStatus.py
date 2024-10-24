@@ -15,7 +15,7 @@ def getServerRCONStatus(port: int, password: str, multiHome: str | None, mapName
     status = 'offline'
     try:
         # Find RCON address
-        addr = multiHome if not multiHome == None else '127.0.0.1'
+        addr = '127.0.0.1'
         playerCount = 0
         with Client(addr, port, passwd=password, timeout=3) as client:
             response = client.run('ListPlayers')
@@ -32,7 +32,7 @@ def getServerRCONStatus(port: int, password: str, multiHome: str | None, mapName
                     playerName = row[row.index('.')+2::]
                     playerName = playerName[:playerName.rindex(',')]
                     playerCount += 1
-                    updatePlayerPlaytime(playerName, playerId, mapName)
+                    # updatePlayerPlaytime(playerName, playerId, mapName)
             client.close()
         if serverId:
             dbUpdatePlayerCount(serverId, playerCount)

@@ -24,10 +24,10 @@ const rconCommand = async ({ command, serverId }: TCommand) => {
     return null;
   }
 
-  const { rconPort, multiHome } = server;
+  const { rconPort } = server;
 
   const rcon = new Rcon({
-    host: multiHome ?? '127.0.0.1',
+    host: '127.0.0.1',
     password: password,
     port: rconPort,
     timeout: 6000,
