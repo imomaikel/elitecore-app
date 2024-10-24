@@ -1,10 +1,13 @@
 import { getAllTribeScore, updateTribeScore } from '../../lib/mysql';
+import { minutesToMilliseconds } from 'date-fns';
 
 export const _calculateTribePoints = async () => {
   const tribes = await getAllTribeScore();
 
   if (!tribes || tribes.length <= 0) {
-    _calculateTribePoints();
+    setTimeout(() => {
+      _calculateTribePoints();
+    }, minutesToMilliseconds(30));
     return;
   }
 

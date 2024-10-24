@@ -47,7 +47,8 @@ const scheduler = () => {
 
   setInterval(() => {
     updateDamageWidget();
-  }, minutesToMilliseconds(60));
+  }, minutesToMilliseconds(120));
+  updateDamageWidget();
 
   // Update member count
   setInterval(async () => {

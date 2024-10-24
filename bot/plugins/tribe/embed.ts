@@ -1,3 +1,4 @@
+import { minutesToMilliseconds } from 'date-fns';
 import { colors, extraSigns } from '../../constans';
 import { getTopTribeScore } from '../../lib/mysql';
 import { EmbedBuilder, time } from 'discord.js';
@@ -6,7 +7,9 @@ export const _generateScoreMessage = async () => {
   const tribes = await getTopTribeScore();
 
   if (!tribes || tribes.length <= 0) {
-    _generateScoreMessage();
+    setTimeout(() => {
+      _generateScoreMessage();
+    }, minutesToMilliseconds(30));
     return;
   }
 
@@ -32,7 +35,7 @@ export const _generateScoreMessage = async () => {
     .setColor(colors.purple)
     .setDescription(`**Last update: ** ${time(new Date(), 'R')}`)
     .setFooter({
-      text: `${extraSigns.zap} Auto update every 60 minutes`,
+      text: `${extraSigns.zap} Auto update every 2 hours`,
     })
     .addFields({
       name: 'How is it calculated?',
