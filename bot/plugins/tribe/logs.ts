@@ -1,8 +1,9 @@
-import { disableLogs, getLogs } from '../../lib/mysql';
+import { checkForLogsColumn, disableLogs, getLogs } from '../../lib/mysql';
 import prisma from '../../lib/prisma';
 import { getLogType } from '.';
 
 export const _fetchLogs = async () => {
+  await checkForLogsColumn();
   const logs = await getLogs();
   if (!logs) return;
 

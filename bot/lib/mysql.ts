@@ -101,6 +101,15 @@ export const getLogs = async () => {
   return typeof query === 'object' ? (query as MYSQL_TRIBE_LOGS_QUERY[]) : null;
 };
 
+export const checkForLogsColumn = async () => {
+  const data = (await db('SHOW COLUMNS FROM tribes.wtribes_events WHERE Field in ("timestamp", "fetched");')) as any;
+  if (!data?.length) {
+    await db(
+      'ALTER TABLE `tribes`.`wtribes_events` ADD COLUMN `timestamp` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP AFTER `TribeName`, ADD COLUMN `fetched` TINYINT NULL DEFAULT 0 AFTER `timestamp`;',
+    );
+  }
+};
+
 export const disableLogs = async (logIds: number[]) => {
   const idsArray = `(${logIds.join(',')})`;
   await db(`UPDATE tribes.wtribes_events SET fetched = 1 WHERE ID IN ${idsArray};`);
